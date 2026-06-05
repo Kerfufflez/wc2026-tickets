@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
 """Fetch SeatSidekick match_seat_groups for WC2026 Semi-Final Atlanta."""
+
+from __future__ import annotations
 
 import json
 import re
@@ -7,30 +8,18 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from pathlib import Path
 
-BASE = Path(__file__).resolve().parent
-API_BASE = "https://dlvtfsmonledyyjaqjcn.supabase.co/rest/v1/match_seat_groups"
-APIKEY = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsdnRmc21vbmxlZHl5amFxamNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MDk3NDcsImV4cCI6MjA5MTk4NTc0N30.warYGD7rBH_x_qx9i56WfcJ3RKhCALBEarzHSUpkq5k"
+from wc2026.config import (
+    API_BASE,
+    API_HEADERS,
+    DATA_RAW,
+    FETCH_META,
+    FETCH_QUERIES,
+    MAX_SINGLE_LIMIT,
+    PAGE_SIZE,
+    PERFORMANCE_ID,
+    raw_path,
 )
-HEADERS = {
-    "apikey": APIKEY,
-    "accept-profile": "api",
-    "origin": "https://seatsidekick.com",
-}
-# PostgREST returns at most 100 rows when limit <= 100; higher limits return full sets.
-PAGE_SIZE = 100
-MAX_SINGLE_LIMIT = 1000
-
-QUERIES = [
-    ("cat1_g2.json", "Category 1", 2),
-    ("cat1_g4.json", "Category 1", 4),
-    ("cat2_g2.json", "Category 2", 2),
-    ("cat2_g4.json", "Category 2", 4),
-    ("cat3_g2.json", "Category 3", 2),
-    ("cat3_g4.json", "Category 3", 4),
-]
 
 
 def build_url(
@@ -38,7 +27,7 @@ def build_url(
 ) -> str:
     params = {
         "select": select,
-        "performance_id": "eq.10229226725358",
+        "performance_id": f"eq.{PERFORMANCE_ID}",
         "dominant_bucket": "eq.Standard",
         "dominant_category": f"eq.{category}",
         "order": "total_price.asc",
@@ -50,7 +39,7 @@ def build_url(
 
 
 def http_request(url: str, extra_headers: dict | None = None) -> tuple[int, dict, str]:
-    headers = {**HEADERS, **(extra_headers or {})}
+    headers = {**API_HEADERS, **(extra_headers or {})}
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=60) as resp:
         return resp.status, dict(resp.headers), resp.read().decode("utf-8")
@@ -113,7 +102,6 @@ def fetch_all(category: str, group_size: int) -> tuple[list | None, int | None]:
         if batch is not None and len(batch) >= total:
             return batch, total
 
-    # Paginate in PAGE_SIZE chunks (needed when limit=100 caps results)
     all_rows: list = []
     offset = 0
     while True:
@@ -130,16 +118,17 @@ def fetch_all(category: str, group_size: int) -> tuple[list | None, int | None]:
 
 
 def main() -> int:
+    DATA_RAW.mkdir(parents=True, exist_ok=True)
     errors = []
     meta: dict[str, dict] = {}
-    for filename, category, group_size in QUERIES:
+    for filename, category, group_size in FETCH_QUERIES:
         print(f"Fetching {filename}...")
         data, expected = fetch_all(category, group_size)
         if data is None:
             errors.append(filename)
             print("  FAILED after retries")
             continue
-        out = BASE / filename
+        out = raw_path(filename)
         out.write_text(json.dumps(data, indent=2), encoding="utf-8")
         truncated = expected is not None and len(data) < expected
         meta[filename] = {
@@ -152,10 +141,8 @@ def main() -> int:
             note = f" (WARNING: expected {expected}, got {len(data)})"
         elif expected is not None and len(data) > 100:
             note = f" (full inventory; {len(data)} total)"
-        print(f"  saved {len(data)} groups -> {filename}{note}")
-    (BASE / "fetch_meta.json").write_text(
-        json.dumps(meta, indent=2), encoding="utf-8"
-    )
+        print(f"  saved {len(data)} groups -> data/raw/{filename}{note}")
+    FETCH_META.write_text(json.dumps(meta, indent=2), encoding="utf-8")
     if errors:
         print(f"\nFailed files: {', '.join(errors)}")
         return 1

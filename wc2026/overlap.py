@@ -1,38 +1,14 @@
-#!/usr/bin/env python3
-"""G4 pair derivation overlap analysis -> overlap_analysis.md"""
+"""G4 pair derivation overlap analysis -> reports/overlap_analysis.md"""
 
 from __future__ import annotations
 
 from datetime import date
-from pathlib import Path
 
-from seatsidekick_utils import BASE, FILES, g2_key, load_json, validate_all
+from wc2026.config import CATEGORIES, REPORT_OVERLAP, raw_path
+from wc2026.derive import derive_pairs
+from wc2026.utils import g2_key, load_json, validate_all
 
 CAT_NAMES = {1: "Category 1", 2: "Category 2", 3: "Category 3"}
-
-
-def derive_pairs(g4_rows: list[dict]) -> list[dict]:
-    pairs = []
-    for row in g4_rows:
-        seats = [int(s.strip()) for s in row["seat_numbers"].split(",")]
-        if len(seats) < 2:
-            continue
-        avg = round(row["avg_price"])
-        block, r = str(row["block"]), str(row["row"])
-        for i in range(len(seats) - 1):
-            pairs.append(
-                {
-                    "block": block,
-                    "row": r,
-                    "first_seat": seats[i],
-                    "last_seat": seats[i + 1],
-                    "avg": avg,
-                    "total": avg * 2,
-                    "seat_str": f"{seats[i]}–{seats[i + 1]}",
-                    "parent": row,
-                }
-            )
-    return pairs
 
 
 def classify_pair(pair: dict, g2_lookup: set, g2_min: float, g2_max: float) -> str:
@@ -91,9 +67,7 @@ def analyze_category(cat_num: int, g2: list, g4: list) -> dict:
     v = verdict(overlap_rate, counts["NEW"], counts["IN_RANGE"])
 
     new_below_min = [
-        p
-        for b, p in classified
-        if b == "NEW" and p["total"] < g2_min
+        p for b, p in classified if b == "NEW" and p["total"] < g2_min
     ]
 
     return {
@@ -180,10 +154,10 @@ def main() -> int:
         return 1
 
     results = []
-    for cat_label, g2_file, g4_file in FILES:
+    for cat_label, g2_file, g4_file in CATEGORIES:
         cat_num = int(cat_label.replace("cat", ""))
-        g2 = load_json(BASE / g2_file)
-        g4 = load_json(BASE / g4_file)
+        g2 = load_json(raw_path(g2_file))
+        g4 = load_json(raw_path(g4_file))
         results.append(analyze_category(cat_num, g2, g4))
 
     sections = [format_section(r) for r in results]
@@ -212,10 +186,10 @@ def main() -> int:
         ]
     )
 
-    out = BASE / "overlap_analysis.md"
+    REPORT_OVERLAP.parent.mkdir(parents=True, exist_ok=True)
     body = "\n".join(sections) + "\n" + "\n".join(summary_rows) + "\n"
-    out.write_text(body, encoding="utf-8")
-    print(f"Wrote {out}")
+    REPORT_OVERLAP.write_text(body, encoding="utf-8")
+    print(f"Wrote {REPORT_OVERLAP}")
     for r in results:
         print(
             f"  Cat {r['cat_num']}: overlap {r['overlap_rate']:.1f}%, "

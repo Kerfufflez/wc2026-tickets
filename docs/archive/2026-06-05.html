@@ -39,6 +39,20 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
   border: 1px solid var(--border); border-radius: 6px;
   padding: 6px 10px; cursor: pointer;
 }
+.refresh-btn {
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, opacity 0.15s;
+}
+.refresh-btn:hover:not(:disabled) { border-color: var(--text); }
+.refresh-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.refresh-btn.loading { opacity: 0.7; }
+.live-badge {
+  font-size: 10px; font-weight: 600; color: var(--green-txt);
+  background: var(--green-bg); padding: 2px 6px; border-radius: 4px;
+  margin-left: 4px; vertical-align: middle;
+}
 hr.divider    { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
 
 /* Tabs */
@@ -144,7 +158,7 @@ tr:last-child td { border-bottom: none; }
 @media print {
   body { background: white; }
   .page { padding: 0; max-width: 100%; }
-  .cat-tabs { display: none; }
+  .cat-tabs, .refresh-btn { display: none; }
   .cat-section { display: block !important; }
   .page-break-before { break-before: page; }
   .metrics, .two-col, .card, .list-card, .inv-card, .deal, tr { break-inside: avoid; }
@@ -160,7 +174,7 @@ tr:last-child td { border-bottom: none; }
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Atlanta Stadium &middot; July 15, 2026 &middot; Category 1, 2 &amp; 3 Ticket Inventory</p>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 5:01 PM</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 6:05 PM</strong></p>
     <label class="last-updated" style="margin-bottom:0;padding:6px 12px">
       Snapshot
       <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" style="margin-left:6px">
@@ -168,6 +182,9 @@ tr:last-child td { border-bottom: none; }
           <option value="2026-06-05" selected>Jun 5, 2026</option>
         </select>
     </label>
+    <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
+      <span id="refresh-btn-label">Refresh now</span>
+    </button>
   </div>
   <hr class="divider">
 
@@ -370,6 +387,7 @@ function renderDeals(top3, list2, list4, t3id, l2id, l4id) {
 
 function renderInv(blocks, id) {
   const tbody = document.getElementById(id);
+  tbody.innerHTML = '';
   [...blocks].sort((a,b)=>(b.g2c+b.g4c)-(a.g2c+a.g4c)).forEach(b => {
     const tr = document.createElement('tr');
     const sc = b.side ? `<span class="badge ${sideClass[b.side]}">${b.side}</span>` : '<span class="nil">—</span>';
@@ -380,8 +398,13 @@ function renderInv(blocks, id) {
   });
 }
 
+const chartInstances = {};
 function makeChart(id, c2, c4, labels, ymax, ystep) {
-  new Chart(document.getElementById(id), {
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+    delete chartInstances[id];
+  }
+  chartInstances[id] = new Chart(document.getElementById(id), {
     type:'bar',
     data:{ labels, datasets:[
       {label:'Groups of 2', data:c2, backgroundColor:'#B5D4F4', borderWidth:0, borderRadius:3},
@@ -579,5 +602,6 @@ renderInv(cat3inv,'cat3-inv');
 makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
   ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
 </script>
+<script src="../refresh.js"></script>
 </body>
 </html>

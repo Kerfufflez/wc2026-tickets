@@ -3,7 +3,7 @@
 Track price changes between manual dashboard refreshes.
 
 ## 2026-06-05
-*Captured 2026-06-05T17:01:37*
+*Captured 2026-06-05T18:05:43*
 
 First snapshot — baseline saved. Re-run tomorrow to see day-over-day changes.
 

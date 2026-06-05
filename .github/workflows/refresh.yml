@@ -19,13 +19,13 @@ jobs:
           python-version: '3.12'
 
       - name: Fetch and rebuild dashboard
-        run: python3 fetch_seatsidekick.py && python3 build_html_data.py
+        run: python3 -m wc2026 fetch && python3 -m wc2026 build
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/ history/ fetch_meta.json cat*.json "World Cup Semi-Final Tickets.html" overlap_analysis.md
+          git add docs/ reports/ data/raw/ templates/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Publish dashboard to docs/ for GitHub Pages."""
 
 from __future__ import annotations
@@ -7,14 +6,16 @@ import json
 import re
 import shutil
 from datetime import date, datetime
-from pathlib import Path
 
-BASE = Path(__file__).resolve().parent
-SOURCE_HTML = BASE / "World Cup Semi-Final Tickets.html"
-DOCS = BASE / "docs"
-ARCHIVE = DOCS / "archive"
-HISTORY = DOCS / "history"
-MANIFEST = HISTORY / "manifest.json"
+from wc2026.config import (
+    DOCS,
+    DOCS_ARCHIVE,
+    DOCS_HISTORY,
+    DOCS_MANIFEST,
+    REFRESH_JS,
+    REPORT_DEAL_LOG,
+    REPORT_HTML,
+)
 
 CONTEXT_RE = re.compile(
     r'<meta name="snapshot-context" content="[^"]*">'
@@ -55,42 +56,43 @@ def inject_dropdown(html: str, dates: list[str], current: str | None) -> str:
 
 
 def list_archive_dates() -> list[str]:
-    if not ARCHIVE.exists():
+    if not DOCS_ARCHIVE.exists():
         return []
     dates = sorted(
-        (p.stem for p in ARCHIVE.glob("*.html")),
+        (p.stem for p in DOCS_ARCHIVE.glob("*.html")),
         reverse=True,
     )
     return dates
 
 
 def publish_docs() -> None:
-    if not SOURCE_HTML.exists():
-        raise FileNotFoundError(f"Missing source HTML: {SOURCE_HTML}")
+    if not REPORT_HTML.exists():
+        raise FileNotFoundError(f"Missing built report: {REPORT_HTML}")
 
     today = date.today().isoformat()
-    ARCHIVE.mkdir(parents=True, exist_ok=True)
-    HISTORY.mkdir(parents=True, exist_ok=True)
+    DOCS_ARCHIVE.mkdir(parents=True, exist_ok=True)
+    DOCS_HISTORY.mkdir(parents=True, exist_ok=True)
 
-    # Write today's archive from source (before dropdown injection variants)
-    base_html = SOURCE_HTML.read_text(encoding="utf-8")
-    archive_path = ARCHIVE / f"{today}.html"
+    base_html = REPORT_HTML.read_text(encoding="utf-8")
+    archive_path = DOCS_ARCHIVE / f"{today}.html"
     archive_path.write_text(base_html, encoding="utf-8")
 
     dates = list_archive_dates()
-    MANIFEST.write_text(json.dumps(dates, indent=2) + "\n", encoding="utf-8")
+    DOCS_MANIFEST.write_text(json.dumps(dates, indent=2) + "\n", encoding="utf-8")
 
-    if (BASE / "history" / "DEAL_LOG.md").exists():
-        shutil.copy2(BASE / "history" / "DEAL_LOG.md", HISTORY / "DEAL_LOG.md")
+    if REPORT_DEAL_LOG.exists():
+        shutil.copy2(REPORT_DEAL_LOG, DOCS_HISTORY / "DEAL_LOG.md")
 
-    # Inject dropdown into index (latest) and all archives
+    if REFRESH_JS.exists():
+        shutil.copy2(REFRESH_JS, DOCS / "refresh.js")
+
     index_html = inject_dropdown(
         set_snapshot_context(base_html, "index"), dates, current=None
     )
     (DOCS / "index.html").write_text(index_html, encoding="utf-8")
 
     for d in dates:
-        path = ARCHIVE / f"{d}.html"
+        path = DOCS_ARCHIVE / f"{d}.html"
         raw = base_html if d == today else path.read_text(encoding="utf-8")
         published = inject_dropdown(
             set_snapshot_context(raw, "archive"), dates, current=d
@@ -98,9 +100,10 @@ def publish_docs() -> None:
         published = published.replace(
             'href="history/DEAL_LOG.md"', 'href="../history/DEAL_LOG.md"'
         )
+        published = published.replace('src="refresh.js"', 'src="../refresh.js"')
         path.write_text(published, encoding="utf-8")
 
-    print(f"Published docs/index.html")
+    print("Published docs/index.html")
     print(f"Published docs/archive/{today}.html")
     print(f"Archive dates: {', '.join(dates) if dates else '(none)'}")
 

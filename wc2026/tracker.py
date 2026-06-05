@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Snapshot best deals and compare day-over-day price movements."""
 
 from __future__ import annotations
@@ -9,12 +8,9 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-from build_html_data import build_category, merge_derived_pairs
-from seatsidekick_utils import BASE, FILES, load_json, row_to_deal
-
-HISTORY = BASE / "history"
-SNAPSHOTS = HISTORY / "snapshots"
-DEAL_LOG = HISTORY / "DEAL_LOG.md"
+from wc2026.build import build_category, merge_derived_pairs
+from wc2026.config import CATEGORIES, REPORT_DEAL_LOG, REPORT_SNAPSHOTS, raw_path
+from wc2026.utils import load_json, row_to_deal
 
 
 def deal_id(row: dict[str, Any]) -> str:
@@ -64,10 +60,10 @@ def fmt_delta(old: int, new: int) -> str:
 def build_snapshot() -> dict[str, Any]:
     today = date.today().isoformat()
     categories: dict[str, Any] = {}
-    for cat_label, g2_file, g4_file in FILES:
+    for cat_label, g2_file, g4_file in CATEGORIES:
         cat_num = int(cat_label.replace("cat", ""))
-        g2_raw = load_json(BASE / g2_file)
-        g4_raw = load_json(BASE / g4_file)
+        g2_raw = load_json(raw_path(g2_file))
+        g4_raw = load_json(raw_path(g4_file))
         g2_merged = merge_derived_pairs(g2_raw, g4_raw)
         built = build_category(cat_num, g2_file, g4_file)
 
@@ -97,9 +93,9 @@ def load_snapshot(path: Path) -> dict[str, Any]:
 
 
 def previous_snapshot(exclude_date: str) -> tuple[dict[str, Any] | None, str | None]:
-    if not SNAPSHOTS.exists():
+    if not REPORT_SNAPSHOTS.exists():
         return None, None
-    files = sorted(SNAPSHOTS.glob("*.json"), reverse=True)
+    files = sorted(REPORT_SNAPSHOTS.glob("*.json"), reverse=True)
     for f in files:
         if f.stem != exclude_date:
             return load_snapshot(f), f.stem
@@ -199,19 +195,19 @@ def format_run_report(
             f"{ccat['counts']['g4']} G4 ({_signed(g4_delta)})"
         )
 
-        # Cheapest shifts
         for label, key in (("G2", "cheapest_g2"), ("G4", "cheapest_g4")):
             old, new = pcat.get(key), ccat.get(key)
             if old and new:
                 if _deal_key(old) != _deal_key(new):
-                    lines.append(f"- Cheapest {label} changed: {fmt_deal(old)} → **{fmt_deal(new)}**")
+                    lines.append(
+                        f"- Cheapest {label} changed: {fmt_deal(old)} → **{fmt_deal(new)}**"
+                    )
                 elif new["avg"] != old["avg"]:
                     lines.append(
                         f"- Cheapest {label} price: ${old['avg']:,} → **${new['avg']:,}** "
                         f"({fmt_delta(old['avg'], new['avg'])}/ea)"
                     )
 
-        # New listings (cheapest 10 new)
         if diff["new"]:
             lines.append(f"- **New listings** ({len(diff['new'])} total, cheapest first):")
             for d in diff["new"][:10]:
@@ -219,7 +215,6 @@ def format_run_report(
             if len(diff["new"]) > 10:
                 lines.append(f"  - …and {len(diff['new']) - 10} more")
 
-        # Entered top 10
         for pool, label in (("top10_g2", "G2 top 10"), ("top10_g4", "G4 top 10")):
             entered = top10_changes(pcat[pool], ccat[pool])["entered_top10"]
             if entered:
@@ -227,7 +222,6 @@ def format_run_report(
                 for d in entered:
                     lines.append(f"  - {fmt_deal(d)}")
 
-        # Price drops (most notable)
         notable_drops = [(p, c) for p, c in diff["drops"] if p["avg"] - c["avg"] >= 50]
         if notable_drops:
             lines.append(f"- **Price drops** (≥$50/ea):")
@@ -236,7 +230,6 @@ def format_run_report(
                     f"  - {fmt_deal(c)} — was ${p['avg']:,}/ea ({fmt_delta(p['avg'], c['avg'])}/ea)"
                 )
 
-        # Price rises
         notable_rises = [(p, c) for p, c in diff["rises"] if c["avg"] - p["avg"] >= 50]
         if notable_rises:
             lines.append(f"- **Price rises** (≥$50/ea):")
@@ -245,7 +238,6 @@ def format_run_report(
                     f"  - {fmt_deal(c)} — was ${p['avg']:,}/ea ({fmt_delta(p['avg'], c['avg'])}/ea)"
                 )
 
-        # Removed
         if diff["gone"]:
             lines.append(f"- **Removed** ({len(diff['gone'])} listings no longer available):")
             for d in diff["gone"][:5]:
@@ -279,15 +271,14 @@ def _signed(n: int) -> str:
 
 
 def update_deal_log(report: str, run_date: str) -> None:
-    HISTORY.mkdir(parents=True, exist_ok=True)
-    SNAPSHOTS.mkdir(parents=True, exist_ok=True)
+    REPORT_DEAL_LOG.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
 
     header = "# Deal movement log\n\nTrack price changes between manual dashboard refreshes.\n\n"
-    if DEAL_LOG.exists():
-        body = DEAL_LOG.read_text(encoding="utf-8")
+    if REPORT_DEAL_LOG.exists():
+        body = REPORT_DEAL_LOG.read_text(encoding="utf-8")
         if not body.startswith("# Deal movement log"):
             body = header + body
-        # Replace same-day section if re-running
         pattern = rf"## {re.escape(run_date)}\b[\s\S]*?(?=\n## |\Z)"
         if re.search(pattern, body):
             body = re.sub(pattern, report.strip() + "\n\n", body, count=1)
@@ -296,7 +287,7 @@ def update_deal_log(report: str, run_date: str) -> None:
     else:
         body = header + report.strip() + "\n"
 
-    DEAL_LOG.write_text(body, encoding="utf-8")
+    REPORT_DEAL_LOG.write_text(body, encoding="utf-8")
 
 
 def log_deals() -> Path:
@@ -304,20 +295,20 @@ def log_deals() -> Path:
     run_date = snapshot["date"]
     prev, prev_date = previous_snapshot(exclude_date=run_date)
 
-    SNAPSHOTS.mkdir(parents=True, exist_ok=True)
-    snap_path = SNAPSHOTS / f"{run_date}.json"
+    REPORT_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
+    snap_path = REPORT_SNAPSHOTS / f"{run_date}.json"
     snap_path.write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
 
     report = format_run_report(snapshot, prev, prev_date)
     update_deal_log(report, run_date)
 
     print(f"Snapshot saved: {snap_path}")
-    print(f"Deal log updated: {DEAL_LOG}")
+    print(f"Deal log updated: {REPORT_DEAL_LOG}")
     if prev_date:
         print(f"Compared against: {prev_date}")
     else:
         print("Baseline snapshot (no prior run to compare)")
-    return DEAL_LOG
+    return REPORT_DEAL_LOG
 
 
 def main() -> int:

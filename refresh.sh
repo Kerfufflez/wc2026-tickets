@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Daily dashboard refresh: fetch → validate/analysis → HTML + deal log
+# Daily dashboard refresh: fetch → overlap analysis → build + publish
 set -euo pipefail
 cd "$(dirname "$0")"
-python3 fetch_seatsidekick.py
-python3 analyze_overlap.py
-python3 build_html_data.py
+python3 -m wc2026 refresh
 echo ""
-echo "Local dashboard: World Cup Semi-Final Tickets.html"
+echo "Local dashboard: reports/dashboard.html"
 echo "Published site:  docs/index.html"
-echo "Deal log:        history/DEAL_LOG.md"
+echo "Deal log:        reports/history/DEAL_LOG.md"

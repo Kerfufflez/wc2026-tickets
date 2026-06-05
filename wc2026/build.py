@@ -1,18 +1,21 @@
-#!/usr/bin/env python3
 """Build HTML/JS updates from JSON + optional DERIVE merges."""
 
 from __future__ import annotations
 
 import json
 import re
-from datetime import date, datetime
-from pathlib import Path
+from datetime import datetime
 
-from analyze_overlap import derive_pairs
-from seatsidekick_utils import (
-    BASE,
+from wc2026.config import (
+    CATEGORIES,
+    FETCH_META,
+    REPORT_HTML,
+    TEMPLATE,
+    raw_path,
+)
+from wc2026.derive import derive_pairs
+from wc2026.utils import (
     BUCKET_LABELS,
-    FILES,
     chart_buckets,
     deal_to_js,
     inv_to_js,
@@ -21,8 +24,6 @@ from seatsidekick_utils import (
     row_to_deal,
     validate_all,
 )
-
-HTML_PATH = BASE / "World Cup Semi-Final Tickets.html"
 
 
 def derived_to_row(pair: dict) -> dict:
@@ -72,10 +73,9 @@ def merge_derived_pairs(g2: list, g4: list) -> list:
 
 
 def cap_comment(filename: str) -> str:
-    meta_path = BASE / "fetch_meta.json"
-    if not meta_path.exists():
+    if not FETCH_META.exists():
         return ""
-    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    meta = json.loads(FETCH_META.read_text(encoding="utf-8"))
     info = meta.get(filename, {})
     if info.get("truncated"):
         total = info.get("total", "?")
@@ -94,15 +94,9 @@ def format_array(name: str, deals: list[dict], prefix_comment: str = "") -> str:
     return "\n".join(lines)
 
 
-def format_top3(g2_deals: list, g4_deals: list) -> str:
-    top = sorted(g2_deals + g4_deals, key=lambda d: d["avg"])[:3]
-    items = ", ".join(deal_to_js(d) for d in top)
-    return f"const cat{{cat}}top3 = [{items}].sort((a,b)=>a.avg-b.avg).slice(0,3);"
-
-
 def build_category(cat_num: int, g2_file: str, g4_file: str) -> dict:
-    g2_raw = load_json(BASE / g2_file)
-    g4_raw = load_json(BASE / g4_file)
+    g2_raw = load_json(raw_path(g2_file))
+    g4_raw = load_json(raw_path(g4_file))
     g2_raw_count = len(g2_raw)
     g4_raw_count = len(g4_raw)
     g2_raw = merge_derived_pairs(g2_raw, g4_raw)
@@ -158,7 +152,8 @@ def build_inventory_from_deals(g2: list, g4: list) -> list:
 
 
 def patch_html(categories: list[dict]) -> None:
-    html = HTML_PATH.read_text(encoding="utf-8")
+    source = TEMPLATE if TEMPLATE.exists() else REPORT_HTML
+    html = source.read_text(encoding="utf-8")
     now = datetime.now()
     today = now.strftime("%B %-d, %Y")
     last_updated = now.strftime("%B %-d, %Y at %-I:%M %p")
@@ -169,25 +164,24 @@ def patch_html(categories: list[dict]) -> None:
         count=1,
     )
     html = re.sub(
-        r'(<p class="last-updated" id="last-updated">Last updated: <strong>)[^<]+(</strong></p>)',
+        r'(<p class="last-updated" id="last-updated"[^>]*>Last updated: <strong>)[^<]+(</strong></p>)',
         rf"\g<1>{last_updated}\g<2>",
         html,
         count=1,
     )
 
     cat_sections = {
-        1: ("cat1", "id=\"cat1\""),
-        2: ("cat2", "id=\"cat2\""),
-        3: ("cat3", "id=\"cat3\""),
+        1: ("cat1", 'id="cat1"'),
+        2: ("cat2", 'id="cat2"'),
+        3: ("cat3", 'id="cat3"'),
     }
 
     for data in categories:
         c = data["cat"]
         prefix = f"cat{c}"
 
-        # Metrics in static HTML per category section
         section_marker = cat_sections[c][1]
-        idx = html.find(f'<div {section_marker}')
+        idx = html.find(f"<div {section_marker}")
         if idx == -1:
             raise RuntimeError(f"Section {c} not found")
         if c == 3:
@@ -198,13 +192,13 @@ def patch_html(categories: list[dict]) -> None:
 
         def replace_metric_block(section_html: str, label: str, m: dict, ticket_n: int) -> str:
             if label == "Groups of 2":
-                end = r'(?=<div class="metrics-row-label">Groups of 4</div>)'
+                end_pat = r"(?=<div class=\"metrics-row-label\">Groups of 4</div>)"
             else:
-                end = r'(?=<div class="two-col">)'
+                end_pat = r"(?=<div class=\"two-col\">)"
             pattern = (
                 rf'<div class="metrics-row-label">{re.escape(label)}</div>\s*'
                 rf'<div class="metrics">[\s\S]*?</div>\s*'
-                rf'{end}'
+                rf"{end_pat}"
             )
             close_grid = (
                 "\n    </div>\n    " if label == "Groups of 4" else "\n      "
@@ -232,7 +226,6 @@ def patch_html(categories: list[dict]) -> None:
         section = replace_metric_block(section, "Groups of 4", data["metrics_g4"], 4)
         html = html[:idx] + section + html[end:]
 
-        # Script block replacements
         g2_comment = cap_comment(data["g2_file"])
         g4_comment = cap_comment(data["g4_file"])
 
@@ -270,8 +263,9 @@ def patch_html(categories: list[dict]) -> None:
         html = re.sub(inv_pat, lambda _m: inv_new, html, count=1)
         html = re.sub(chart_pat, lambda _m: chart_new, html, count=1)
 
-    HTML_PATH.write_text(html, encoding="utf-8")
-    print(f"Updated {HTML_PATH}")
+    REPORT_HTML.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_HTML.write_text(html, encoding="utf-8")
+    print(f"Updated {REPORT_HTML}")
 
 
 def main() -> int:
@@ -281,7 +275,7 @@ def main() -> int:
             print(e)
         return 1
     categories = []
-    for cat_label, g2_file, g4_file in FILES:
+    for cat_label, g2_file, g4_file in CATEGORIES:
         cat_num = int(cat_label.replace("cat", ""))
         categories.append(build_category(cat_num, g2_file, g4_file))
     patch_html(categories)
@@ -290,8 +284,8 @@ def main() -> int:
             f"Cat {d['cat']}: G2={d['g2_count']} G4={d['g4_count']} "
             f"chart peak G2={max(d['chart'][0])} G4={max(d['chart'][1])}"
         )
-    from deal_tracker import log_deals
-    from publish_docs import publish_docs
+    from wc2026.tracker import log_deals
+    from wc2026.publish import publish_docs
 
     log_deals()
     publish_docs()

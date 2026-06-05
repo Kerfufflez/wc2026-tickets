@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Shared transforms, validation, and chart helpers for SeatSidekick data."""
 
 from __future__ import annotations
@@ -9,13 +8,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-BASE = Path(__file__).resolve().parent
-
-FILES = [
-    ("cat1", "cat1_g2.json", "cat1_g4.json"),
-    ("cat2", "cat2_g2.json", "cat2_g4.json"),
-    ("cat3", "cat3_g2.json", "cat3_g4.json"),
-]
+from wc2026.config import CATEGORIES, DATA_RAW, raw_path
 
 BUCKET_RANGES = {
     1: [4500, 5000, 5500, 6000, 6500],
@@ -80,9 +73,9 @@ def validate_all() -> list[str]:
     errors: list[str] = []
     loaded: dict[str, tuple[list, list]] = {}
 
-    for cat, g2_file, g4_file in FILES:
+    for cat, g2_file, g4_file in CATEGORIES:
         for fname in (g2_file, g4_file):
-            path = BASE / fname
+            path = raw_path(fname)
             if not path.exists():
                 errors.append(f"Missing file: {fname}")
                 continue
@@ -110,7 +103,7 @@ def validate_all() -> list[str]:
                         f"{fname}: missing block on {row.get('group_id', '?')}"
                     )
 
-        g2_path, g4_path = BASE / g2_file, BASE / g4_file
+        g2_path, g4_path = raw_path(g2_file), raw_path(g4_file)
         if g2_path.exists() and g4_path.exists():
             g2 = load_json(g2_path)
             g4 = load_json(g4_path)
@@ -157,9 +150,9 @@ def median_rounded(values: list[float]) -> int:
 
 def build_inventory(g2: list[dict], g4: list[dict]) -> list[dict]:
     blocks: dict[str, dict] = {}
-    for rows, gs_key, cnt_key, min_key in (
-        (g2, "g2", "g2c", "g2m"),
-        (g4, "g4", "g4c", "g4m"),
+    for rows, cnt_key, min_key in (
+        (g2, "g2c", "g2m"),
+        (g4, "g4c", "g4m"),
     ):
         for row in rows:
             sec = str(row["block"])
@@ -184,7 +177,6 @@ def build_inventory(g2: list[dict], g4: list[dict]) -> list[dict]:
 
 def metrics_for(rows: list[dict], ticket_label: str) -> dict[str, str]:
     avgs = [r["avg_price"] for r in rows]
-    totals = [r["total_price"] for r in rows]
     cheapest = min(rows, key=lambda r: r["avg_price"])
     min_total_row = min(rows, key=lambda r: r["total_price"])
     n = len(rows)
