@@ -155,6 +155,67 @@ tr:last-child td { border-bottom: none; }
 /* Footer */
 .footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--hint); }
 
+/* Mobile */
+@media (max-width: 768px) {
+  .page { padding: 24px 16px 40px; }
+  .report-title { font-size: 22px; letter-spacing: -0.3px; }
+  .report-sub { font-size: 13px; }
+  .header-row { gap: 8px; margin-bottom: 20px; }
+  .header-row .last-updated { flex: 1 1 auto; min-width: 0; }
+  .refresh-btn { flex: 1 1 auto; }
+  .cat-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab { flex-shrink: 0; padding: 8px 16px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .metric { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .metric:nth-child(2n) { border-right: none; }
+  .metric:nth-child(n+3) { border-bottom: none; }
+  .metric-value { font-size: 20px; }
+  .two-col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .card { padding: 16px; }
+  .card .deal-tags { flex-wrap: wrap; overflow: visible; }
+  .deal {
+    grid-template-columns: 28px 1fr;
+    gap: 8px 10px;
+    align-items: start;
+    padding: 14px 0;
+  }
+  .deal-prices {
+    grid-column: 2;
+    text-align: left;
+    white-space: normal;
+  }
+  .list-card { padding: 0 14px; }
+  .section-title { font-size: 10px; line-height: 1.4; }
+  .inv-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+  }
+  .inv-card table { min-width: 520px; font-size: 11px; }
+  th, td { padding: 8px 10px; }
+  .group-min { display: block; margin-left: 0; margin-top: 2px; }
+  .legend { flex-wrap: wrap; gap: 8px; }
+  .footer { font-size: 10px; line-height: 1.6; }
+}
+
+@media (max-width: 400px) {
+  .page { padding: 20px 12px 32px; }
+  .report-title { font-size: 20px; }
+  .metrics { grid-template-columns: 1fr; }
+  .metric { border-right: none !important; border-bottom: 1px solid var(--border); }
+  .metric:last-child { border-bottom: none; }
+  .metric-value { font-size: 18px; }
+  .deal-loc { font-size: 13px; }
+  .deal-per { font-size: 14px; }
+}
+
 @media print {
   body { background: white; }
   .page { padding: 0; max-width: 100%; }
@@ -174,7 +235,7 @@ tr:last-child td { border-bottom: none; }
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Atlanta Stadium &middot; July 15, 2026 &middot; Category 1, 2 &amp; 3 Ticket Inventory</p>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 6:05 PM</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 6:19 PM</strong></p>
     <label class="last-updated" style="margin-bottom:0;padding:6px 12px">
       Snapshot
       <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" style="margin-left:6px">
