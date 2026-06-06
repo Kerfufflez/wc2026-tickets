@@ -30,6 +30,22 @@
     3: ["<$2.5k", "$2.5–3k", "$3–3.5k", "$3.5–4k", "$4–5k", "$5k+"],
   };
 
+  // Typical market range — listings outside are real but excluded from rankings
+  const CAT_MARKET_RANGE = {
+    1: [3000, 35000],
+    2: [500, 25000],
+    3: [1500, 15000],
+  };
+
+  function marketAvg(avg, catNum) {
+    const [lo, hi] = CAT_MARKET_RANGE[catNum];
+    return avg >= lo && avg <= hi;
+  }
+
+  function marketDeal(deal, catNum) {
+    return marketAvg(deal.avg, catNum);
+  }
+
   function buildUrl(category, groupSize) {
     const params = new URLSearchParams({
       select: "*",
@@ -73,23 +89,7 @@
     return `${seats[0]}–${seats[seats.length - 1]}`;
   }
 
-  function normalizeRowPrices(row) {
-    const avg = Number(row.avg_price || 0);
-    if (avg < 50000) return row;
-    const minP = Number(row.min_price ?? avg);
-    const maxP = Number(row.max_price ?? avg);
-    if (Math.abs(minP - maxP) > 0.01) return row;
-    return {
-      ...row,
-      min_price: minP / 100,
-      max_price: maxP / 100,
-      avg_price: avg / 100,
-      total_price: Number(row.total_price) / 100,
-    };
-  }
-
   function rowToDeal(row) {
-    row = normalizeRowPrices(row);
     const rowNum = parseInt(row.row, 10);
     return {
       sec: String(row.block),
@@ -212,7 +212,20 @@
     return Object.values(blocks);
   }
 
-  function metricsFor(rows, ticketLabel) {
+  function metricsFor(rows, ticketLabel, catNum) {
+    rows = rows.filter((r) => marketAvg(Math.round(r.avg_price), catNum));
+    if (!rows.length) {
+      return {
+        listings: "0",
+        cheapest_value: "—",
+        cheapest_sub: "No listings in market range",
+        median_value: "—",
+        median_sub: "",
+        min_total_value: "—",
+        min_total_sub: "",
+        ticket_label: ticketLabel,
+      };
+    }
     const avgs = rows.map((r) => r.avg_price);
     const cheapest = rows.reduce((a, b) => (a.avg_price < b.avg_price ? a : b));
     const minTotal = rows.reduce((a, b) =>
@@ -231,23 +244,46 @@
     };
   }
 
+  function topDeals(deals, n) {
+    const seen = new Set();
+    const picked = [];
+    for (const d of [...deals].sort((a, b) => a.avg - b.avg)) {
+      const key = `${d.sec}|${d.row}|${d.gs}|${d.derived}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      picked.push(d);
+      if (picked.length >= n) break;
+    }
+    return picked;
+  }
+
   function buildCategory(catNum, g2Raw, g4Raw) {
-    const g2Merged = mergeDerivedPairs(g2Raw, g4Raw);
-    const g2Deals = g2Merged.map(rowToDeal);
-    const g4Deals = g4Raw.map(rowToDeal);
-    const top3 = [...g2Deals, ...g4Deals].sort((a, b) => a.avg - b.avg).slice(0, 3);
+    const g2Native = g2Raw.filter((r) =>
+      marketAvg(Math.round(r.avg_price), catNum)
+    );
+    const g4Native = g4Raw.filter((r) =>
+      marketAvg(Math.round(r.avg_price), catNum)
+    );
+    const g2Merged = mergeDerivedPairs(g2Native, g4Native);
+    const g2Deals = g2Merged
+      .map((r) => rowToDeal(r))
+      .filter((d) => marketDeal(d, catNum));
+    const g4Deals = g4Native
+      .map((r) => rowToDeal(r))
+      .filter((d) => marketDeal(d, catNum));
+    const top3 = topDeals([...g2Deals, ...g4Deals], 3);
     const inv = buildInventory(g2Deals, g4Deals).sort(
       (a, b) => b.g2c + b.g4c - (a.g2c + a.g4c)
     );
-    const { c2, c4, ymax, ystep } = chartBuckets(catNum, g2Merged, g4Raw);
+    const { c2, c4, ymax, ystep } = chartBuckets(catNum, g2Merged, g4Native);
     return {
-      g2_top: g2Deals.slice(0, 10),
-      g4_top: g4Deals.slice(0, 10),
+      g2_top: [...g2Deals].sort((a, b) => a.avg - b.avg).slice(0, 10),
+      g4_top: [...g4Deals].sort((a, b) => a.avg - b.avg).slice(0, 10),
       top3,
       inv,
       chart: { c2, c4, labels: BUCKET_LABELS[catNum], ymax, ystep },
-      metrics_g2: metricsFor(g2Merged, "Groups of 2 tickets"),
-      metrics_g4: metricsFor(g4Raw, "Groups of 4 tickets"),
+      metrics_g2: metricsFor(g2Merged, "Groups of 2 tickets", catNum),
+      metrics_g4: metricsFor(g4Native, "Groups of 4 tickets", catNum),
     };
   }
 
@@ -358,9 +394,10 @@
       });
 
       for (const catNum of [1, 2, 3]) {
-        const g2 = byCat[catNum].g2.map(normalizeRowPrices);
-        const g4 = byCat[catNum].g4.map(normalizeRowPrices);
-        applyCategory(catNum, buildCategory(catNum, g2, g4));
+        applyCategory(
+          catNum,
+          buildCategory(catNum, byCat[catNum].g2, byCat[catNum].g4)
+        );
       }
 
       const lu = document.getElementById("last-updated");

@@ -48,41 +48,31 @@ def format_seats(seat_numbers: str) -> str:
     return f"{seats[0]}–{seats[-1]}"
 
 
-def normalize_row_prices(row: dict[str, Any]) -> dict[str, Any]:
-    """Fix SeatSidekick rows where uniform prices are 100× too high."""
-    avg = float(row.get("avg_price") or 0)
-    if avg < 50_000:
-        return row
-    min_p = float(row.get("min_price", avg))
-    max_p = float(row.get("max_price", avg))
-    if abs(min_p - max_p) > 0.01:
-        return row
-    out = dict(row)
-    for key in ("min_price", "max_price", "avg_price", "total_price"):
-        if key in out and out[key] is not None:
-            out[key] = float(out[key]) / 100.0
-    return out
+# Typical market range per category — used to surface buyable deals in rankings
+# and metrics. Listings outside this range are kept in inventory but excluded
+# from Top 3 / Top 10 / cheapest (e.g. $92k ask prices stay as-is).
+CAT_MARKET_RANGE: dict[int, tuple[int, int]] = {
+    1: (3_000, 35_000),
+    2: (500, 25_000),
+    3: (1_500, 15_000),
+}
 
 
-def normalize_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [normalize_row_prices(r) for r in rows]
+def market_avg(avg: int | float, cat_num: int) -> bool:
+    lo, hi = CAT_MARKET_RANGE[cat_num]
+    return lo <= avg <= hi
 
 
-def normalize_deal_prices(deal: dict[str, Any]) -> dict[str, Any]:
-    """Fix stored listing/deal dicts with the same 100× scaling issue."""
-    if not deal or deal.get("mixed"):
-        return deal
-    avg = int(deal.get("avg", 0))
-    if avg < 50_000:
-        return deal
-    out = dict(deal)
-    out["avg"] = round(out["avg"] / 100)
-    out["total"] = round(out["total"] / 100)
-    return out
+def market_deal(deal: dict[str, Any], cat_num: int) -> bool:
+    return market_avg(deal.get("avg", 0), cat_num)
 
 
-def row_to_deal(row: dict[str, Any]) -> dict[str, Any]:
-    row = normalize_row_prices(row)
+# Back-compat aliases used across build/tracker
+plausible_avg = market_avg
+plausible_deal = market_deal
+
+
+def row_to_deal(row: dict[str, Any], cat_num: int | None = None) -> dict[str, Any]:
     row_num = int(row["row"])
     return {
         "sec": str(row["block"]),
@@ -209,7 +199,25 @@ def build_inventory(g2: list[dict], g4: list[dict]) -> list[dict]:
     return list(blocks.values())
 
 
-def metrics_for(rows: list[dict], ticket_label: str) -> dict[str, str]:
+def metrics_for(
+    rows: list[dict], ticket_label: str, cat_num: int
+) -> dict[str, str]:
+    rows = [
+        r
+        for r in rows
+        if market_avg(round(r["avg_price"]), cat_num)
+    ]
+    if not rows:
+        return {
+            "listings": "0",
+            "cheapest_value": "—",
+            "cheapest_sub": "No listings in market range",
+            "median_value": "—",
+            "median_sub": "",
+            "min_total_value": "—",
+            "min_total_sub": "",
+            "ticket_label": ticket_label,
+        }
     avgs = [r["avg_price"] for r in rows]
     cheapest = min(rows, key=lambda r: r["avg_price"])
     min_total_row = min(rows, key=lambda r: r["total_price"])

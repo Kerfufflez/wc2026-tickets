@@ -17,7 +17,7 @@ from wc2026.dates import (
     parse_captured_at,
     snapshot_id,
 )
-from wc2026.utils import load_json, normalize_deal_prices, normalize_rows, row_to_deal
+from wc2026.utils import load_json, market_deal, row_to_deal
 
 TIMESTAMPED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{6}$")
 
@@ -31,8 +31,8 @@ def deal_id(row: dict[str, Any]) -> str:
     return str(row.get("group_id", ""))
 
 
-def listing_record(row: dict[str, Any]) -> dict[str, Any]:
-    d = row_to_deal(row)
+def listing_record(row: dict[str, Any], cat_num: int) -> dict[str, Any]:
+    d = row_to_deal(row, cat_num)
     return {
         "id": deal_id(row),
         "sec": d["sec"],
@@ -89,14 +89,14 @@ def build_snapshot() -> dict[str, Any]:
     categories: dict[str, Any] = {}
     for cat_label, g2_file, g4_file in CATEGORIES:
         cat_num = int(cat_label.replace("cat", ""))
-        g2_raw = normalize_rows(load_json(raw_path(g2_file)))
-        g4_raw = normalize_rows(load_json(raw_path(g4_file)))
+        g2_raw = load_json(raw_path(g2_file))
+        g4_raw = load_json(raw_path(g4_file))
         g2_merged = merge_derived_pairs(g2_raw, g4_raw)
         built = build_category(cat_num, g2_file, g4_file)
 
         listings: dict[str, dict] = {}
         for row in g2_merged + g4_raw:
-            listings[deal_id(row)] = listing_record(row)
+            listings[deal_id(row)] = listing_record(row, cat_num)
 
         categories[f"cat{cat_num}"] = {
             "counts": {"g2": built["g2_count"], "g4": built["g4_count"]},
@@ -136,17 +136,6 @@ def normalize_snapshot(data: dict[str, Any], path: Path) -> dict[str, Any]:
         out["captured_label"] = out["id"]
     if "date" not in out:
         out["date"] = out["id"][:10]
-    for cat in out.get("categories", {}).values():
-        if listings := cat.get("listings"):
-            cat["listings"] = {
-                k: normalize_deal_prices(v) for k, v in listings.items()
-            }
-        for key in ("cheapest_g2", "cheapest_g4"):
-            if cat.get(key):
-                cat[key] = normalize_deal_prices(cat[key])
-        for key in ("top3", "top10_g2", "top10_g4"):
-            if cat.get(key):
-                cat[key] = [normalize_deal_prices(d) for d in cat[key]]
     return out
 
 
@@ -260,7 +249,6 @@ def _deal_brief(
     change: str | None = None,
     was_avg: int | None = None,
 ) -> dict:
-    d = normalize_deal_prices(d)
     out = {
         "cat": cat,
         "sec": d["sec"],
@@ -343,10 +331,9 @@ def build_log_entry(
 
             drop_rows: list[tuple[int, dict]] = []
             for p, c in diff["drops"]:
-                p = normalize_deal_prices(p)
-                c = normalize_deal_prices(c)
+                cat_num = int(cat_key.replace("cat", ""))
                 saved = p["avg"] - c["avg"]
-                if saved < 1:
+                if saved < 1 or not market_deal(c, cat_num):
                     continue
                 drop_rows.append(
                     (

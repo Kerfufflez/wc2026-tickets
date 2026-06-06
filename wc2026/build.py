@@ -21,7 +21,8 @@ from wc2026.utils import (
     inv_to_js,
     load_json,
     metrics_for,
-    normalize_rows,
+    market_avg,
+    market_deal,
     row_to_deal,
     validate_all,
 )
@@ -46,6 +47,21 @@ def derived_to_row(pair: dict) -> dict:
         "dominant_bucket": parent["dominant_bucket"],
         "_derived": True,
     }
+
+
+def _top_deals(deals: list[dict], n: int) -> list[dict]:
+    """Cheapest unique deals for Top 3 (one entry per section/row/size)."""
+    seen: set[tuple] = set()
+    picked: list[dict] = []
+    for d in sorted(deals, key=lambda x: x["avg"]):
+        key = (d["sec"], d["row"], d["gs"], d.get("derived", False))
+        if key in seen:
+            continue
+        seen.add(key)
+        picked.append(d)
+        if len(picked) >= n:
+            break
+    return picked
 
 
 def merge_derived_pairs(g2: list, g4: list) -> list:
@@ -96,28 +112,38 @@ def format_array(name: str, deals: list[dict], prefix_comment: str = "") -> str:
 
 
 def build_category(cat_num: int, g2_file: str, g4_file: str) -> dict:
-    g2_raw = normalize_rows(load_json(raw_path(g2_file)))
-    g4_raw = normalize_rows(load_json(raw_path(g4_file)))
+    g2_raw = load_json(raw_path(g2_file))
+    g4_raw = load_json(raw_path(g4_file))
     g2_raw_count = len(g2_raw)
     g4_raw_count = len(g4_raw)
-    g2_raw = merge_derived_pairs(g2_raw, g4_raw)
+    g2_native = [
+        r for r in g2_raw if market_avg(round(r["avg_price"]), cat_num)
+    ]
+    g4_native = [
+        r for r in g4_raw if market_avg(round(r["avg_price"]), cat_num)
+    ]
+    g2_merged = merge_derived_pairs(g2_native, g4_native)
 
-    g2_deals = [row_to_deal(r) for r in g2_raw]
-    g4_deals = [row_to_deal(r) for r in g4_raw]
-    g2_top = g2_deals[:10]
-    g4_top = g4_deals[:10]
-    top3 = sorted(g2_deals + g4_deals, key=lambda d: d["avg"])[:3]
+    g2_deals = [
+        d for d in (row_to_deal(r, cat_num) for r in g2_merged) if market_deal(d, cat_num)
+    ]
+    g4_deals = [
+        d for d in (row_to_deal(r, cat_num) for r in g4_native) if market_deal(d, cat_num)
+    ]
+    g2_top = sorted(g2_deals, key=lambda d: d["avg"])[:10]
+    g4_top = sorted(g4_deals, key=lambda d: d["avg"])[:10]
+    top3 = _top_deals(g2_deals + g4_deals, 3)
     inv = sorted(
         build_inventory_from_deals(g2_deals, g4_deals),
         key=lambda b: -(b["g2c"] + b["g4c"]),
     )
-    c2, c4, ymax, ystep = chart_buckets(cat_num, g2_raw, g4_raw)
+    c2, c4, ymax, ystep = chart_buckets(cat_num, g2_merged, g4_native)
     return {
         "cat": cat_num,
         "g2_file": g2_file,
         "g4_file": g4_file,
-        "g2_count": len(g2_raw),
-        "g4_count": len(g4_raw),
+        "g2_count": len(g2_merged),
+        "g4_count": len(g4_native),
         "g2_api_count": g2_raw_count,
         "g4_api_count": g4_raw_count,
         "g2_top": g2_top,
@@ -125,8 +151,8 @@ def build_category(cat_num: int, g2_file: str, g4_file: str) -> dict:
         "top3": top3,
         "inv": inv,
         "chart": (c2, c4, BUCKET_LABELS[cat_num], ymax, ystep),
-        "metrics_g2": metrics_for(g2_raw, "Groups of 2 tickets"),
-        "metrics_g4": metrics_for(g4_raw, "Groups of 4 tickets"),
+        "metrics_g2": metrics_for(g2_merged, "Groups of 2 tickets", cat_num),
+        "metrics_g4": metrics_for(g4_native, "Groups of 4 tickets", cat_num),
     }
 
 
