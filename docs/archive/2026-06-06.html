@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="snapshot-context" content="index">
+<meta name="snapshot-context" content="archive">
 <meta name="tz-label" content="ET">
 <title>FIFA World Cup · Ticket Inventory · Atlanta</title>
 <style>
@@ -248,12 +248,14 @@ tr:last-child td { border-bottom: none; }
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Atlanta Stadium &middot; July 15, 2026 &middot; Category 1, 2 &amp; 3 Ticket Inventory</p>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 5:01 PM ET</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 6, 2026 at 11:49 AM ET</strong></p>
     <div class="header-controls">
       <label class="snapshot-label">
         Snapshot
         <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)">
-          <option value="">Latest</option>
+          <option value="">Latest · Jun 6, 2026 at 11:49 AM ET</option>
+          <option value="2026-06-06" selected>Jun 6, 2026 · 11:49 AM ET</option>
+          <option value="2026-06-05">Jun 5, 2026 · 6:19 PM ET</option>
         </select>
       </label>
       <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
@@ -413,7 +415,7 @@ tr:last-child td { border-bottom: none; }
     </table></div>
   </div>
 
-  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured June 5, 2026. Prices reflect resale market and may change. Avg per ticket = total cost ÷ group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
+  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured Jun 6, 2026. Prices reflect resale market and may change. Avg per ticket = total cost ÷ group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -677,6 +679,6 @@ renderInv(cat3inv,'cat3-inv');
 makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
   ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
 </script>
-<script src="refresh.js"></script>
+<script src="../refresh.js"></script>
 </body>
 </html>

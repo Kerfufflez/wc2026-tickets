@@ -6,4 +6,4 @@ python3 -m wc2026 refresh
 echo ""
 echo "Local dashboard: reports/dashboard.html"
 echo "Published site:  docs/index.html"
-echo "Deal log:        reports/history/DEAL_LOG.md"
+echo "Deal log:        reports/history/deal-log.html"

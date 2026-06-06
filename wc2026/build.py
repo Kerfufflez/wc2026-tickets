@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import datetime
 
 from wc2026.config import (
     CATEGORIES,
@@ -13,6 +12,7 @@ from wc2026.config import (
     TEMPLATE,
     raw_path,
 )
+from wc2026.dates import format_est, format_est_date, now_est
 from wc2026.derive import derive_pairs
 from wc2026.utils import (
     BUCKET_LABELS,
@@ -154,9 +154,9 @@ def build_inventory_from_deals(g2: list, g4: list) -> list:
 def patch_html(categories: list[dict]) -> None:
     source = TEMPLATE if TEMPLATE.exists() else REPORT_HTML
     html = source.read_text(encoding="utf-8")
-    now = datetime.now()
-    today = now.strftime("%B %-d, %Y")
-    last_updated = now.strftime("%B %-d, %Y at %-I:%M %p")
+    now = now_est()
+    today = format_est_date(now)
+    last_updated = format_est(now)
     html = re.sub(
         r"Data captured [^.<]+",
         f"Data captured {today}",
@@ -284,10 +284,12 @@ def main() -> int:
             f"Cat {d['cat']}: G2={d['g2_count']} G4={d['g4_count']} "
             f"chart peak G2={max(d['chart'][0])} G4={max(d['chart'][1])}"
         )
+    from wc2026.render_deal_log import render_deal_log
     from wc2026.tracker import log_deals
     from wc2026.publish import publish_docs
 
     log_deals()
+    render_deal_log()
     publish_docs()
     return 0
 

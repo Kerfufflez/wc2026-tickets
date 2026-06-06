@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="tz-label" content="ET">
+<title>Deal Movement Log · WC2026 Semi-Final</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F6F3; --card: #FFFFFF; --border: #E5E3DC;
+  --text: #1A1A18; --muted: #6B6A65; --hint: #A5A49F;
+  --green-bg: #EAF3DE; --green-txt: #27500A;
+  --purple-bg: #EEEDFE; --purple-txt: #3C3489;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.page { max-width: 720px; margin: 0 auto; padding: 40px 24px 60px; }
+.back-link { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 20px; }
+.back-link:hover { color: var(--text); }
+h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.generated { font-size: 11px; color: var(--hint); margin-bottom: 28px; }
+.changelog { display: flex; flex-direction: column; gap: 12px; }
+.changelog-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; transition: border-color 0.15s;
+}
+.changelog-card.expanded { border-color: #ccc; }
+.changelog-card-header {
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 16px 18px; font-family: inherit; color: inherit;
+}
+.changelog-card-top {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.changelog-time {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  white-space: nowrap;
+}
+.changelog-badge {
+  font-size: 10px; font-weight: 600; color: var(--purple-txt);
+  background: var(--purple-bg); padding: 2px 8px; border-radius: 4px;
+}
+.changelog-toggle {
+  margin-left: auto; font-size: 18px; font-weight: 400; color: var(--hint);
+  line-height: 1; flex-shrink: 0;
+}
+.changelog-preview {
+  max-height: 72px; overflow: hidden;
+}
+.changelog-card.expanded .changelog-preview { max-height: none; }
+.changelog-preview-line {
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.changelog-card.expanded .changelog-preview { display: none; }
+.changelog-body {
+  border-top: 1px solid var(--border);
+  max-height: 280px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.changelog-body-inner {
+  padding: 14px 18px 18px; font-size: 12px; color: var(--muted);
+  line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+}
+.changelog-empty { font-size: 13px; color: var(--hint); padding: 24px; text-align: center; }
+.changelog-empty code { font-size: 12px; background: var(--card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+@media (max-width: 768px) {
+  .page { padding: 24px 16px 40px; }
+  h1 { font-size: 20px; }
+  .changelog-time { font-size: 12px; white-space: normal; }
+  .changelog-preview-line { white-space: normal; }
+  .changelog-body { max-height: 50vh; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back-link" href="../dashboard.html">&larr; Back to dashboard</a>
+  <h1>Deal movement log</h1>
+  <p class="subtitle">One entry per inventory refresh — tap a card to read full details.</p>
+  <p class="generated">Generated Jun 6, 2026 at 11:49 AM ET</p>
+  <div class="changelog" id="changelog">
+<article class="changelog-card" data-id="2026-06-06T114946">
+  <button type="button" class="changelog-card-header" aria-expanded="false">
+    <div class="changelog-card-top">
+      <time class="changelog-time" datetime="2026-06-06T11:49:46-04:00">Jun 6, 2026 at 11:49 AM ET</time>
+      
+      <span class="changelog-toggle" aria-hidden="true">+</span>
+    </div>
+    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1 G2 ±0 · G4 ±0 · Cat 2 G2 ±0 · G4 ±0 · Cat 3 G2 ±0 · G4 ±0</p><p class="changelog-preview-line">No changes vs last scan</p></div>
+  </button>
+  <div class="changelog-body" hidden>
+    <div class="changelog-body-inner">Compared to Jun 6, 2026 at 11:49 AM ET
+
+Cat 1: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+
+Cat 2: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+
+Cat 3: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+</div>
+  </div>
+</article>
+<article class="changelog-card" data-id="2026-06-06T114944">
+  <button type="button" class="changelog-card-header" aria-expanded="false">
+    <div class="changelog-card-top">
+      <time class="changelog-time" datetime="2026-06-06T11:49:44-04:00">Jun 6, 2026 at 11:49 AM ET</time>
+      
+      <span class="changelog-toggle" aria-hidden="true">+</span>
+    </div>
+    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1 G2 ±0 · G4 ±0 · Cat 2 G2 ±0 · G4 ±0 · Cat 3 G2 ±0 · G4 ±0</p><p class="changelog-preview-line">No changes vs last scan</p></div>
+  </button>
+  <div class="changelog-body" hidden>
+    <div class="changelog-body-inner">Compared to 2026-06-05
+
+Cat 1: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+
+Cat 2: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+
+Cat 3: G2 ±0 (0 new) · G4 ±0 (0 new)
+  No material changes
+</div>
+  </div>
+</article>
+  </div>
+</div>
+<script src="deal_log.js"></script>
+</body>
+</html>

@@ -37,6 +37,8 @@ Open `reports/dashboard.html` locally, or `docs/index.html` for the published co
 
 The dashboard **Refresh now** button pulls live listings in the browser (60s cooldown) — works on GitHub Pages without waiting for CI.
 
+All displayed timestamps use **Eastern Time (ET)**. The deal movement log (`reports/history/deal-log.html`) is a styled changelog with one expandable card per inventory refresh (every 6h via GitHub Actions, or on manual build).
+
 ## One-time GitHub setup (personal account)
 
 Your global git email is already personal (`git config user.email`). This repo uses that identity locally — commits will not go through your work account unless you push to a work remote.

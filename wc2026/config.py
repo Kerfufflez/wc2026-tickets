@@ -26,6 +26,9 @@ REPORT_HTML = ROOT / "reports" / "dashboard.html"
 REPORT_HISTORY = ROOT / "reports" / "history"
 REPORT_SNAPSHOTS = REPORT_HISTORY / "snapshots"
 REPORT_DEAL_LOG = REPORT_HISTORY / "DEAL_LOG.md"
+REPORT_DEAL_LOG_JSON = REPORT_HISTORY / "deal_log.json"
+REPORT_DEAL_LOG_HTML = REPORT_HISTORY / "deal-log.html"
+TEMPLATE_DEAL_LOG = ROOT / "templates" / "deal_log.html"
 REPORT_OVERLAP = ROOT / "reports" / "overlap_analysis.md"
 DOCS = ROOT / "docs"
 DOCS_ARCHIVE = DOCS / "archive"
@@ -33,6 +36,8 @@ DOCS_HISTORY = DOCS / "history"
 DOCS_MANIFEST = DOCS_HISTORY / "manifest.json"
 STATIC = ROOT / "static"
 REFRESH_JS = STATIC / "refresh.js"
+DEAL_LOG_JS = STATIC / "deal_log.js"
+DOCS_DEAL_LOG = DOCS_HISTORY / "deal-log.html"
 
 CATEGORIES = [
     ("cat1", "cat1_g2.json", "cat1_g4.json"),

@@ -5,17 +5,21 @@ from __future__ import annotations
 import json
 import re
 import shutil
-from datetime import date, datetime
+from datetime import date
 
 from wc2026.config import (
+    DEAL_LOG_JS,
     DOCS,
     DOCS_ARCHIVE,
+    DOCS_DEAL_LOG,
     DOCS_HISTORY,
     DOCS_MANIFEST,
     REFRESH_JS,
-    REPORT_DEAL_LOG,
+    REPORT_DEAL_LOG_HTML,
     REPORT_HTML,
 )
+from wc2026.dates import format_est_short, now_est
+from wc2026.tracker import snapshot_dates_manifest
 
 CONTEXT_RE = re.compile(
     r'<meta name="snapshot-context" content="[^"]*">'
@@ -24,19 +28,19 @@ SELECT_RE = re.compile(
     r'(<select id="snapshot-picker"[^>]*>)(.*?)(</select>)',
     re.DOTALL,
 )
+LAST_UPDATED_RE = re.compile(
+    r'(<p class="last-updated" id="last-updated"[^>]*>Last updated: <strong>)[^<]+(</strong></p>)'
+)
 
 
-def format_date_label(iso_date: str) -> str:
-    d = datetime.strptime(iso_date, "%Y-%m-%d")
-    return d.strftime("%b %-d, %Y")
-
-
-def build_options(dates: list[str], current: str | None) -> str:
+def build_options(dates: list[dict], current: str | None, latest_label: str) -> str:
     latest_sel = " selected" if current is None else ""
-    lines = [f'<option value=""{latest_sel}>Latest</option>']
-    for d in dates:
+    lines = [f'<option value=""{latest_sel}>{latest_label}</option>']
+    for item in dates:
+        d = item["date"]
         sel = " selected" if current == d else ""
-        lines.append(f'<option value="{d}"{sel}>{format_date_label(d)}</option>')
+        label = item.get("label", d)
+        lines.append(f'<option value="{d}"{sel}>{label}</option>')
     return "\n          ".join(lines)
 
 
@@ -47,8 +51,10 @@ def set_snapshot_context(html: str, context: str) -> str:
     return html.replace("</head>", f"  {tag}\n</head>", 1)
 
 
-def inject_dropdown(html: str, dates: list[str], current: str | None) -> str:
-    options = build_options(dates, current)
+def inject_dropdown(
+    html: str, dates: list[dict], current: str | None, latest_label: str
+) -> str:
+    options = build_options(dates, current, latest_label)
     inner = f"\n          {options}\n        "
     if not SELECT_RE.search(html):
         raise RuntimeError("Snapshot dropdown <select> missing from HTML template")
@@ -58,11 +64,20 @@ def inject_dropdown(html: str, dates: list[str], current: str | None) -> str:
 def list_archive_dates() -> list[str]:
     if not DOCS_ARCHIVE.exists():
         return []
-    dates = sorted(
+    return sorted(
         (p.stem for p in DOCS_ARCHIVE.glob("*.html")),
         reverse=True,
     )
-    return dates
+
+
+def latest_option_label(html: str) -> str:
+    m = LAST_UPDATED_RE.search(html)
+    if m:
+        inner = html[m.start() : m.end()]
+        strong = re.search(r"<strong>([^<]+)</strong>", inner)
+        if strong:
+            return f"Latest · {strong.group(1)}"
+    return f"Latest · {format_est_short(now_est())}"
 
 
 def publish_docs() -> None:
@@ -77,35 +92,61 @@ def publish_docs() -> None:
     archive_path = DOCS_ARCHIVE / f"{today}.html"
     archive_path.write_text(base_html, encoding="utf-8")
 
-    dates = list_archive_dates()
-    DOCS_MANIFEST.write_text(json.dumps(dates, indent=2) + "\n", encoding="utf-8")
+    manifest_dates = snapshot_dates_manifest()
+    DOCS_MANIFEST.write_text(
+        json.dumps({"dates": manifest_dates}, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
-    if REPORT_DEAL_LOG.exists():
-        shutil.copy2(REPORT_DEAL_LOG, DOCS_HISTORY / "DEAL_LOG.md")
+    dates_for_dropdown = manifest_dates
+    latest_label = latest_option_label(base_html)
 
     if REFRESH_JS.exists():
         shutil.copy2(REFRESH_JS, DOCS / "refresh.js")
 
+    if REPORT_DEAL_LOG_HTML.exists():
+        published_log = REPORT_DEAL_LOG_HTML.read_text(encoding="utf-8")
+        published_log = published_log.replace(
+            'href="../dashboard.html"', 'href="../index.html"'
+        )
+        DOCS_DEAL_LOG.write_text(published_log, encoding="utf-8")
+        if DEAL_LOG_JS.exists():
+            shutil.copy2(DEAL_LOG_JS, DOCS_HISTORY / "deal_log.js")
+
     index_html = inject_dropdown(
-        set_snapshot_context(base_html, "index"), dates, current=None
+        set_snapshot_context(base_html, "index"),
+        dates_for_dropdown,
+        current=None,
+        latest_label=latest_label,
+    )
+    index_html = index_html.replace(
+        'href="history/DEAL_LOG.md"', 'href="history/deal-log.html"'
     )
     (DOCS / "index.html").write_text(index_html, encoding="utf-8")
 
-    for d in dates:
+    archive_dates = list_archive_dates()
+    for d in archive_dates:
         path = DOCS_ARCHIVE / f"{d}.html"
         raw = base_html if d == today else path.read_text(encoding="utf-8")
         published = inject_dropdown(
-            set_snapshot_context(raw, "archive"), dates, current=d
+            set_snapshot_context(raw, "archive"),
+            dates_for_dropdown,
+            current=d,
+            latest_label=latest_label,
         )
         published = published.replace(
-            'href="history/DEAL_LOG.md"', 'href="../history/DEAL_LOG.md"'
+            'href="history/DEAL_LOG.md"', 'href="../history/deal-log.html"'
         )
         published = published.replace('src="refresh.js"', 'src="../refresh.js"')
         path.write_text(published, encoding="utf-8")
 
     print("Published docs/index.html")
     print(f"Published docs/archive/{today}.html")
-    print(f"Archive dates: {', '.join(dates) if dates else '(none)'}")
+    if REPORT_DEAL_LOG_HTML.exists():
+        print("Published docs/history/deal-log.html")
+    print(
+        f"Archive dates: {', '.join(archive_dates) if archive_dates else '(none)'}"
+    )
 
 
 def main() -> int:

@@ -281,12 +281,14 @@
       month: "long",
       day: "numeric",
       year: "numeric",
+      timeZone: "America/New_York",
     });
     const timePart = now.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
+      timeZone: "America/New_York",
     });
-    return `${datePart} at ${timePart}`;
+    return `${datePart} at ${timePart} ET`;
   }
 
   function cooldownRemaining() {
