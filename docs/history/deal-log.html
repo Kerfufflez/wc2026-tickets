@@ -11,16 +11,20 @@
 :root {
   --bg: #F7F6F3; --card: #FFFFFF; --border: #E5E3DC;
   --text: #1A1A18; --muted: #6B6A65; --hint: #A5A49F;
+  --blue-bg: #E6F1FB; --blue-txt: #0C447C;
   --green-bg: #EAF3DE; --green-txt: #27500A;
   --purple-bg: #EEEDFE; --purple-txt: #3C3489;
+  --amber-bg: #FAEEDA; --amber-txt: #633806;
+  --red-bg: #FCE8E8; --red-txt: #8B1A1A;
 }
 body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-.page { max-width: 720px; margin: 0 auto; padding: 40px 24px 60px; }
+.page { max-width: 800px; margin: 0 auto; padding: 40px 24px 60px; }
 .back-link { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 20px; }
 .back-link:hover { color: var(--text); }
 h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6px; }
 .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .generated { font-size: 11px; color: var(--hint); margin-bottom: 28px; }
+
 .changelog { display: flex; flex-direction: column; gap: 12px; }
 .changelog-card {
   background: var(--card); border: 1px solid var(--border); border-radius: 10px;
@@ -32,12 +36,9 @@ h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6
   padding: 16px 18px; font-family: inherit; color: inherit;
 }
 .changelog-card-top {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;
 }
-.changelog-time {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  white-space: nowrap;
-}
+.changelog-time { font-size: 13px; font-weight: 600; color: var(--text); }
 .changelog-badge {
   font-size: 10px; font-weight: 600; color: var(--purple-txt);
   background: var(--purple-bg); padding: 2px 8px; border-radius: 4px;
@@ -46,32 +47,105 @@ h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6
   margin-left: auto; font-size: 18px; font-weight: 400; color: var(--hint);
   line-height: 1; flex-shrink: 0;
 }
-.changelog-preview {
-  max-height: 72px; overflow: hidden;
-}
-.changelog-card.expanded .changelog-preview { max-height: none; }
-.changelog-preview-line {
-  font-size: 12px; color: var(--muted); line-height: 1.5;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+.changelog-compare { font-size: 11px; color: var(--hint); margin-bottom: 10px; }
+
+.changelog-preview { display: flex; flex-direction: column; gap: 8px; }
 .changelog-card.expanded .changelog-preview { display: none; }
+
+.cat-preview-row {
+  display: grid; grid-template-columns: 88px 1fr auto; gap: 10px; align-items: center;
+  padding: 8px 10px; background: var(--bg); border-radius: 8px;
+}
+.cat-preview-label { font-size: 11px; font-weight: 600; color: var(--text); }
+.cat-preview-deltas { display: flex; gap: 6px; flex-wrap: wrap; }
+.cat-preview-signals { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+.delta, .inv-count {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  white-space: nowrap;
+}
+.inv-count { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+.delta.up { color: var(--green-txt); background: var(--green-bg); }
+.delta.down { color: var(--red-txt); background: var(--red-bg); }
+.delta.flat { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+
+.signal {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  white-space: nowrap;
+}
+.signal-green { color: var(--green-txt); background: var(--green-bg); }
+.signal-blue { color: var(--blue-txt); background: var(--blue-bg); }
+.signal-muted { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+
 .changelog-body {
   border-top: 1px solid var(--border);
-  max-height: 280px; overflow-y: auto;
+  max-height: 70vh; overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.changelog-body-inner {
-  padding: 14px 18px 18px; font-size: 12px; color: var(--muted);
-  line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+.changelog-body-inner { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 16px; }
+
+.cat-panel {
+  border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 12px;
+  background: var(--bg);
 }
+.cat-panel-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  margin-bottom: 10px; color: var(--text);
+}
+.cat-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.cat-stat {
+  background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px;
+}
+.cat-stat-label {
+  display: block; font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;
+}
+.cat-stat-value { font-size: 14px; font-weight: 600; }
+.cat-block { margin-top: 10px; }
+.cat-block-title {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+}
+.cat-quiet { font-size: 12px; color: var(--hint); }
+
+.deal-list { list-style: none; }
+.deal-row {
+  display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+  padding: 9px 10px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 6px; margin-bottom: 6px;
+}
+.deal-row:last-child { margin-bottom: 0; }
+.deal-row.accent-drop { border-left: 3px solid var(--green-txt); }
+.deal-row.accent-new { border-left: 3px solid var(--blue-txt); }
+.deal-loc { display: block; font-size: 13px; font-weight: 600; }
+.deal-meta { font-size: 11px; color: var(--muted); }
+.deal-avg { font-size: 14px; font-weight: 600; text-align: right; }
+.deal-per { font-size: 11px; font-weight: 500; color: var(--muted); }
+.deal-change {
+  display: block; font-size: 10px; font-weight: 600; color: var(--green-txt);
+  text-align: right; margin-top: 2px;
+}
+.deal-tag {
+  font-size: 10px; font-weight: 600; color: var(--purple-txt);
+  background: var(--purple-bg); padding: 1px 5px; border-radius: 3px;
+}
+.deal-tag-front { color: var(--amber-txt); background: var(--amber-bg); }
+
 .changelog-empty { font-size: 13px; color: var(--hint); padding: 24px; text-align: center; }
-.changelog-empty code { font-size: 12px; background: var(--card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+.changelog-empty code {
+  font-size: 12px; background: var(--card); padding: 2px 6px;
+  border-radius: 4px; border: 1px solid var(--border);
+}
+
 @media (max-width: 768px) {
   .page { padding: 24px 16px 40px; }
   h1 { font-size: 20px; }
-  .changelog-time { font-size: 12px; white-space: normal; }
-  .changelog-preview-line { white-space: normal; }
-  .changelog-body { max-height: 50vh; }
+  .cat-preview-row {
+    grid-template-columns: 1fr; gap: 6px;
+  }
+  .cat-preview-signals { justify-content: flex-start; }
+  .cat-stat-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -79,9 +153,44 @@ h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6
 <div class="page">
   <a class="back-link" href="../index.html">&larr; Back to dashboard</a>
   <h1>Deal movement log</h1>
-  <p class="subtitle">One entry per inventory refresh — tap a card to read full details.</p>
-  <p class="generated">Generated Jun 6, 2026 at 12:01 PM ET</p>
+  <p class="subtitle">Per refresh: listing deltas, cheaper tickets, and new top-10 entries by category.</p>
+  <p class="generated">Generated Jun 6, 2026 at 12:12 PM ET</p>
   <div class="changelog" id="changelog">
+<article class="changelog-card" data-id="2026-06-06T121218">
+  <button type="button" class="changelog-card-header" aria-expanded="false">
+    <div class="changelog-card-top">
+      <time class="changelog-time" datetime="2026-06-06T12:12:18-04:00">Jun 6, 2026 at 12:12 PM ET</time>
+      
+      <span class="changelog-toggle" aria-hidden="true">+</span>
+    </div>
+    <p class="changelog-compare">vs Jun 6, 2026 at 12:01 PM ET</p>
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div></div>
+  </button>
+  <div class="changelog-body" hidden>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">82 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">27 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">156 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">53 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">133 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">69 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section></div>
+  </div>
+</article>
 <article class="changelog-card" data-id="2026-06-06T120159">
   <button type="button" class="changelog-card-header" aria-expanded="false">
     <div class="changelog-card-top">
@@ -89,30 +198,32 @@ h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6
       
       <span class="changelog-toggle" aria-hidden="true">+</span>
     </div>
-    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1: 82 G2 · 27 G4 · Cat 2: 156 G2 · 53 G4 · Cat 3: 133 G2 · 69 G4</p></div>
+    <p class="changelog-compare">vs Jun 6, 2026 at 11:50 AM ET</p>
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div></div>
   </button>
   <div class="changelog-body" hidden>
-    <div class="changelog-body-inner">Compared to Jun 6, 2026 at 11:50 AM ET
-
-Current inventory:
-  Cat 1: 82 G2 / 27 G4
-    Cheapest G2: Sec 118 Row 41 Seats 3–4 (2t) — $4,456/ea ($8,912 total) [from 4-pack]
-    Cheapest G4: Sec 118 Row 41 Seats 3–6 (4t) — $4,456/ea ($17,825 total)
-  Cat 2: 156 G2 / 53 G4
-    Cheapest G2: Sec 308 Row 23 Seats 9–10 (2t) — $3,191/ea ($6,382 total)
-    Cheapest G4: Sec 312 Row 14 Seats 21–24 (4t) — $3,508/ea ($14,030 total) [front]
-  Cat 3: 133 G2 / 69 G4
-    Cheapest G2: Sec 322 Row 14 Seats 1–2 (2t) — $2,404/ea ($4,807 total) [front]
-    Cheapest G4: Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total) [front]
-
-Changes vs prior scan:
-  Cat 1: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 2: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 3: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-</div>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">82 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">27 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">156 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">53 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">133 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">69 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section></div>
   </div>
 </article>
 <article class="changelog-card" data-id="2026-06-06T115006">
@@ -122,136 +233,248 @@ Changes vs prior scan:
       
       <span class="changelog-toggle" aria-hidden="true">+</span>
     </div>
-    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1: 82 G2 · 27 G4 · Cat 2: 156 G2 · 53 G4 · Cat 3: 133 G2 · 69 G4</p><p class="changelog-preview-line">Δ Cat 1 G2 -3 · G4 +1 · Cat 2 G2 -8 · G4 -2 · Cat 3 G2 -1 · G4 +1</p><p class="changelog-preview-line">63 price drops · 29 front-section</p></div>
+    <p class="changelog-compare">vs Jun 6, 2026 at 11:49 AM ET</p>
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="delta delta-down">G2 -3</span><span class="delta delta-up">G4 +1</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-green">5 cheaper</span><span class="signal signal-blue">4 new in top 10</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="delta delta-down">G2 -8</span><span class="delta delta-down">G4 -2</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-green">5 cheaper</span><span class="signal signal-blue">4 new in top 10</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="delta delta-down">G2 -1</span><span class="delta delta-up">G4 +1</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-green">5 cheaper</span><span class="signal signal-blue">1 new in top 10</span></div>
+</div></div>
   </button>
   <div class="changelog-body" hidden>
-    <div class="changelog-body-inner">Compared to Jun 6, 2026 at 11:49 AM ET
-
-Current inventory:
-  Cat 1: 82 G2 / 27 G4
-    Cheapest G2: Sec 118 Row 41 Seats 3–4 (2t) — $4,456/ea ($8,912 total) [from 4-pack]
-    Cheapest G4: Sec 118 Row 41 Seats 3–6 (4t) — $4,456/ea ($17,825 total)
-  Cat 2: 156 G2 / 53 G4
-    Cheapest G2: Sec 308 Row 23 Seats 9–10 (2t) — $3,191/ea ($6,382 total)
-    Cheapest G4: Sec 312 Row 14 Seats 21–24 (4t) — $3,508/ea ($14,030 total) [front]
-  Cat 3: 133 G2 / 69 G4
-    Cheapest G2: Sec 322 Row 14 Seats 1–2 (2t) — $2,404/ea ($4,807 total) [front]
-    Cheapest G4: Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total) [front]
-
-Changes vs prior scan:
-  Cat 1: G2 -3 (4 new) · G4 +1 (0 new)
-    Price drop: Sec 135 Row 19 Seats 11–12 (2t) — $6,900/ea ($13,800 total) [front] — was $49,979/ea (−$43,079/ea)
-    Price drop: Sec 118 Row 41 Seats 14–15 (2t) — $5,750/ea ($11,500 total) — was $10,603/ea (−$4,853/ea)
-    Price drop: Sec 103 Row 29 Seats 12–13 (2t) — $6,900/ea ($13,800 total) — was $9,200/ea (−$2,300/ea)
-    Price drop: Sec 121 Row 43 Seats 1–2 (2t) — $415,035/ea ($830,070 total) — was $416,358/ea (−$1,323/ea)
-    Price drop: Sec 135 Row 20 Seats 10–11 (2t) — $410,885/ea ($821,769 total) — was $412,194/ea (−$1,309/ea)
-    Price drop: Sec 118 Row 41 Seats 3–6 (4t) — $4,456/ea ($17,825 total) — was $4,772/ea (−$316/ea)
-    Price drop: Sec 121 Row 44 Seats 13–14 (2t) — $13,194/ea ($26,388 total) — was $13,236/ea (−$42/ea)
-    Price drop: Sec 135 Row 18 Seats 18–19 (2t) — $8,301/ea ($16,601 total) [front] — was $8,327/ea (−$26/ea)
-    Price drop: Sec 121 Row 43 Seats 12–13 (2t) — $8,301/ea ($16,601 total) — was $8,327/ea (−$26/ea)
-    Price drop: Sec 136 Row 20 Seats 2–3 (2t) — $7,886/ea ($15,771 total) — was $7,911/ea (−$25/ea)
-    Price drop: Sec 103 Row 32 Seats 7–8 (2t) — $5,395/ea ($10,791 total) — was $5,413/ea (−$18/ea)
-    Front row drop: Sec 135 Row 19 Seats 11–12 (2t) — $6,900/ea ($13,800 total) [front] — was $49,979/ea
-    Front row drop: Sec 135 Row 18 Seats 18–19 (2t) — $8,301/ea ($16,601 total) [front] — was $8,327/ea
-    Removed 6 listings
-      Sec 104 Row 49 Seats 14–15 (2t) — $3,703/ea ($7,406 total)
-      Sec 120 Row 40 Seats 1–2 (2t) — $4,082/ea ($8,165 total)
-      Sec 121 Row 42 Seats 8–9 (2t) — $4,370/ea ($8,740 total)
-      Sec 103 Row 33 Seats 1–2 (2t) — $5,750/ea ($11,500 total)
-      Sec 118 Row 37 Seats 5–6 (2t) — $6,385/ea ($12,770 total)
-      …and 1 more
-  Cat 2: G2 -8 (0 new) · G4 -2 (0 new)
-    Price drop: Sec 342 Row 18 Seats 19–20 (2t) — $9,200/ea ($18,400 total) [front] — was $14,634/ea (−$5,434/ea)
-    Price drop: Sec 246 Row 2 Seats 14–17 (4t) — $5,750/ea ($23,000 total) [front] — was $8,050/ea (−$2,300/ea)
-    Price drop: Sec 220 Row 9 Seats 12–13 (2t) — $3,978/ea ($7,956 total) [front] — was $4,599/ea (−$621/ea)
-    Price drop: Sec 315 Row 9 Seats 9–12 (4t) — $4,019/ea ($16,077 total) [front] — was $4,594/ea (−$575/ea)
-    Price drop: Sec 343 Row 14 Seats 12–15 (4t) — $6,268/ea ($25,070 total) [front] — was $6,637/ea (−$369/ea)
-    Price drop: Sec 336 Row 22 Seats 3–4 (2t) — $4,456/ea ($8,912 total) — was $4,738/ea (−$282/ea)
-    Price drop: Sec 313 Row 22 Seats 13–16 (4t) — $41,504/ea ($166,014 total) — was $41,636/ea (−$132/ea)
-    Price drop: Sec 314 Row 20 Seats 8–9 (2t) — $16,601/ea ($33,203 total) — was $16,654/ea (−$53/ea)
-    Price drop: Sec 313 Row 21 Seats 17–20 (4t) — $9,712/ea ($38,847 total) — was $9,743/ea (−$31/ea)
-    Price drop: Sec 315 Row 15 Seats 17–18 (2t) — $9,131/ea ($18,262 total) [front] — was $9,160/ea (−$29/ea)
-    Price drop: Sec 314 Row 22 Seats 8–9 (2t) — $7,470/ea ($14,940 total) — was $7,494/ea (−$24/ea)
-    Price drop: Sec 309 Row 18 Seats 6–7 (2t) — $7,378/ea ($14,755 total) [front] — was $7,401/ea (−$23/ea)
-    Price drop: Sec 311 Row 25 Seats 6–9 (4t) — $6,973/ea ($27,890 total) — was $6,995/ea (−$22/ea)
-    Price drop: Sec 308 Row 14 Seats 12–15 (4t) — $7,055/ea ($28,219 total) [front] — was $7,077/ea (−$22/ea)
-    Price drop: Sec 315 Row 23 Seats 3–4 (2t) — $6,221/ea ($12,443 total) — was $6,241/ea (−$20/ea)
-    Price drop: Sec 310 Row 23 Seats 23–24 (2t) — $5,727/ea ($11,455 total) — was $5,746/ea (−$19/ea)
-    Price drop: Sec 309 Row 18 Seats 10–11 (2t) — $6,226/ea ($12,451 total) [front] — was $6,245/ea (−$19/ea)
-    Price drop: Sec 309 Row 15 Seats 11–12 (2t) — $5,644/ea ($11,289 total) [front] — was $5,662/ea (−$18/ea)
-    Price drop: Sec 311 Row 26 Seats 19–20 (2t) — $4,980/ea ($9,961 total) — was $4,996/ea (−$16/ea)
-    Price drop: Sec 311 Row 23 Seats 7–8 (2t) — $5,031/ea ($10,061 total) — was $5,047/ea (−$16/ea)
-    Price drop: Sec 336 Row 23 Seats 19–20 (2t) — $4,565/ea ($9,131 total) — was $4,580/ea (−$15/ea)
-    Price drop: Sec 314 Row 3 Seats 13–14 (2t) — $4,150/ea ($8,301 total) [front] — was $4,164/ea (−$14/ea)
-    Price drop: Sec 314 Row 25 Seats 15–16 (2t) — $3,984/ea ($7,969 total) — was $3,997/ea (−$13/ea)
-    Price drop: Sec 308 Row 24 Seats 14–15 (2t) — $3,735/ea ($7,471 total) — was $3,747/ea (−$12/ea)
-    Price drop: Sec 218 Row 10 Seats 12–13 (2t) — $3,486/ea ($6,973 total) [front] — was $3,497/ea (−$11/ea)
-    Price drop: Sec 315 Row 25 Seats 18–19 (2t) — $3,486/ea ($6,973 total) — was $3,497/ea (−$11/ea)
-    Price drop: Sec 312 Row 15 Seats 20–21 (2t) — $7,713/ea ($15,426 total) [front] — was $7,723/ea (−$10/ea)
-    Price drop: Sec 314 Row 16 Seats 21–24 (4t) — $5,940/ea ($23,761 total) [front] — was $5,948/ea (−$8/ea)
-    Price drop: Sec 312 Row 17 Seats 18–19 (2t) — $5,119/ea ($10,238 total) [front] — was $5,127/ea (−$8/ea)
-    Front row drop: Sec 342 Row 18 Seats 19–20 (2t) — $9,200/ea ($18,400 total) [front] — was $14,634/ea
-    Front row drop: Sec 246 Row 2 Seats 14–17 (4t) — $5,750/ea ($23,000 total) [front] — was $8,050/ea
-    Front row drop: Sec 220 Row 9 Seats 12–13 (2t) — $3,978/ea ($7,956 total) [front] — was $4,599/ea
-    Front row drop: Sec 315 Row 9 Seats 9–12 (4t) — $4,019/ea ($16,077 total) [front] — was $4,594/ea
-    Front row drop: Sec 343 Row 14 Seats 12–15 (4t) — $6,268/ea ($25,070 total) [front] — was $6,637/ea
-    Front row drop: Sec 315 Row 15 Seats 17–18 (2t) — $9,131/ea ($18,262 total) [front] — was $9,160/ea
-    Front row drop: Sec 309 Row 18 Seats 6–7 (2t) — $7,378/ea ($14,755 total) [front] — was $7,401/ea
-    Front row drop: Sec 308 Row 14 Seats 12–15 (4t) — $7,055/ea ($28,219 total) [front] — was $7,077/ea
-    Front row drop: Sec 309 Row 18 Seats 10–11 (2t) — $6,226/ea ($12,451 total) [front] — was $6,245/ea
-    Front row drop: Sec 309 Row 15 Seats 11–12 (2t) — $5,644/ea ($11,289 total) [front] — was $5,662/ea
-    Front row drop: Sec 314 Row 3 Seats 13–14 (2t) — $4,150/ea ($8,301 total) [front] — was $4,164/ea
-    Front row drop: Sec 218 Row 10 Seats 12–13 (2t) — $3,486/ea ($6,973 total) [front] — was $3,497/ea
-    Front row drop: Sec 312 Row 15 Seats 20–21 (2t) — $7,713/ea ($15,426 total) [front] — was $7,723/ea
-    Front row drop: Sec 314 Row 16 Seats 21–24 (4t) — $5,940/ea ($23,761 total) [front] — was $5,948/ea
-    Front row drop: Sec 312 Row 17 Seats 18–19 (2t) — $5,119/ea ($10,238 total) [front] — was $5,127/ea
-    Removed 10 listings
-      Sec 201 Row 7 Seats 1–4 (4t) — $2,904/ea ($11,615 total) [front]
-      Sec 201 Row 7 Seats 3–4 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-      Sec 201 Row 7 Seats 1–2 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-      Sec 201 Row 7 Seats 2–3 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-      Sec 205 Row 9 Seats 8–9 (2t) — $4,025/ea ($8,050 total) [front]
-      …and 5 more
-  Cat 3: G2 -1 (1 new) · G4 +1 (1 new)
-    Price drop: Sec 301 Row 8 Seats 23–24 (2t) — $2,702/ea ($5,405 total) [front] — was $4,140/ea (−$1,438/ea)
-    Price drop: Sec 325 Row 6 Seats 7–10 (4t) — $4,600/ea ($18,400 total) [front] — was $5,750/ea (−$1,150/ea)
-    Price drop: Sec 306 Row 24 Seats 1–2 (2t) — $42,968/ea ($85,937 total) — was $43,718/ea (−$750/ea)
-    Price drop: Sec 323 Row 8 Seats 15–16 (2t) — $9,131/ea ($18,262 total) [front] — was $9,160/ea (−$29/ea)
-    Price drop: Sec 303 Row 12 Seats 20–21 (2t) — $8,301/ea ($16,601 total) [front] — was $8,327/ea (−$26/ea)
-    Price drop: Sec 303 Row 13 Seats 18–19 (2t) — $6,641/ea ($13,281 total) [front] — was $6,662/ea (−$21/ea)
-    Price drop: Sec 341 Row 33 Seats 9–10 (2t) — $5,395/ea ($10,791 total) — was $5,413/ea (−$18/ea)
-    Price drop: Sec 340 Row 31 Seats 11–12 (2t) — $4,980/ea ($9,961 total) — was $4,996/ea (−$16/ea)
-    Price drop: Sec 319 Row 16 Seats 16–19 (4t) — $5,149/ea ($20,594 total) [front] — was $5,165/ea (−$16/ea)
-    Price drop: Sec 345 Row 25 Seats 15–16 (2t) — $4,150/ea ($8,301 total) — was $4,164/ea (−$14/ea)
-    Price drop: Sec 324 Row 7 Seats 25–26 (2t) — $4,370/ea ($8,741 total) [front] — was $4,384/ea (−$14/ea)
-    Price drop: Sec 304 Row 14 Seats 11–12 (2t) — $4,001/ea ($8,002 total) [front] — was $4,014/ea (−$13/ea)
-    Price drop: Sec 322 Row 24 Seats 14–15 (2t) — $3,735/ea ($7,471 total) — was $3,747/ea (−$12/ea)
-    Price drop: Sec 339 Row 35 Seats 11–12 (2t) — $3,569/ea ($7,139 total) — was $3,581/ea (−$12/ea)
-    Price drop: Sec 304 Row 15 Seats 3–4 (2t) — $3,237/ea ($6,475 total) [front] — was $3,248/ea (−$11/ea)
-    Price drop: Sec 339 Row 33 Seats 15–16 (2t) — $3,528/ea ($7,056 total) — was $3,539/ea (−$11/ea)
-    Price drop: Sec 323 Row 13 Seats 7–8 (2t) — $3,320/ea ($6,641 total) [front] — was $3,331/ea (−$11/ea)
-    Price drop: Sec 323 Row 12 Seats 1–2 (2t) — $2,905/ea ($5,810 total) [front] — was $2,914/ea (−$9/ea)
-    Price drop: Sec 338 Row 30 Seats 4–5 (2t) — $2,905/ea ($5,810 total) — was $2,914/ea (−$9/ea)
-    Price drop: Sec 347 Row 22 Seats 1–2 (2t) — $2,905/ea ($5,810 total) — was $2,914/ea (−$9/ea)
-    Price drop: Sec 322 Row 24 Seats 20–21 (2t) — $2,748/ea ($5,495 total) — was $2,756/ea (−$8/ea)
-    Price drop: Sec 347 Row 24 Seats 1–4 (4t) — $4,790/ea ($19,161 total) — was $4,798/ea (−$8/ea)
-    Price drop: Sec 339 Row 35 Seats 26–27 (2t) — $7,703/ea ($15,406 total) — was $7,709/ea (−$6/ea)
-    New front row: Sec 307 Row 16 Seats 11–14 (4t) — $4,772/ea ($19,090 total) [front]
-    Front row drop: Sec 301 Row 8 Seats 23–24 (2t) — $2,702/ea ($5,405 total) [front] — was $4,140/ea
-    Front row drop: Sec 325 Row 6 Seats 7–10 (4t) — $4,600/ea ($18,400 total) [front] — was $5,750/ea
-    Front row drop: Sec 323 Row 8 Seats 15–16 (2t) — $9,131/ea ($18,262 total) [front] — was $9,160/ea
-    Front row drop: Sec 303 Row 12 Seats 20–21 (2t) — $8,301/ea ($16,601 total) [front] — was $8,327/ea
-    Front row drop: Sec 303 Row 13 Seats 18–19 (2t) — $6,641/ea ($13,281 total) [front] — was $6,662/ea
-    Front row drop: Sec 319 Row 16 Seats 16–19 (4t) — $5,149/ea ($20,594 total) [front] — was $5,165/ea
-    Front row drop: Sec 324 Row 7 Seats 25–26 (2t) — $4,370/ea ($8,741 total) [front] — was $4,384/ea
-    Front row drop: Sec 304 Row 14 Seats 11–12 (2t) — $4,001/ea ($8,002 total) [front] — was $4,014/ea
-    Front row drop: Sec 304 Row 15 Seats 3–4 (2t) — $3,237/ea ($6,475 total) [front] — was $3,248/ea
-    Front row drop: Sec 323 Row 13 Seats 7–8 (2t) — $3,320/ea ($6,641 total) [front] — was $3,331/ea
-    Front row drop: Sec 323 Row 12 Seats 1–2 (2t) — $2,905/ea ($5,810 total) [front] — was $2,914/ea
-    Removed 2 listings
-      Sec 328 Row 14 Seats 21–22 (2t) — $3,852/ea ($7,705 total) [front]
-      Sec 342 Row 29 Seats 5–6 (2t) — $5,111/ea ($10,221 total)
-</div>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">82 <span class="delta delta-down">-3</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">27 <span class="delta delta-up">+1</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><ul class="deal-list"><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 135 · Row 19</span>
+    <span class="deal-meta">11–12 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$6,900<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$43,079/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 118 · Row 41</span>
+    <span class="deal-meta">14–15 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$5,750<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$4,853/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 103 · Row 29</span>
+    <span class="deal-meta">12–13 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$6,900<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$2,300/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 121 · Row 43</span>
+    <span class="deal-meta">1–2 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$415,035<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$1,323/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 135 · Row 20</span>
+    <span class="deal-meta">10–11 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$410,885<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$1,309/ea</span>
+  </div>
+</li></ul></div><div class="cat-block"><h4 class="cat-block-title">New in top 10 · G2</h4><ul class="deal-list"><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 118 · Row 41</span>
+    <span class="deal-meta">4–5 · 2t · <span class="deal-tag">4-pack split</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,456<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 118 · Row 41</span>
+    <span class="deal-meta">5–6 · 2t · <span class="deal-tag">4-pack split</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,456<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 103 · Row 37</span>
+    <span class="deal-meta">17–18 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$5,445<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li></ul></div><div class="cat-block"><h4 class="cat-block-title">New in top 10 · G4</h4><ul class="deal-list"><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 118 · Row 41</span>
+    <span class="deal-meta">3–6 · 4t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,456<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li></ul></div>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">156 <span class="delta delta-down">-8</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">53 <span class="delta delta-down">-2</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><ul class="deal-list"><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 342 · Row 18</span>
+    <span class="deal-meta">19–20 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$9,200<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$5,434/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 246 · Row 2</span>
+    <span class="deal-meta">14–17 · 4t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$5,750<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$2,300/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 220 · Row 9</span>
+    <span class="deal-meta">12–13 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$3,978<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$621/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 315 · Row 9</span>
+    <span class="deal-meta">9–12 · 4t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,019<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$575/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 343 · Row 14</span>
+    <span class="deal-meta">12–15 · 4t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$6,268<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$369/ea</span>
+  </div>
+</li></ul></div><div class="cat-block"><h4 class="cat-block-title">New in top 10 · G2</h4><ul class="deal-list"><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 314 · Row 15</span>
+    <span class="deal-meta">15–16 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$3,450<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 315 · Row 25</span>
+    <span class="deal-meta">18–19 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$3,486<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 218 · Row 10</span>
+    <span class="deal-meta">12–13 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$3,486<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li></ul></div><div class="cat-block"><h4 class="cat-block-title">New in top 10 · G4</h4><ul class="deal-list"><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 315 · Row 9</span>
+    <span class="deal-meta">9–12 · 4t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,019<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li></ul></div>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">133 <span class="delta delta-down">-1</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">69 <span class="delta delta-up">+1</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><ul class="deal-list"><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 301 · Row 8</span>
+    <span class="deal-meta">23–24 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$2,702<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$1,438/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 325 · Row 6</span>
+    <span class="deal-meta">7–10 · 4t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$4,600<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$1,150/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 306 · Row 24</span>
+    <span class="deal-meta">1–2 · 2t</span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$42,968<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$750/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 323 · Row 8</span>
+    <span class="deal-meta">15–16 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$9,131<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$29/ea</span>
+  </div>
+</li><li class="deal-row accent-drop">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 303 · Row 12</span>
+    <span class="deal-meta">20–21 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$8,301<span class="deal-per">/ea</span></span>
+    <span class="deal-change">−$26/ea</span>
+  </div>
+</li></ul></div><div class="cat-block"><h4 class="cat-block-title">New in top 10 · G2</h4><ul class="deal-list"><li class="deal-row accent-new">
+  <div class="deal-main">
+    <span class="deal-loc">Sec 301 · Row 8</span>
+    <span class="deal-meta">23–24 · 2t · <span class="deal-tag deal-tag-front">front</span></span>
+  </div>
+  <div class="deal-price">
+    <span class="deal-avg">$2,702<span class="deal-per">/ea</span></span>
+    
+  </div>
+</li></ul></div>
+</section></div>
   </div>
 </article>
 <article class="changelog-card" data-id="2026-06-06T114946">
@@ -261,30 +484,32 @@ Changes vs prior scan:
       
       <span class="changelog-toggle" aria-hidden="true">+</span>
     </div>
-    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1: 85 G2 · 26 G4 · Cat 2: 164 G2 · 55 G4 · Cat 3: 134 G2 · 68 G4</p></div>
+    <p class="changelog-compare">vs Jun 6, 2026 at 11:49 AM ET</p>
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div></div>
   </button>
   <div class="changelog-body" hidden>
-    <div class="changelog-body-inner">Compared to Jun 6, 2026 at 11:49 AM ET
-
-Current inventory:
-  Cat 1: 85 G2 / 26 G4
-    Cheapest G2: Sec 104 Row 49 Seats 14–15 (2t) — $3,703/ea ($7,406 total)
-    Cheapest G4: Sec 103 Row 39 Seats 11–14 (4t) — $5,034/ea ($20,134 total)
-  Cat 2: 164 G2 / 55 G4
-    Cheapest G2: Sec 201 Row 7 Seats 1–2 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-    Cheapest G4: Sec 201 Row 7 Seats 1–4 (4t) — $2,904/ea ($11,615 total) [front]
-  Cat 3: 134 G2 / 68 G4
-    Cheapest G2: Sec 322 Row 14 Seats 1–2 (2t) — $2,404/ea ($4,807 total) [front]
-    Cheapest G4: Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total) [front]
-
-Changes vs prior scan:
-  Cat 1: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 2: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 3: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-</div>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">85 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">26 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">164 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">55 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">134 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">68 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section></div>
   </div>
 </article>
 <article class="changelog-card" data-id="2026-06-06T114944">
@@ -294,55 +519,67 @@ Changes vs prior scan:
       
       <span class="changelog-toggle" aria-hidden="true">+</span>
     </div>
-    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1: 85 G2 · 26 G4 · Cat 2: 164 G2 · 55 G4 · Cat 3: 134 G2 · 68 G4</p></div>
+    <p class="changelog-compare">vs Jun 5, 2026 at 6:19 PM ET</p>
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="delta delta-flat">G2 ±0</span><span class="delta delta-flat">G4 ±0</span></div>
+  <div class="cat-preview-signals"><span class="signal signal-muted">no changes</span></div>
+</div></div>
   </button>
   <div class="changelog-body" hidden>
-    <div class="changelog-body-inner">Compared to Jun 5, 2026 at 6:19 PM ET
-
-Current inventory:
-  Cat 1: 85 G2 / 26 G4
-    Cheapest G2: Sec 104 Row 49 Seats 14–15 (2t) — $3,703/ea ($7,406 total)
-    Cheapest G4: Sec 103 Row 39 Seats 11–14 (4t) — $5,034/ea ($20,134 total)
-  Cat 2: 164 G2 / 55 G4
-    Cheapest G2: Sec 201 Row 7 Seats 1–2 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-    Cheapest G4: Sec 201 Row 7 Seats 1–4 (4t) — $2,904/ea ($11,615 total) [front]
-  Cat 3: 134 G2 / 68 G4
-    Cheapest G2: Sec 322 Row 14 Seats 1–2 (2t) — $2,404/ea ($4,807 total) [front]
-    Cheapest G4: Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total) [front]
-
-Changes vs prior scan:
-  Cat 1: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 2: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-  Cat 3: G2 ±0 (0 new) · G4 ±0 (0 new)
-    No listing changes
-</div>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">85 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">26 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">164 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">55 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat-grid"><div class="cat-stat"><span class="cat-stat-label">G2 listings</span><span class="cat-stat-value">134 <span class="delta delta-flat">±0</span></span></div><div class="cat-stat"><span class="cat-stat-label">G4 listings</span><span class="cat-stat-value">68 <span class="delta delta-flat">±0</span></span></div></div><div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4><p class="cat-quiet">None vs prior scan</p></div><p class="cat-quiet">No listing movement this scan.</p>
+</section></div>
   </div>
 </article>
 <article class="changelog-card" data-id="2026-06-05">
   <button type="button" class="changelog-card-header" aria-expanded="false">
     <div class="changelog-card-top">
-      <time class="changelog-time" datetime="2026-06-05T18:19:32">Jun 5, 2026 at 6:19 PM ET</time>
+      <time class="changelog-time" datetime="2026-06-05T18:19:32-04:00">Jun 5, 2026 at 6:19 PM ET</time>
       <span class="changelog-badge">Baseline</span>
       <span class="changelog-toggle" aria-hidden="true">+</span>
     </div>
-    <div class="changelog-preview"><p class="changelog-preview-line">Cat 1: 85 G2 · 26 G4 · Cat 2: 164 G2 · 55 G4 · Cat 3: 134 G2 · 68 G4</p><p class="changelog-preview-line">6 front-section</p></div>
+    
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="inv-count">85 G2</span><span class="inv-count">26 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="inv-count">164 G2</span><span class="inv-count">55 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="inv-count">134 G2</span><span class="inv-count">68 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div></div>
   </button>
   <div class="changelog-body" hidden>
-    <div class="changelog-body-inner">First scan — baseline inventory saved.
-
-Current inventory:
-  Cat 1: 85 G2 / 26 G4
-    Cheapest G2: Sec 104 Row 49 Seats 14–15 (2t) — $3,703/ea ($7,406 total)
-    Cheapest G4: Sec 103 Row 39 Seats 11–14 (4t) — $5,034/ea ($20,134 total)
-  Cat 2: 164 G2 / 55 G4
-    Cheapest G2: Sec 201 Row 7 Seats 1–2 (2t) — $2,904/ea ($5,808 total) [from 4-pack] [front]
-    Cheapest G4: Sec 201 Row 7 Seats 1–4 (4t) — $2,904/ea ($11,615 total) [front]
-  Cat 3: 134 G2 / 68 G4
-    Cheapest G2: Sec 322 Row 14 Seats 1–2 (2t) — $2,404/ea ($4,807 total) [front]
-    Cheapest G4: Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total) [front]
-</div>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">85 G2 · 26 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">164 G2 · 55 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">134 G2 · 68 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section></div>
   </div>
 </article>
   </div>

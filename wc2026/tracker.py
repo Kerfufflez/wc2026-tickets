@@ -10,6 +10,7 @@ from typing import Any
 from wc2026.build import build_category, merge_derived_pairs
 from wc2026.config import CATEGORIES, REPORT_DEAL_LOG_JSON, REPORT_SNAPSHOTS, raw_path
 from wc2026.dates import (
+    _HAS_OFFSET,
     format_est,
     iso_est,
     now_est,
@@ -123,11 +124,14 @@ def load_snapshot(path: Path) -> dict[str, Any]:
 def normalize_snapshot(data: dict[str, Any], path: Path) -> dict[str, Any]:
     out = dict(data)
     out["id"] = out.get("id") or path.stem
-    if out.get("captured_at") and "captured_label" not in out:
+    if out.get("captured_at"):
         try:
-            out["captured_label"] = format_est(parse_captured_at(out["captured_at"]))
+            dt = parse_captured_at(out["captured_at"], source=path)
+            if not _HAS_OFFSET.search(out["captured_at"].strip()):
+                out["captured_at"] = iso_est(dt)
+            out["captured_label"] = format_est(dt)
         except ValueError:
-            out["captured_label"] = out["id"]
+            out["captured_label"] = out.get("captured_label") or out["id"]
     elif "captured_label" not in out:
         out["captured_label"] = out["id"]
     if "date" not in out:
@@ -135,12 +139,33 @@ def normalize_snapshot(data: dict[str, Any], path: Path) -> dict[str, Any]:
     return out
 
 
-def _snapshot_sort_key(path: Path) -> str:
+def _snapshot_sort_key(path: Path) -> float:
     try:
         data = load_snapshot(path)
-        return data.get("captured_at", path.stem)
-    except (json.JSONDecodeError, OSError):
-        return path.stem
+        raw = data.get("captured_at", path.stem)
+        return parse_captured_at(raw, source=path).timestamp()
+    except (json.JSONDecodeError, OSError, ValueError):
+        return 0.0
+
+
+def top10_entered(prev_top: list, curr_top: list, cat_key: str) -> list[dict]:
+    prev_keys = {_deal_key(d) for d in prev_top}
+    return [
+        _deal_brief(d, cat_key)
+        for d in curr_top
+        if _deal_key(d) not in prev_keys
+    ]
+
+
+def cleanup_legacy_snapshots() -> None:
+    """Remove duplicate daily JSON when timestamped snapshots exist for that day."""
+    if not REPORT_SNAPSHOTS.exists():
+        return
+    ts_dates = _dates_with_timestamped()
+    for path in REPORT_SNAPSHOTS.glob("*.json"):
+        if is_legacy_daily_stem(path.stem) and path.stem in ts_dates:
+            path.unlink()
+            print(f"Removed legacy snapshot: {path.name}")
 
 
 def list_snapshot_files() -> list[Path]:
@@ -262,42 +287,33 @@ def _inventory_detail_lines(inventory: dict[str, dict]) -> list[str]:
     return lines
 
 
+def _empty_cat_detail(cat_num: str, inventory: dict, cat_key: str) -> dict:
+    inv = inventory[cat_key]
+    return {
+        "label": f"Category {cat_num}",
+        "g2_count": inv["g2"],
+        "g4_count": inv["g4"],
+        "g2_delta": 0,
+        "g4_delta": 0,
+        "cheaper": [],
+        "top10_new_g2": [],
+        "top10_new_g4": [],
+    }
+
+
 def build_log_entry(
     snapshot: dict[str, Any],
     prev: dict[str, Any] | None,
     prev_id: str | None,
 ) -> dict[str, Any]:
     inventory = extract_inventory(snapshot)
-    summary: dict[str, dict] = {}
-    price_drops: list[dict] = []
-    front_section: list[dict] = []
-    detail_lines: list[str] = []
-    preview_stats: dict[str, int] = {"price_drops": 0, "front_section": 0}
+    categories_detail: dict[str, dict] = {}
 
     if prev is None:
-        detail_lines.append("First scan — baseline inventory saved.")
-        detail_lines.append("")
-        detail_lines.extend(_inventory_detail_lines(inventory))
         for cat_key in ("cat1", "cat2", "cat3"):
-            summary[cat_key] = {
-                "g2_delta": 0,
-                "g4_delta": 0,
-                "new_g2": 0,
-                "new_g4": 0,
-            }
-            for d in snapshot["categories"][cat_key].get("top3", []):
-                if d.get("front"):
-                    front_section.append(_deal_brief(d, cat_key, "baseline"))
-        preview_stats["front_section"] = len(front_section)
-        detail_lines.append("")
+            cat_num = cat_key.replace("cat", "")
+            categories_detail[cat_key] = _empty_cat_detail(cat_num, inventory, cat_key)
     else:
-        prev_label = prev.get("captured_label") or prev_id or "prior scan"
-        detail_lines.append(f"Compared to {prev_label}")
-        detail_lines.append("")
-        detail_lines.extend(_inventory_detail_lines(inventory))
-        detail_lines.append("")
-        detail_lines.append("Changes vs prior scan:")
-
         for cat_key in ("cat1", "cat2", "cat3"):
             cat_num = cat_key.replace("cat", "")
             pcat = prev["categories"][cat_key]
@@ -305,112 +321,47 @@ def build_log_entry(
             diff = compare_listings(pcat["listings"], ccat["listings"])
             g2_delta = ccat["counts"]["g2"] - pcat["counts"]["g2"]
             g4_delta = ccat["counts"]["g4"] - pcat["counts"]["g4"]
-            new_g2 = len([d for d in diff["new"] if d["gs"] == 2])
-            new_g4 = len([d for d in diff["new"] if d["gs"] == 4])
 
-            summary[cat_key] = {
+            drop_rows: list[tuple[int, dict]] = []
+            for p, c in diff["drops"]:
+                saved = p["avg"] - c["avg"]
+                if saved < 1:
+                    continue
+                drop_rows.append(
+                    (
+                        saved,
+                        _deal_brief(
+                            c, cat_key, f"{fmt_delta(p['avg'], c['avg'])}/ea"
+                        ),
+                    )
+                )
+            drop_rows.sort(key=lambda x: x[0], reverse=True)
+            cheaper = [d for _, d in drop_rows]
+
+            categories_detail[cat_key] = {
+                "label": f"Category {cat_num}",
+                "g2_count": ccat["counts"]["g2"],
+                "g4_count": ccat["counts"]["g4"],
                 "g2_delta": g2_delta,
                 "g4_delta": g4_delta,
-                "new_g2": new_g2,
-                "new_g4": new_g4,
+                "cheaper": cheaper[:5],
+                "top10_new_g2": top10_entered(
+                    pcat.get("top10_g2", []), ccat.get("top10_g2", []), cat_key
+                ),
+                "top10_new_g4": top10_entered(
+                    pcat.get("top10_g4", []), ccat.get("top10_g4", []), cat_key
+                ),
             }
-
-            detail_lines.append(
-                f"  Cat {cat_num}: G2 {_signed(g2_delta)} ({new_g2} new) · "
-                f"G4 {_signed(g4_delta)} ({new_g4} new)"
-            )
-
-            for p, c in diff["drops"]:
-                if p["avg"] - c["avg"] < 1:
-                    continue
-                change = f"{fmt_delta(p['avg'], c['avg'])}/ea"
-                drop = _deal_brief(c, cat_key, change)
-                price_drops.append(drop)
-                detail_lines.append(
-                    f"    Price drop: {fmt_deal(c)} — was ${p['avg']:,}/ea ({change})"
-                )
-
-            for d in diff["new"]:
-                if d.get("front"):
-                    front_section.append(_deal_brief(d, cat_key, "new"))
-                    detail_lines.append(f"    New front row: {fmt_deal(d)}")
-
-            for p, c in diff["drops"]:
-                if c.get("front") and c["avg"] < p["avg"]:
-                    key = _deal_key(c)
-                    if not any(_deal_key(x) == key for x in front_section):
-                        front_section.append(
-                            _deal_brief(c, cat_key, fmt_delta(p["avg"], c["avg"]) + "/ea")
-                        )
-                        detail_lines.append(
-                            f"    Front row drop: {fmt_deal(c)} — was ${p['avg']:,}/ea"
-                        )
-
-            if diff["gone"]:
-                detail_lines.append(f"    Removed {len(diff['gone'])} listings")
-                for d in diff["gone"][:5]:
-                    detail_lines.append(f"      {fmt_deal(d)}")
-                if len(diff["gone"]) > 5:
-                    detail_lines.append(f"      …and {len(diff['gone']) - 5} more")
-
-            if not any([diff["new"], diff["drops"], diff["gone"], g2_delta, g4_delta]):
-                detail_lines.append("    No listing changes")
-
-        preview_stats["price_drops"] = len(price_drops)
-        preview_stats["front_section"] = len(front_section)
-        detail_lines.append("")
-
-    preview_lines = _build_preview_lines(summary, preview_stats, inventory)
 
     return {
         "id": snapshot["id"],
         "captured_at": snapshot["captured_at"],
         "captured_label": snapshot["captured_label"],
         "prev_id": prev_id,
-        "inventory": inventory,
-        "summary": summary,
-        "preview_lines": preview_lines,
-        "preview_stats": preview_stats,
-        "price_drops": price_drops,
-        "front_section": front_section,
-        "detail_lines": detail_lines,
+        "prev_label": (prev.get("captured_label") if prev else None),
+        "categories": categories_detail,
         "is_baseline": prev is None,
     }
-
-
-def _build_preview_lines(
-    summary: dict, stats: dict, inventory: dict
-) -> list[str]:
-    inv_parts = []
-    for cat_key in ("cat1", "cat2", "cat3"):
-        inv = inventory[cat_key]
-        num = cat_key.replace("cat", "")
-        inv_parts.append(f"Cat {num}: {inv['g2']} G2 · {inv['g4']} G4")
-    lines = [" · ".join(inv_parts)]
-
-    delta_parts = []
-    for cat_key in ("cat1", "cat2", "cat3"):
-        s = summary.get(cat_key, {})
-        g2d, g4d = s.get("g2_delta", 0), s.get("g4_delta", 0)
-        if g2d or g4d:
-            num = cat_key.replace("cat", "")
-            delta_parts.append(
-                f"Cat {num} G2 {_signed(g2d)} · G4 {_signed(g4d)}"
-            )
-    if delta_parts:
-        lines.append("Δ " + " · ".join(delta_parts))
-
-    stat_parts = []
-    if stats.get("price_drops"):
-        n = stats["price_drops"]
-        stat_parts.append(f"{n} price drop{'s' if n != 1 else ''}")
-    if stats.get("front_section"):
-        n = stats["front_section"]
-        stat_parts.append(f"{n} front-section")
-    if stat_parts:
-        lines.append(" · ".join(stat_parts))
-
-    return lines
 
 
 def load_deal_log_entries() -> list[dict]:
@@ -448,6 +399,7 @@ def rebuild_deal_log() -> list[dict]:
 
 
 def log_deals() -> Path:
+    cleanup_legacy_snapshots()
     snapshot = build_snapshot()
     sid = snapshot["id"]
 
@@ -467,25 +419,29 @@ def log_deals() -> Path:
 
 
 def snapshot_dates_manifest() -> list[dict]:
-    """Latest capture per calendar day for dropdown labels."""
+    """Fallback manifest from timestamped snapshots only (prefer archive HTML in publish)."""
     from wc2026.dates import format_dropdown_label
 
     by_date: dict[str, dict] = {}
     for path in list_snapshot_files():
+        if not is_timestamped_stem(path.stem):
+            continue
         try:
             data = normalize_snapshot(load_snapshot(path), path)
             day = data.get("date") or path.stem[:10]
-            captured = data.get("captured_at", "")
-            if day not in by_date or captured > by_date[day].get("captured_at", ""):
-                dt = parse_captured_at(captured) if captured else now_est()
+            dt = parse_captured_at(data["captured_at"], source=path)
+            ts = dt.timestamp()
+            if day not in by_date or ts > by_date[day].get("_ts", 0):
                 by_date[day] = {
                     "date": day,
-                    "captured_at": captured,
+                    "captured_at": data["captured_at"],
                     "label": format_dropdown_label(dt),
+                    "_ts": ts,
                 }
         except (json.JSONDecodeError, ValueError, OSError):
             continue
-    return sorted(by_date.values(), key=lambda x: x["date"], reverse=True)
+    items = [{k: v for k, v in d.items() if k != "_ts"} for d in by_date.values()]
+    return sorted(items, key=lambda x: x["date"], reverse=True)
 
 
 def main() -> int:

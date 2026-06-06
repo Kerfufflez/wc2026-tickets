@@ -18,8 +18,7 @@ from wc2026.config import (
     REPORT_DEAL_LOG_HTML,
     REPORT_HTML,
 )
-from wc2026.dates import format_est_short, now_est
-from wc2026.tracker import snapshot_dates_manifest
+from wc2026.dates import format_est_short, label_from_last_updated, now_est
 
 CONTEXT_RE = re.compile(
     r'<meta name="snapshot-context" content="[^"]*">'
@@ -70,6 +69,35 @@ def list_archive_dates() -> list[str]:
     )
 
 
+def _last_updated_text(html: str) -> str | None:
+    m = LAST_UPDATED_RE.search(html)
+    if not m:
+        return None
+    block = html[m.start() : m.end()]
+    strong = re.search(r"<strong>([^<]+)</strong>", block)
+    return strong.group(1).strip() if strong else None
+
+
+def archive_manifest(exclude_date: str | None = None) -> list[dict]:
+    """Dropdown archive labels from each saved HTML (source of truth for display time)."""
+    if not DOCS_ARCHIVE.exists():
+        return []
+    items: list[dict] = []
+    for path in sorted(DOCS_ARCHIVE.glob("*.html"), key=lambda p: p.stem, reverse=True):
+        day = path.stem
+        if exclude_date and day == exclude_date:
+            continue
+        try:
+            raw = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        text = _last_updated_text(raw)
+        if not text:
+            continue
+        items.append({"date": day, "label": label_from_last_updated(text)})
+    return items
+
+
 def latest_option_label(html: str) -> str:
     m = LAST_UPDATED_RE.search(html)
     if m:
@@ -95,7 +123,7 @@ def publish_docs() -> None:
     archive_path = DOCS_ARCHIVE / f"{today}.html"
     archive_path.write_text(base_html, encoding="utf-8")
 
-    manifest_dates = snapshot_dates_manifest()
+    manifest_dates = archive_manifest(exclude_date=today)
     DOCS_MANIFEST.write_text(
         json.dumps({"dates": manifest_dates}, indent=2) + "\n",
         encoding="utf-8",
