@@ -34,3 +34,19 @@ First snapshot — baseline saved. Re-run tomorrow to see day-over-day changes.
   2. Sec 326 Row 6 Seats 17–18 (2t) — $2,415/ea ($4,830 total)
   3. Sec 328 Row 11 Seats 21–24 (4t) — $2,415/ea ($9,660 total)
 
+## 2026-06-06
+*Captured 2026-06-06T03:49:46*
+
+Compared to **2026-06-05**
+
+### CAT1
+- Inventory: 85 G2 (±0), 26 G4 (±0)
+- No material changes vs prior snapshot.
+
+### CAT2
+- Inventory: 164 G2 (±0), 55 G4 (±0)
+- No material changes vs prior snapshot.
+
+### CAT3
+- Inventory: 134 G2 (±0), 68 G4 (±0)
+- No material changes vs prior snapshot.
