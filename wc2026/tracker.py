@@ -17,7 +17,7 @@ from wc2026.dates import (
     parse_captured_at,
     snapshot_id,
 )
-from wc2026.utils import load_json, row_to_deal
+from wc2026.utils import load_json, normalize_deal_prices, normalize_rows, row_to_deal
 
 TIMESTAMPED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{6}$")
 
@@ -89,8 +89,8 @@ def build_snapshot() -> dict[str, Any]:
     categories: dict[str, Any] = {}
     for cat_label, g2_file, g4_file in CATEGORIES:
         cat_num = int(cat_label.replace("cat", ""))
-        g2_raw = load_json(raw_path(g2_file))
-        g4_raw = load_json(raw_path(g4_file))
+        g2_raw = normalize_rows(load_json(raw_path(g2_file)))
+        g4_raw = normalize_rows(load_json(raw_path(g4_file)))
         g2_merged = merge_derived_pairs(g2_raw, g4_raw)
         built = build_category(cat_num, g2_file, g4_file)
 
@@ -136,6 +136,17 @@ def normalize_snapshot(data: dict[str, Any], path: Path) -> dict[str, Any]:
         out["captured_label"] = out["id"]
     if "date" not in out:
         out["date"] = out["id"][:10]
+    for cat in out.get("categories", {}).values():
+        if listings := cat.get("listings"):
+            cat["listings"] = {
+                k: normalize_deal_prices(v) for k, v in listings.items()
+            }
+        for key in ("cheapest_g2", "cheapest_g4"):
+            if cat.get(key):
+                cat[key] = normalize_deal_prices(cat[key])
+        for key in ("top3", "top10_g2", "top10_g4"):
+            if cat.get(key):
+                cat[key] = [normalize_deal_prices(d) for d in cat[key]]
     return out
 
 
@@ -243,7 +254,13 @@ def _deal_key(d: dict) -> str:
     return f"{d['sec']}:{d['row']}:{d['seats']}:{d['gs']}"
 
 
-def _deal_brief(d: dict[str, Any], cat: str, change: str | None = None) -> dict:
+def _deal_brief(
+    d: dict[str, Any],
+    cat: str,
+    change: str | None = None,
+    was_avg: int | None = None,
+) -> dict:
+    d = normalize_deal_prices(d)
     out = {
         "cat": cat,
         "sec": d["sec"],
@@ -258,6 +275,8 @@ def _deal_brief(d: dict[str, Any], cat: str, change: str | None = None) -> dict:
     }
     if change:
         out["change"] = change
+    if was_avg is not None:
+        out["was_avg"] = was_avg
     return out
 
 
@@ -324,6 +343,8 @@ def build_log_entry(
 
             drop_rows: list[tuple[int, dict]] = []
             for p, c in diff["drops"]:
+                p = normalize_deal_prices(p)
+                c = normalize_deal_prices(c)
                 saved = p["avg"] - c["avg"]
                 if saved < 1:
                     continue
@@ -331,7 +352,10 @@ def build_log_entry(
                     (
                         saved,
                         _deal_brief(
-                            c, cat_key, f"{fmt_delta(p['avg'], c['avg'])}/ea"
+                            c,
+                            cat_key,
+                            f"{fmt_delta(p['avg'], c['avg'])}/ea",
+                            was_avg=p["avg"],
                         ),
                     )
                 )

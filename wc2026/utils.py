@@ -48,7 +48,41 @@ def format_seats(seat_numbers: str) -> str:
     return f"{seats[0]}–{seats[-1]}"
 
 
+def normalize_row_prices(row: dict[str, Any]) -> dict[str, Any]:
+    """Fix SeatSidekick rows where uniform prices are 100× too high."""
+    avg = float(row.get("avg_price") or 0)
+    if avg < 50_000:
+        return row
+    min_p = float(row.get("min_price", avg))
+    max_p = float(row.get("max_price", avg))
+    if abs(min_p - max_p) > 0.01:
+        return row
+    out = dict(row)
+    for key in ("min_price", "max_price", "avg_price", "total_price"):
+        if key in out and out[key] is not None:
+            out[key] = float(out[key]) / 100.0
+    return out
+
+
+def normalize_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [normalize_row_prices(r) for r in rows]
+
+
+def normalize_deal_prices(deal: dict[str, Any]) -> dict[str, Any]:
+    """Fix stored listing/deal dicts with the same 100× scaling issue."""
+    if not deal or deal.get("mixed"):
+        return deal
+    avg = int(deal.get("avg", 0))
+    if avg < 50_000:
+        return deal
+    out = dict(deal)
+    out["avg"] = round(out["avg"] / 100)
+    out["total"] = round(out["total"] / 100)
+    return out
+
+
 def row_to_deal(row: dict[str, Any]) -> dict[str, Any]:
+    row = normalize_row_prices(row)
     row_num = int(row["row"])
     return {
         "sec": str(row["block"]),

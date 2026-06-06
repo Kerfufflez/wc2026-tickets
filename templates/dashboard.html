@@ -34,20 +34,14 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 }
 .last-updated strong { color: var(--text); font-weight: 600; white-space: nowrap; }
 .header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }
-.snapshot-label {
-  display: flex; flex-direction: column; align-items: stretch; gap: 6px;
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 6px; padding: 8px 12px; margin-bottom: 0;
-  flex: 1 1 200px; min-width: 0; max-width: 100%; overflow: hidden;
-}
+.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
 .snapshot-picker {
   font-size: 12px; font-weight: 500; font-family: inherit;
-  color: var(--text); background: var(--bg);
+  color: var(--text); background: var(--card);
   border: 1px solid var(--border); border-radius: 6px;
-  padding: 8px 10px; cursor: pointer;
-  width: 100%; max-width: 100%; box-sizing: border-box;
+  padding: 6px 10px; cursor: pointer;
+  flex: 0 1 auto; max-width: 300px; min-width: 0;
+  box-sizing: border-box;
 }
 .refresh-btn {
   font-size: 12px; font-weight: 600; font-family: inherit;
@@ -172,10 +166,9 @@ tr:last-child td { border-bottom: none; }
   .report-sub { font-size: 13px; }
   .header-row { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 20px; }
   .header-row .last-updated { width: 100%; margin-bottom: 0; flex-wrap: wrap; }
-  .header-controls { width: 100%; flex-direction: column; align-items: stretch; }
-  .snapshot-label { width: 100%; flex: none; max-width: 100%; }
-  .snapshot-picker { width: 100%; max-width: 100%; }
-  .refresh-btn { width: 100%; }
+  .header-controls { width: 100%; flex-direction: row; align-items: center; }
+  .snapshot-picker { flex: 1 1 160px; max-width: none; }
+  .refresh-btn { flex: 0 0 auto; width: auto; }
   .cat-tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
@@ -250,12 +243,9 @@ tr:last-child td { border-bottom: none; }
   <div class="header-row">
     <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 5:01 PM ET</strong></p>
     <div class="header-controls">
-      <label class="snapshot-label">
-        Snapshot
-        <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)">
-          <option value="">Latest</option>
-        </select>
-      </label>
+      <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        <option value="">Latest</option>
+      </select>
       <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
         <span id="refresh-btn-label">Refresh now</span>
       </button>

@@ -21,6 +21,7 @@ from wc2026.utils import (
     inv_to_js,
     load_json,
     metrics_for,
+    normalize_rows,
     row_to_deal,
     validate_all,
 )
@@ -95,8 +96,8 @@ def format_array(name: str, deals: list[dict], prefix_comment: str = "") -> str:
 
 
 def build_category(cat_num: int, g2_file: str, g4_file: str) -> dict:
-    g2_raw = load_json(raw_path(g2_file))
-    g4_raw = load_json(raw_path(g4_file))
+    g2_raw = normalize_rows(load_json(raw_path(g2_file)))
+    g4_raw = normalize_rows(load_json(raw_path(g4_file)))
     g2_raw_count = len(g2_raw)
     g4_raw_count = len(g4_raw)
     g2_raw = merge_derived_pairs(g2_raw, g4_raw)

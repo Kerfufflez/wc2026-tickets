@@ -34,20 +34,14 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 }
 .last-updated strong { color: var(--text); font-weight: 600; white-space: nowrap; }
 .header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }
-.snapshot-label {
-  display: flex; flex-direction: column; align-items: stretch; gap: 6px;
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 6px; padding: 8px 12px; margin-bottom: 0;
-  flex: 1 1 200px; min-width: 0; max-width: 100%; overflow: hidden;
-}
+.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
 .snapshot-picker {
   font-size: 12px; font-weight: 500; font-family: inherit;
-  color: var(--text); background: var(--bg);
+  color: var(--text); background: var(--card);
   border: 1px solid var(--border); border-radius: 6px;
-  padding: 8px 10px; cursor: pointer;
-  width: 100%; max-width: 100%; box-sizing: border-box;
+  padding: 6px 10px; cursor: pointer;
+  flex: 0 1 auto; max-width: 300px; min-width: 0;
+  box-sizing: border-box;
 }
 .refresh-btn {
   font-size: 12px; font-weight: 600; font-family: inherit;
@@ -172,10 +166,9 @@ tr:last-child td { border-bottom: none; }
   .report-sub { font-size: 13px; }
   .header-row { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 20px; }
   .header-row .last-updated { width: 100%; margin-bottom: 0; flex-wrap: wrap; }
-  .header-controls { width: 100%; flex-direction: column; align-items: stretch; }
-  .snapshot-label { width: 100%; flex: none; max-width: 100%; }
-  .snapshot-picker { width: 100%; max-width: 100%; }
-  .refresh-btn { width: 100%; }
+  .header-controls { width: 100%; flex-direction: row; align-items: center; }
+  .snapshot-picker { flex: 1 1 160px; max-width: none; }
+  .refresh-btn { flex: 0 0 auto; width: auto; }
   .cat-tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
@@ -248,15 +241,12 @@ tr:last-child td { border-bottom: none; }
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Atlanta Stadium &middot; July 15, 2026 &middot; Category 1, 2 &amp; 3 Ticket Inventory</p>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 6, 2026 at 12:12 PM ET</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 6, 2026 at 12:21 PM ET</strong></p>
     <div class="header-controls">
-      <label class="snapshot-label">
-        Snapshot
-        <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)">
-          <option value="">Latest · 12:12 PM ET</option>
+      <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        <option value="">Jun 6, 2026 · 12:21 PM ET · Latest</option>
           <option value="2026-06-05">June 5, 2026 · 6:19 PM ET</option>
-        </select>
-      </label>
+      </select>
       <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
         <span id="refresh-btn-label">Refresh now</span>
       </button>
@@ -275,17 +265,17 @@ tr:last-child td { border-bottom: none; }
     <div class="metrics-grid">
       <div class="metrics-row-label">Groups of 2</div>
       <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">82</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$4,456</div><div class="metric-sub">Section 118 · Row 41</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$8,050</div><div class="metric-sub">Across 82 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$8,912</div><div class="metric-sub">Section 118, Row 41</div></div>
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">79</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$920</div><div class="metric-sub">Section 121 · Row 10</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$7,886</div><div class="metric-sub">Across 79 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,840</div><div class="metric-sub">Section 121, Row 10</div></div>
       </div>
       <div class="metrics-row-label">Groups of 4</div>
       <div class="metrics">
         <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">27</div><div class="metric-sub">Groups of 4 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$4,456</div><div class="metric-sub">Section 118 · Row 41</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$8,487</div><div class="metric-sub">Across 27 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$17,825</div><div class="metric-sub">Section 118, Row 41</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$3,450</div><div class="metric-sub">Section 136 · Row 18</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$8,050</div><div class="metric-sub">Across 27 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$13,800</div><div class="metric-sub">Section 136, Row 18</div></div>
       </div>
     </div>
     <div class="two-col">
@@ -324,9 +314,9 @@ tr:last-child td { border-bottom: none; }
       <div class="metrics-row-label">Groups of 2</div>
       <div class="metrics">
         <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">156</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$3,191</div><div class="metric-sub">Section 308 · Row 23</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$5,526</div><div class="metric-sub">Across 156 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$6,382</div><div class="metric-sub">Section 308, Row 23</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$575</div><div class="metric-sub">Section 310 · Row 15</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$5,477</div><div class="metric-sub">Across 156 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,150</div><div class="metric-sub">Section 310, Row 15</div></div>
       </div>
       <div class="metrics-row-label">Groups of 4</div>
       <div class="metrics">
@@ -511,9 +501,6 @@ function makeChart(id, c2, c4, labels, ymax, ystep) {
 
 // ── CAT 1 ─────────────────────────────────────────────────────────────────
 const cat1g2 = [
-  {sec:'118',row:41,seats:'3–4',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true},
-  {sec:'118',row:41,seats:'4–5',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true},
-  {sec:'118',row:41,seats:'5–6',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true},
   {sec:'103',row:34,seats:'19–20',stand:'Main',side:'Left',total:9198,avg:4599,gs:2,front:false,mixed:false,derived:false},
   {sec:'116',row:43,seats:'15–16',stand:'Main',side:'Right',total:9660,avg:4830,gs:2,front:false,mixed:false,derived:false},
   {sec:'123',row:36,seats:'6–7',stand:'Main',side:'Center',total:10350,avg:5175,gs:2,front:false,mixed:false,derived:false},
@@ -521,6 +508,9 @@ const cat1g2 = [
   {sec:'118',row:39,seats:'17–18',stand:'Main',side:'Right',total:10752,avg:5376,gs:2,front:false,mixed:false,derived:false},
   {sec:'103',row:32,seats:'7–8',stand:'Main',side:'Left',total:10791,avg:5395,gs:2,front:false,mixed:false,derived:false},
   {sec:'103',row:37,seats:'17–18',stand:'Main',side:'Left',total:10890,avg:5445,gs:2,front:false,mixed:false,derived:false},
+  {sec:'103',row:38,seats:'5–6',stand:'Main',side:'Left',total:11040,avg:5520,gs:2,front:false,mixed:false,derived:false},
+  {sec:'121',row:46,seats:'18–19',stand:'Main',side:'Right',total:11144,avg:5572,gs:2,front:false,mixed:false,derived:false},
+  {sec:'104',row:44,seats:'7–8',stand:'Main',side:'Left',total:11316,avg:5658,gs:2,front:false,mixed:false,derived:false},
 ];
 const cat1g4 = [
   {sec:'118',row:41,seats:'3–6',stand:'Main',side:'Right',total:17825,avg:4456,gs:4,front:false,mixed:true,derived:false},
@@ -534,16 +524,16 @@ const cat1g4 = [
   {sec:'118',row:38,seats:'4–7',stand:'Main',side:'Right',total:25300,avg:6325,gs:4,front:false,mixed:false,derived:false},
   {sec:'103',row:29,seats:'5–8',stand:'Main',side:'Left',total:26675,avg:6669,gs:4,front:false,mixed:false,derived:false},
 ];
-const cat1top3 = [{sec:'118',row:41,seats:'3–4',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true}, {sec:'118',row:41,seats:'4–5',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true}, {sec:'118',row:41,seats:'5–6',stand:'Main',side:'Right',total:8912,avg:4456,gs:2,front:false,mixed:false,derived:true}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat1top3 = [{sec:'121',row:10,seats:'1–2',stand:'Main',side:'Right',total:1840,avg:920,gs:2,front:true,mixed:false,derived:false}, {sec:'136',row:18,seats:'17–20',stand:'Main',side:'Left',total:13800,avg:3450,gs:4,front:true,mixed:false,derived:false}, {sec:'135',row:20,seats:'10–11',stand:'Main',side:'Left',total:8218,avg:4109,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
 const cat1inv = [
-  {sec:'118',stand:'Main',side:'Right',g2c:14,g2m:4456,g4c:4,g4m:4456},
   {sec:'103',stand:'Main',side:'Left',g2c:10,g2m:4599,g4c:6,g4m:5034},
-  {sec:'121',stand:'Main',side:'Right',g2c:10,g2m:5572,g4c:6,g4m:6785},
+  {sec:'121',stand:'Main',side:'Right',g2c:10,g2m:920,g4c:6,g4m:6785},
+  {sec:'118',stand:'Main',side:'Right',g2c:11,g2m:5376,g4c:4,g4m:4456},
   {sec:'116',stand:'Main',side:'Right',g2c:9,g2m:4830,g4c:2,g4m:5520},
   {sec:'120',stand:'Main',side:'Right',g2c:8,g2m:5175,g4c:2,g4m:8050},
   {sec:'104',stand:'Main',side:'Left',g2c:9,g2m:5658,g4c:1,g4m:10280},
-  {sec:'136',stand:'Main',side:'Left',g2c:7,g2m:5748,g4c:3,g4m:5972},
-  {sec:'135',stand:'Main',side:'Left',g2c:7,g2m:6612,g4c:2,g4m:5635},
+  {sec:'136',stand:'Main',side:'Left',g2c:7,g2m:5748,g4c:3,g4m:3450},
+  {sec:'135',stand:'Main',side:'Left',g2c:7,g2m:4109,g4c:2,g4m:5635},
   {sec:'134',stand:'Main',side:'Left',g2c:4,g2m:7475,g4c:0,g4m:null},
   {sec:'123',stand:'Main',side:'Center',g2c:3,g2m:5175,g4c:0,g4m:null},
   {sec:'117',stand:'Main',side:'Right',g2c:1,g2m:13800,g4c:0,g4m:null},
@@ -579,12 +569,12 @@ const cat2g4 = [
   {sec:'337',row:26,seats:'8–11',stand:'Main',side:'Center',total:16790,avg:4198,gs:4,front:false,mixed:true,derived:false},
   {sec:'308',row:15,seats:'15–18',stand:'Opposite',side:'Opposite',total:18170,avg:4542,gs:4,front:true,mixed:false,derived:false},
 ];
-const cat2top3 = [{sec:'308',row:23,seats:'9–10',stand:'Opposite',side:'Opposite',total:6382,avg:3191,gs:2,front:false,mixed:false,derived:false}, {sec:'336',row:22,seats:'17–18',stand:'Main',side:'Center',total:6599,avg:3299,gs:2,front:false,mixed:false,derived:false}, {sec:'309',row:18,seats:'21–22',stand:'Opposite',side:'Opposite',total:6670,avg:3335,gs:2,front:true,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat2top3 = [{sec:'310',row:15,seats:'1–2',stand:'Opposite',side:'Opposite',total:1150,avg:575,gs:2,front:true,mixed:false,derived:false}, {sec:'308',row:23,seats:'9–10',stand:'Opposite',side:'Opposite',total:6382,avg:3191,gs:2,front:false,mixed:false,derived:false}, {sec:'336',row:22,seats:'17–18',stand:'Main',side:'Center',total:6599,avg:3299,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
 const cat2inv = [
   {sec:'314',stand:'Opposite',side:'Opposite',g2c:24,g2m:3450,g4c:5,g4m:4025},
   {sec:'313',stand:'Opposite',side:'Opposite',g2c:20,g2m:3910,g4c:5,g4m:4600},
   {sec:'309',stand:'Opposite',side:'Opposite',g2c:14,g2m:3335,g4c:8,g4m:3910},
-  {sec:'310',stand:'Opposite',side:'Opposite',g2c:12,g2m:3421,g4c:8,g4m:3910},
+  {sec:'310',stand:'Opposite',side:'Opposite',g2c:12,g2m:575,g4c:8,g4m:3910},
   {sec:'308',stand:'Opposite',side:'Opposite',g2c:8,g2m:3191,g4c:6,g4m:4542},
   {sec:'336',stand:'Main',side:'Center',g2c:13,g2m:3299,g4c:1,g4m:15812},
   {sec:'315',stand:'Opposite',side:'Opposite',g2c:10,g2m:3438,g4c:3,g4m:3622},

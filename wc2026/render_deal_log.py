@@ -30,26 +30,32 @@ def _delta_class(n: int) -> str:
     return "flat"
 
 
-def _deal_row(deal: dict, accent: str = "") -> str:
+def _deal_row(deal: dict, accent: str = "", show_drop: bool = False) -> str:
     tags = []
     if deal.get("derived"):
         tags.append('<span class="deal-tag">4-pack split</span>')
     if deal.get("front"):
         tags.append('<span class="deal-tag deal-tag-front">front</span>')
-    change = deal.get("change")
-    change_html = (
-        f'<span class="deal-change">{_esc(change)}</span>' if change else ""
-    )
     tags_html = "".join(tags)
+
+    if show_drop and deal.get("was_avg") is not None:
+        change = deal.get("change", "")
+        price_html = (
+            f'<span class="deal-avg">${deal["avg"]:,}<span class="deal-per">/ea</span></span>'
+            f'<span class="deal-change">was ${deal["was_avg"]:,}/ea'
+            f'{(" · " + _esc(change)) if change else ""}</span>'
+        )
+    else:
+        price_html = (
+            f'<span class="deal-avg">${deal["avg"]:,}<span class="deal-per">/ea</span></span>'
+        )
+
     return f"""<li class="deal-row {accent}">
   <div class="deal-main">
     <span class="deal-loc">Sec {_esc(deal['sec'])} · Row {_esc(deal['row'])}</span>
     <span class="deal-meta">{_esc(deal['seats'])} · {deal['gs']}t{(' · ' + tags_html) if tags_html else ''}</span>
   </div>
-  <div class="deal-price">
-    <span class="deal-avg">${deal['avg']:,}<span class="deal-per">/ea</span></span>
-    {change_html}
-  </div>
+  <div class="deal-price">{price_html}</div>
 </li>"""
 
 
@@ -116,7 +122,7 @@ def render_cat_detail(cat: dict, is_baseline: bool) -> str:
 
         cheaper = cat.get("cheaper", [])
         if cheaper:
-            rows = "".join(_deal_row(d, "accent-drop") for d in cheaper)
+            rows = "".join(_deal_row(d, "accent-drop", show_drop=True) for d in cheaper)
             sections.append(
                 f'<div class="cat-block"><h4 class="cat-block-title">Cheaper tickets</h4>'
                 f'<ul class="deal-list">{rows}</ul></div>'

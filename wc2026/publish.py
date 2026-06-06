@@ -18,13 +18,17 @@ from wc2026.config import (
     REPORT_DEAL_LOG_HTML,
     REPORT_HTML,
 )
-from wc2026.dates import format_est_short, label_from_last_updated, now_est
+from wc2026.dates import format_dropdown_label, label_from_last_updated, now_est
 
 CONTEXT_RE = re.compile(
     r'<meta name="snapshot-context" content="[^"]*">'
 )
 SELECT_RE = re.compile(
     r'(<select id="snapshot-picker"[^>]*>)(.*?)(</select>)',
+    re.DOTALL,
+)
+HEADER_ROW_RE = re.compile(
+    r'<div class="header-row">.*?</div>\s*<hr class="divider">',
     re.DOTALL,
 )
 LAST_UPDATED_RE = re.compile(
@@ -54,10 +58,89 @@ def inject_dropdown(
     html: str, dates: list[dict], current: str | None, latest_label: str
 ) -> str:
     options = build_options(dates, current, latest_label)
-    inner = f"\n          {options}\n        "
+    inner = f"\n        {options}\n      "
     if not SELECT_RE.search(html):
         raise RuntimeError("Snapshot dropdown <select> missing from HTML template")
     return SELECT_RE.sub(rf"\g<1>{inner}\g<3>", html, count=1)
+
+
+def render_header_row(
+    last_updated: str, dates: list[dict], current: str | None, latest_label: str
+) -> str:
+    options = build_options(dates, current, latest_label)
+    return f"""<div class="header-row">
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>{last_updated}</strong></p>
+    <div class="header-controls">
+      <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        {options}
+      </select>
+      <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
+        <span id="refresh-btn-label">Refresh now</span>
+      </button>
+    </div>
+  </div>
+  <hr class="divider">"""
+
+
+def patch_header_styles(html: str) -> str:
+    """Keep snapshot dropdown compact on pages built from older templates."""
+    html = re.sub(r"\.snapshot-label \{[^}]+\}\s*", "", html, flags=re.DOTALL)
+    if ".header-controls {" not in html:
+        html = html.replace(
+            ".header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }",
+            ".header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }\n"
+            ".header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }",
+        )
+    else:
+        html = html.replace(
+            ".header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }",
+            ".header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }",
+        )
+    html = re.sub(
+        r"\.snapshot-picker \{[^}]+\}",
+        (
+            ".snapshot-picker {\n"
+            "  font-size: 12px; font-weight: 500; font-family: inherit;\n"
+            "  color: var(--text); background: var(--card);\n"
+            "  border: 1px solid var(--border); border-radius: 6px;\n"
+            "  padding: 6px 10px; cursor: pointer;\n"
+            "  flex: 0 1 auto; max-width: 300px; min-width: 0;\n"
+            "  box-sizing: border-box;\n"
+            "}"
+        ),
+        html,
+        count=1,
+    )
+    html = html.replace(
+        "  .header-controls { width: 100%; flex-direction: column; align-items: stretch; }\n"
+        "  .snapshot-label { width: 100%; flex: none; max-width: 100%; }\n"
+        "  .snapshot-picker { width: 100%; max-width: 100%; }\n"
+        "  .refresh-btn { width: 100%; }\n",
+        "  .header-controls { width: 100%; flex-direction: row; align-items: center; }\n"
+        "  .snapshot-picker { flex: 1 1 160px; max-width: none; }\n"
+        "  .refresh-btn { flex: 0 0 auto; width: auto; }\n",
+    )
+    html = html.replace(
+        "  .header-row .last-updated { flex: 1 1 auto; min-width: 0; }\n"
+        "  .refresh-btn { flex: 1 1 auto; }\n",
+        "  .header-row .last-updated { flex: 1 1 auto; min-width: 0; }\n"
+        "  .header-controls { width: 100%; flex-direction: row; align-items: center; }\n"
+        "  .snapshot-picker { flex: 1 1 160px; max-width: none; }\n"
+        "  .refresh-btn { flex: 0 0 auto; width: auto; }\n",
+    )
+    return html
+
+
+def standardize_header(
+    html: str, dates: list[dict], current: str | None, latest_label: str
+) -> str:
+    """Normalize header row (compact dropdown + always-visible refresh)."""
+    html = patch_header_styles(html)
+    last_updated = _last_updated_text(html) or format_dropdown_label(now_est())
+    block = render_header_row(last_updated, dates, current, latest_label)
+    if HEADER_ROW_RE.search(html):
+        return HEADER_ROW_RE.sub(block, html, count=1)
+    return inject_dropdown(html, dates, current, latest_label)
 
 
 def list_archive_dates() -> list[str]:
@@ -99,16 +182,10 @@ def archive_manifest(exclude_date: str | None = None) -> list[dict]:
 
 
 def latest_option_label(html: str) -> str:
-    m = LAST_UPDATED_RE.search(html)
-    if m:
-        inner = html[m.start() : m.end()]
-        strong = re.search(r"<strong>([^<]+)</strong>", inner)
-        if strong:
-            text = strong.group(1)
-            if " at " in text:
-                return f"Latest · {text.split(' at ', 1)[1]}"
-            return f"Latest · {text}"
-    return f"Latest · {format_est_short(now_est())}"
+    text = _last_updated_text(html)
+    if text:
+        return f"{label_from_last_updated(text)} · Latest"
+    return f"{format_dropdown_label(now_est())} · Latest"
 
 
 def publish_docs() -> None:
@@ -144,7 +221,7 @@ def publish_docs() -> None:
         if DEAL_LOG_JS.exists():
             shutil.copy2(DEAL_LOG_JS, DOCS_HISTORY / "deal_log.js")
 
-    index_html = inject_dropdown(
+    index_html = standardize_header(
         set_snapshot_context(base_html, "index"),
         dates_for_dropdown,
         current=None,
@@ -159,7 +236,7 @@ def publish_docs() -> None:
     for d in archive_dates:
         path = DOCS_ARCHIVE / f"{d}.html"
         raw = base_html if d == today else path.read_text(encoding="utf-8")
-        published = inject_dropdown(
+        published = standardize_header(
             set_snapshot_context(raw, "archive"),
             dates_for_dropdown,
             current=d,

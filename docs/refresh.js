@@ -73,7 +73,23 @@
     return `${seats[0]}–${seats[seats.length - 1]}`;
   }
 
+  function normalizeRowPrices(row) {
+    const avg = Number(row.avg_price || 0);
+    if (avg < 50000) return row;
+    const minP = Number(row.min_price ?? avg);
+    const maxP = Number(row.max_price ?? avg);
+    if (Math.abs(minP - maxP) > 0.01) return row;
+    return {
+      ...row,
+      min_price: minP / 100,
+      max_price: maxP / 100,
+      avg_price: avg / 100,
+      total_price: Number(row.total_price) / 100,
+    };
+  }
+
   function rowToDeal(row) {
+    row = normalizeRowPrices(row);
     const rowNum = parseInt(row.row, 10);
     return {
       sec: String(row.block),
@@ -342,7 +358,9 @@
       });
 
       for (const catNum of [1, 2, 3]) {
-        applyCategory(catNum, buildCategory(catNum, byCat[catNum].g2, byCat[catNum].g4));
+        const g2 = byCat[catNum].g2.map(normalizeRowPrices);
+        const g4 = byCat[catNum].g4.map(normalizeRowPrices);
+        applyCategory(catNum, buildCategory(catNum, g2, g4));
       }
 
       const lu = document.getElementById("last-updated");
@@ -364,13 +382,20 @@
     const btn = document.getElementById("refresh-btn");
     if (!btn) return;
 
-    if (ctx === "archive") {
-      btn.style.display = "none";
-      return;
-    }
-
-    btn.addEventListener("click", refreshNow);
+    btn.addEventListener("click", () => {
+      if (ctx === "archive") {
+        sessionStorage.setItem("wc2026_auto_refresh", "1");
+        window.location.href = "../index.html";
+        return;
+      }
+      refreshNow();
+    });
     scheduleCooldownUI(btn);
+
+    if (ctx !== "archive" && sessionStorage.getItem("wc2026_auto_refresh")) {
+      sessionStorage.removeItem("wc2026_auto_refresh");
+      refreshNow();
+    }
   }
 
   if (document.readyState === "loading") {
