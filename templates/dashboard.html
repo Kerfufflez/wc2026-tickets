@@ -36,18 +36,18 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 .header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
 .header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }
 .snapshot-label {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 6px;
   font-size: 12px; font-weight: 500; color: var(--muted);
   background: var(--card); border: 1px solid var(--border);
-  border-radius: 6px; padding: 6px 12px; margin-bottom: 0;
-  flex: 1 1 180px; min-width: 0;
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 0;
+  flex: 1 1 200px; min-width: 0; max-width: 100%; overflow: hidden;
 }
 .snapshot-picker {
   font-size: 12px; font-weight: 500; font-family: inherit;
-  color: var(--text); background: var(--card);
+  color: var(--text); background: var(--bg);
   border: 1px solid var(--border); border-radius: 6px;
-  padding: 6px 10px; cursor: pointer;
-  min-width: 0; max-width: 100%; flex: 1 1 140px;
+  padding: 8px 10px; cursor: pointer;
+  width: 100%; max-width: 100%; box-sizing: border-box;
 }
 .refresh-btn {
   font-size: 12px; font-weight: 600; font-family: inherit;
@@ -173,8 +173,8 @@ tr:last-child td { border-bottom: none; }
   .header-row { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 20px; }
   .header-row .last-updated { width: 100%; margin-bottom: 0; flex-wrap: wrap; }
   .header-controls { width: 100%; flex-direction: column; align-items: stretch; }
-  .snapshot-label { width: 100%; flex: none; }
-  .snapshot-picker { width: 100%; flex: none; }
+  .snapshot-label { width: 100%; flex: none; max-width: 100%; }
+  .snapshot-picker { width: 100%; max-width: 100%; }
   .refresh-btn { width: 100%; }
   .cat-tabs {
     overflow-x: auto;

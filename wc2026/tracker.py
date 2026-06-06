@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,8 @@ from wc2026.dates import (
     snapshot_id,
 )
 from wc2026.utils import load_json, row_to_deal
+
+TIMESTAMPED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{6}$")
 
 
 def deal_id(row: dict[str, Any]) -> str:
@@ -71,6 +74,14 @@ def _signed(n: int) -> str:
     return "±0"
 
 
+def is_timestamped_stem(stem: str) -> bool:
+    return bool(TIMESTAMPED_RE.match(stem))
+
+
+def is_legacy_daily_stem(stem: str) -> bool:
+    return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", stem))
+
+
 def build_snapshot() -> dict[str, Any]:
     now = now_est()
     sid = snapshot_id(now)
@@ -106,17 +117,22 @@ def build_snapshot() -> dict[str, Any]:
 
 
 def load_snapshot(path: Path) -> dict[str, Any]:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if "id" not in data:
-        data["id"] = path.stem
-    return data
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
-def list_snapshot_files() -> list[Path]:
-    if not REPORT_SNAPSHOTS.exists():
-        return []
-    files = list(REPORT_SNAPSHOTS.glob("*.json"))
-    return sorted(files, key=_snapshot_sort_key, reverse=True)
+def normalize_snapshot(data: dict[str, Any], path: Path) -> dict[str, Any]:
+    out = dict(data)
+    out["id"] = out.get("id") or path.stem
+    if out.get("captured_at") and "captured_label" not in out:
+        try:
+            out["captured_label"] = format_est(parse_captured_at(out["captured_at"]))
+        except ValueError:
+            out["captured_label"] = out["id"]
+    elif "captured_label" not in out:
+        out["captured_label"] = out["id"]
+    if "date" not in out:
+        out["date"] = out["id"][:10]
+    return out
 
 
 def _snapshot_sort_key(path: Path) -> str:
@@ -127,11 +143,44 @@ def _snapshot_sort_key(path: Path) -> str:
         return path.stem
 
 
+def list_snapshot_files() -> list[Path]:
+    if not REPORT_SNAPSHOTS.exists():
+        return []
+    files = list(REPORT_SNAPSHOTS.glob("*.json"))
+    return sorted(files, key=_snapshot_sort_key, reverse=True)
+
+
+def _dates_with_timestamped() -> set[str]:
+    dates: set[str] = set()
+    if not REPORT_SNAPSHOTS.exists():
+        return dates
+    for path in REPORT_SNAPSHOTS.glob("*.json"):
+        if is_timestamped_stem(path.stem):
+            dates.add(path.stem[:10])
+    return dates
+
+
+def list_chain_snapshot_paths() -> list[Path]:
+    """Snapshot files used for scan-to-scan deal log (chronological order)."""
+    if not REPORT_SNAPSHOTS.exists():
+        return []
+    ts_dates = _dates_with_timestamped()
+    selected: list[Path] = []
+    for path in REPORT_SNAPSHOTS.glob("*.json"):
+        stem = path.stem
+        if is_timestamped_stem(stem):
+            selected.append(path)
+        elif is_legacy_daily_stem(stem) and stem not in ts_dates:
+            selected.append(path)
+    return sorted(selected, key=_snapshot_sort_key)
+
+
 def previous_snapshot(exclude_id: str) -> tuple[dict[str, Any] | None, str | None]:
-    for path in list_snapshot_files():
+    for path in reversed(list_chain_snapshot_paths()):
         if path.stem == exclude_id:
             continue
-        return load_snapshot(path), path.stem
+        data = normalize_snapshot(load_snapshot(path), path)
+        return data, path.stem
     return None, None
 
 
@@ -187,11 +236,38 @@ def _deal_brief(d: dict[str, Any], cat: str, change: str | None = None) -> dict:
     return out
 
 
+def extract_inventory(snapshot: dict[str, Any]) -> dict[str, dict]:
+    inv: dict[str, dict] = {}
+    for cat_key in ("cat1", "cat2", "cat3"):
+        cat = snapshot["categories"][cat_key]
+        inv[cat_key] = {
+            "g2": cat["counts"]["g2"],
+            "g4": cat["counts"]["g4"],
+            "cheapest_g2": cat.get("cheapest_g2"),
+            "cheapest_g4": cat.get("cheapest_g4"),
+        }
+    return inv
+
+
+def _inventory_detail_lines(inventory: dict[str, dict]) -> list[str]:
+    lines = ["Current inventory:"]
+    for cat_key in ("cat1", "cat2", "cat3"):
+        cat_num = cat_key.replace("cat", "")
+        inv = inventory[cat_key]
+        lines.append(f"  Cat {cat_num}: {inv['g2']} G2 / {inv['g4']} G4")
+        if inv.get("cheapest_g2"):
+            lines.append(f"    Cheapest G2: {fmt_deal(inv['cheapest_g2'])}")
+        if inv.get("cheapest_g4"):
+            lines.append(f"    Cheapest G4: {fmt_deal(inv['cheapest_g4'])}")
+    return lines
+
+
 def build_log_entry(
     snapshot: dict[str, Any],
     prev: dict[str, Any] | None,
     prev_id: str | None,
 ) -> dict[str, Any]:
+    inventory = extract_inventory(snapshot)
     summary: dict[str, dict] = {}
     price_drops: list[dict] = []
     front_section: list[dict] = []
@@ -200,31 +276,27 @@ def build_log_entry(
 
     if prev is None:
         detail_lines.append("First scan — baseline inventory saved.")
+        detail_lines.append("")
+        detail_lines.extend(_inventory_detail_lines(inventory))
         for cat_key in ("cat1", "cat2", "cat3"):
-            cat = snapshot["categories"][cat_key]
-            cat_num = cat_key.replace("cat", "")
             summary[cat_key] = {
                 "g2_delta": 0,
                 "g4_delta": 0,
                 "new_g2": 0,
                 "new_g4": 0,
             }
-            detail_lines.append(
-                f"Cat {cat_num}: {cat['counts']['g2']} G2 / {cat['counts']['g4']} G4 listings"
-            )
-            if cat["cheapest_g2"]:
-                detail_lines.append(f"  Cheapest G2: {fmt_deal(cat['cheapest_g2'])}")
-            if cat["cheapest_g4"]:
-                detail_lines.append(f"  Cheapest G4: {fmt_deal(cat['cheapest_g4'])}")
-            for d in cat.get("top3", []):
+            for d in snapshot["categories"][cat_key].get("top3", []):
                 if d.get("front"):
                     front_section.append(_deal_brief(d, cat_key, "baseline"))
-            preview_stats["front_section"] = len(front_section)
+        preview_stats["front_section"] = len(front_section)
         detail_lines.append("")
     else:
         prev_label = prev.get("captured_label") or prev_id or "prior scan"
         detail_lines.append(f"Compared to {prev_label}")
         detail_lines.append("")
+        detail_lines.extend(_inventory_detail_lines(inventory))
+        detail_lines.append("")
+        detail_lines.append("Changes vs prior scan:")
 
         for cat_key in ("cat1", "cat2", "cat3"):
             cat_num = cat_key.replace("cat", "")
@@ -244,7 +316,7 @@ def build_log_entry(
             }
 
             detail_lines.append(
-                f"Cat {cat_num}: G2 {_signed(g2_delta)} ({new_g2} new) · "
+                f"  Cat {cat_num}: G2 {_signed(g2_delta)} ({new_g2} new) · "
                 f"G4 {_signed(g4_delta)} ({new_g4} new)"
             )
 
@@ -254,44 +326,48 @@ def build_log_entry(
                 change = f"{fmt_delta(p['avg'], c['avg'])}/ea"
                 drop = _deal_brief(c, cat_key, change)
                 price_drops.append(drop)
-                detail_lines.append(f"  Price drop: {fmt_deal(c)} — was ${p['avg']:,}/ea ({change})")
+                detail_lines.append(
+                    f"    Price drop: {fmt_deal(c)} — was ${p['avg']:,}/ea ({change})"
+                )
 
             for d in diff["new"]:
                 if d.get("front"):
                     front_section.append(_deal_brief(d, cat_key, "new"))
-                    detail_lines.append(f"  New front row: {fmt_deal(d)}")
+                    detail_lines.append(f"    New front row: {fmt_deal(d)}")
 
             for p, c in diff["drops"]:
                 if c.get("front") and c["avg"] < p["avg"]:
                     key = _deal_key(c)
                     if not any(_deal_key(x) == key for x in front_section):
-                        front_section.append(_deal_brief(c, cat_key, fmt_delta(p["avg"], c["avg"]) + "/ea"))
+                        front_section.append(
+                            _deal_brief(c, cat_key, fmt_delta(p["avg"], c["avg"]) + "/ea")
+                        )
                         detail_lines.append(
-                            f"  Front row drop: {fmt_deal(c)} — was ${p['avg']:,}/ea"
+                            f"    Front row drop: {fmt_deal(c)} — was ${p['avg']:,}/ea"
                         )
 
             if diff["gone"]:
-                detail_lines.append(f"  Removed {len(diff['gone'])} listings")
+                detail_lines.append(f"    Removed {len(diff['gone'])} listings")
                 for d in diff["gone"][:5]:
-                    detail_lines.append(f"    {fmt_deal(d)}")
+                    detail_lines.append(f"      {fmt_deal(d)}")
                 if len(diff["gone"]) > 5:
-                    detail_lines.append(f"    …and {len(diff['gone']) - 5} more")
+                    detail_lines.append(f"      …and {len(diff['gone']) - 5} more")
 
             if not any([diff["new"], diff["drops"], diff["gone"], g2_delta, g4_delta]):
-                detail_lines.append("  No material changes")
-
-            detail_lines.append("")
+                detail_lines.append("    No listing changes")
 
         preview_stats["price_drops"] = len(price_drops)
         preview_stats["front_section"] = len(front_section)
+        detail_lines.append("")
 
-    preview_lines = _build_preview_lines(summary, preview_stats)
+    preview_lines = _build_preview_lines(summary, preview_stats, inventory)
 
     return {
         "id": snapshot["id"],
         "captured_at": snapshot["captured_at"],
         "captured_label": snapshot["captured_label"],
         "prev_id": prev_id,
+        "inventory": inventory,
         "summary": summary,
         "preview_lines": preview_lines,
         "preview_stats": preview_stats,
@@ -302,14 +378,28 @@ def build_log_entry(
     }
 
 
-def _build_preview_lines(summary: dict, stats: dict) -> list[str]:
-    cat_parts = []
+def _build_preview_lines(
+    summary: dict, stats: dict, inventory: dict
+) -> list[str]:
+    inv_parts = []
+    for cat_key in ("cat1", "cat2", "cat3"):
+        inv = inventory[cat_key]
+        num = cat_key.replace("cat", "")
+        inv_parts.append(f"Cat {num}: {inv['g2']} G2 · {inv['g4']} G4")
+    lines = [" · ".join(inv_parts)]
+
+    delta_parts = []
     for cat_key in ("cat1", "cat2", "cat3"):
         s = summary.get(cat_key, {})
-        num = cat_key.replace("cat", "")
-        cat_parts.append(
-            f"Cat {num} G2 {_signed(s.get('g2_delta', 0))} · G4 {_signed(s.get('g4_delta', 0))}"
-        )
+        g2d, g4d = s.get("g2_delta", 0), s.get("g4_delta", 0)
+        if g2d or g4d:
+            num = cat_key.replace("cat", "")
+            delta_parts.append(
+                f"Cat {num} G2 {_signed(g2d)} · G4 {_signed(g4d)}"
+            )
+    if delta_parts:
+        lines.append("Δ " + " · ".join(delta_parts))
+
     stat_parts = []
     if stats.get("price_drops"):
         n = stats["price_drops"]
@@ -317,14 +407,9 @@ def _build_preview_lines(summary: dict, stats: dict) -> list[str]:
     if stats.get("front_section"):
         n = stats["front_section"]
         stat_parts.append(f"{n} front-section")
-    lines = [" · ".join(cat_parts)]
     if stat_parts:
         lines.append(" · ".join(stat_parts))
-    elif not any(
-        s.get("g2_delta") or s.get("g4_delta")
-        for s in summary.values()
-    ):
-        lines.append("No changes vs last scan")
+
     return lines
 
 
@@ -335,50 +420,64 @@ def load_deal_log_entries() -> list[dict]:
     return data.get("entries", [])
 
 
-def append_deal_log_entry(entry: dict) -> None:
+def save_deal_log_entries(entries: list[dict]) -> None:
     REPORT_DEAL_LOG_JSON.parent.mkdir(parents=True, exist_ok=True)
-    entries = load_deal_log_entries()
-    entries = [e for e in entries if e.get("id") != entry["id"]]
-    entries.insert(0, entry)
     REPORT_DEAL_LOG_JSON.write_text(
         json.dumps({"entries": entries}, indent=2) + "\n",
         encoding="utf-8",
     )
 
 
+def rebuild_deal_log() -> list[dict]:
+    """Rebuild changelog from all stored snapshots (newest first)."""
+    paths = list_chain_snapshot_paths()
+    chronological: list[dict] = []
+    for path in paths:
+        chronological.append(normalize_snapshot(load_snapshot(path), path))
+
+    entries: list[dict] = []
+    prev: dict[str, Any] | None = None
+    prev_id: str | None = None
+    for snap in chronological:
+        entries.append(build_log_entry(snap, prev, prev_id))
+        prev, prev_id = snap, snap["id"]
+
+    entries.reverse()
+    save_deal_log_entries(entries)
+    return entries
+
+
 def log_deals() -> Path:
     snapshot = build_snapshot()
     sid = snapshot["id"]
-    prev, prev_id = previous_snapshot(exclude_id=sid)
 
     REPORT_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
     snap_path = REPORT_SNAPSHOTS / f"{sid}.json"
     snap_path.write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
-
-    entry = build_log_entry(snapshot, prev, prev_id)
-    append_deal_log_entry(entry)
-
     print(f"Snapshot saved: {snap_path}")
-    print(f"Deal log entry: {REPORT_DEAL_LOG_JSON} ({entry['captured_label']})")
-    if prev_id:
-        print(f"Compared against: {prev_id}")
-    else:
-        print("Baseline snapshot (no prior scan to compare)")
+
+    entries = rebuild_deal_log()
+    latest = entries[0] if entries else None
+    print(f"Deal log rebuilt: {REPORT_DEAL_LOG_JSON} ({len(entries)} entries)")
+    if latest:
+        print(f"  Latest: {latest['captured_label']}")
+        if latest.get("prev_id"):
+            print(f"  Compared against: {latest['prev_id']}")
     return REPORT_DEAL_LOG_JSON
 
 
 def snapshot_dates_manifest() -> list[dict]:
     """Latest capture per calendar day for dropdown labels."""
+    from wc2026.dates import format_dropdown_label
+
     by_date: dict[str, dict] = {}
     for path in list_snapshot_files():
         try:
-            data = load_snapshot(path)
+            data = normalize_snapshot(load_snapshot(path), path)
             day = data.get("date") or path.stem[:10]
             captured = data.get("captured_at", "")
             if day not in by_date or captured > by_date[day].get("captured_at", ""):
                 dt = parse_captured_at(captured) if captured else now_est()
-                from wc2026.dates import format_dropdown_label
-
                 by_date[day] = {
                     "date": day,
                     "captured_at": captured,

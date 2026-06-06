@@ -76,7 +76,10 @@ def latest_option_label(html: str) -> str:
         inner = html[m.start() : m.end()]
         strong = re.search(r"<strong>([^<]+)</strong>", inner)
         if strong:
-            return f"Latest · {strong.group(1)}"
+            text = strong.group(1)
+            if " at " in text:
+                return f"Latest · {text.split(' at ', 1)[1]}"
+            return f"Latest · {text}"
     return f"Latest · {format_est_short(now_est())}"
 
 
