@@ -25,36 +25,32 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 /* Header */
 .event-label  { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
 .report-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
-.report-sub   { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
-.game-nav-wrap { margin-bottom: 18px; }
-.game-nav-select {
-  font-size: 12px; font-weight: 500; font-family: inherit;
-  color: var(--text); background: var(--card);
-  border: 1px solid var(--border); border-radius: 6px;
-  padding: 5px 10px; cursor: pointer; max-width: 340px;
-}
+.report-sub   { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.back-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+.back-link:hover { color: var(--text); }
 .last-updated {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 500; color: var(--muted);
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 6px; padding: 6px 12px; margin-bottom: 28px;
 }
 .last-updated strong { color: var(--text); font-weight: 600; white-space: nowrap; }
-.header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
-.snapshot-picker {
+.controls-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.control-group { display: flex; flex-direction: column; gap: 4px; }
+.control-label { font-size: 11px; font-weight: 500; color: var(--muted); }
+.ctrl-select {
+  height: 32px; padding: 0 10px;
   font-size: 12px; font-weight: 500; font-family: inherit;
   color: var(--text); background: var(--card);
   border: 1px solid var(--border); border-radius: 6px;
-  padding: 6px 10px; cursor: pointer;
-  flex: 0 1 auto; max-width: 300px; min-width: 0;
-  box-sizing: border-box;
+  cursor: pointer; min-width: 140px; max-width: 300px;
 }
+#game-nav { max-width: 320px; }
 .refresh-btn {
+  height: 32px; padding: 0 14px;
   font-size: 12px; font-weight: 600; font-family: inherit;
   color: var(--text); background: var(--card);
   border: 1px solid var(--border); border-radius: 6px;
-  padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, opacity 0.15s;
+  cursor: pointer; transition: border-color 0.15s, opacity 0.15s; white-space: nowrap;
 }
 .refresh-btn:hover:not(:disabled) { border-color: var(--text); }
 .refresh-btn:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -140,11 +136,12 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin-bottom: 2
   .page { padding: 24px 16px 40px; }
   .report-title { font-size: 22px; letter-spacing: -0.3px; }
   .report-sub { font-size: 13px; }
-  .header-row { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 20px; }
-  .header-row .last-updated { width: 100%; margin-bottom: 0; flex-wrap: wrap; }
-  .header-controls { width: 100%; flex-direction: row; align-items: center; }
-  .snapshot-picker { flex: 1 1 160px; max-width: none; }
-  .refresh-btn { flex: 0 0 auto; width: auto; }
+  .top-bar { gap: 6px; }
+  .controls-row { gap: 8px; }
+  #game-nav-group { width: 100%; }
+  #game-nav-group .ctrl-select { max-width: 100%; width: 100%; }
+  .ctrl-select { min-width: 0; flex: 1 1 auto; }
+  .refresh-btn { flex: 0 0 auto; }
   .gs-tabs {
     overflow-x: auto; flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-bottom: 20px;
@@ -180,22 +177,30 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin-bottom: 2
   @page { margin: 0.5in; size: 11in 8.5in landscape; }
 }
 </style>
-<script>window.__wc2026Config = {"performanceId":"10229226725330","queries":[{"cat":1,"gs":1,"category":"Category 1"},{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":3,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":1,"category":"Category 2"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":3,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":1,"category":"Category 3"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":3,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":1,"category":"Category 4"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":3,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[800,1200,1800,2500,3500],"2":[500,800,1200,1800,2500],"3":[300,500,750,1100,1600],"4":[200,350,550,800,1200]},"bucketLabels":{"1":["<$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k\u2013$3.5k","$3.5k+"],"2":["<$500","$500\u2013$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k+"],"3":["<$300","$300\u2013$500","$500\u2013$750","$750\u2013$1.1k","$1.1k\u2013$1.6k","$1.6k+"],"4":["<$200","$200\u2013$350","$350\u2013$550","$550\u2013$800","$800\u2013$1.2k","$1.2k+"]},"catMarketRange":{"1":[400,12000],"2":[200,8000],"3":[150,6000],"4":[100,4000]},"games":[{"pid":"10229226700895","matchup":"Germany vs Cura\u00e7ao","date":"Jun 14"},{"pid":"10229226700896","matchup":"Netherlands vs Japan","date":"Jun 14"},{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226700906","matchup":"Sweden vs Tunisia","date":"Jun 14"},{"pid":"10229226700902","matchup":"Spain vs Cabo Verde","date":"Jun 15"},{"pid":"10229226700903","matchup":"Belgium vs Egypt","date":"Jun 15"},{"pid":"10229226700899","matchup":"Saudi Arabia vs Uruguay","date":"Jun 15"},{"pid":"10229226700901","matchup":"IR Iran vs New Zealand","date":"Jun 15"},{"pid":"10229226700904","matchup":"France vs Senegal","date":"Jun 16"},{"pid":"10229226700905","matchup":"Iraq vs Norway","date":"Jun 16"},{"pid":"10229226700907","matchup":"Argentina vs Algeria","date":"Jun 16"},{"pid":"10229226700908","matchup":"Austria vs Jordan","date":"Jun 16"},{"pid":"10229226700911","matchup":"Portugal vs Congo DR","date":"Jun 17"},{"pid":"10229226700910","matchup":"England vs Croatia","date":"Jun 17"},{"pid":"10229226700909","matchup":"Ghana vs Panama","date":"Jun 17"},{"pid":"10229226700912","matchup":"Uzbekistan vs Colombia","date":"Jun 17"},{"pid":"10229226700913","matchup":"Czechia vs South Africa","date":"Jun 18"},{"pid":"10229226700914","matchup":"Switzerland vs Bosnia and Herzegovina","date":"Jun 18"},{"pid":"10229226700915","matchup":"Canada vs Qatar","date":"Jun 18"},{"pid":"10229226700916","matchup":"Mexico vs Korea Republic","date":"Jun 18"},{"pid":"10229226700920","matchup":"USA vs Australia","date":"Jun 19"},{"pid":"10229226700918","matchup":"Scotland vs Morocco","date":"Jun 19"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 19"},{"pid":"10229226700917","matchup":"Brazil vs Haiti","date":"Jun 19"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700921","matchup":"Germany vs C\u00f4te d'Ivoire","date":"Jun 20"},{"pid":"10229226700922","matchup":"Ecuador vs Cura\u00e7ao","date":"Jun 20"},{"pid":"10229226700924","matchup":"Tunisia vs Japan","date":"Jun 20"},{"pid":"10229226700926","matchup":"Spain vs Saudi Arabia","date":"Jun 21"},{"pid":"10229226700927","matchup":"Belgium vs IR Iran","date":"Jun 21"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 21"},{"pid":"10229226700931","matchup":"Argentina vs Austria","date":"Jun 22"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 22"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 22"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700936","matchup":"Colombia vs Congo DR","date":"Jun 23"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700942","matchup":"Bosnia and Herzegovina vs Qatar","date":"Jun 24"},{"pid":"10229226700937","matchup":"Scotland vs Brazil","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700939","matchup":"South Africa vs Korea Republic","date":"Jun 24"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 24"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700945","matchup":"Japan vs Sweden","date":"Jun 25"},{"pid":"10229226700946","matchup":"Tunisia vs Netherlands","date":"Jun 25"},{"pid":"10229226700947","matchup":"T\u00fcrkiye vs USA","date":"Jun 25"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 25"},{"pid":"10229226700949","matchup":"Norway vs France","date":"Jun 26"},{"pid":"10229226700950","matchup":"Senegal vs Iraq","date":"Jun 26"},{"pid":"10229226700954","matchup":"Uruguay vs Spain","date":"Jun 26"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 26"},{"pid":"10229226700951","matchup":"Egypt vs IR Iran","date":"Jun 26"},{"pid":"10229226700952","matchup":"New Zealand vs Belgium","date":"Jun 26"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226700959","matchup":"Algeria vs Austria","date":"Jun 27"},{"pid":"10229226700960","matchup":"Jordan vs Argentina","date":"Jun 27"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725330","matchup":"1F vs 2C","date":"Jun 29"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jun 30"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 1"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 2"},{"pid":"10229226725341","matchup":"1J vs 2H","date":"Jul 3"},{"pid":"10229226725346","matchup":"Winner 73 vs Winner 75","date":"Jul 4"},{"pid":"10229226725345","matchup":"Winner 74 vs Winner 77","date":"Jul 4"},{"pid":"10229226725347","matchup":"Winner 76 vs Winner 78","date":"Jul 5"},{"pid":"10229226725348","matchup":"Winner 79 vs Winner 80","date":"Jul 5"},{"pid":"10229226725351","matchup":"Winner 86 vs Winner 88","date":"Jul 7"},{"pid":"10229226725353","matchup":"Winner 89 vs Winner 90","date":"Jul 9"},{"pid":"10229226725354","matchup":"Winner 93 vs Winner 94","date":"Jul 10"},{"pid":"10229226725355","matchup":"Winner 91 vs Winner 92","date":"Jul 11"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"},{"pid":"10229226725361","matchup":"Bronze 101 vs Bronze 102","date":"Jul 18"},{"pid":"10229226725360","matchup":"Winner 101 vs Winner 102","date":"Jul 19"}]};</script>
+<script>window.__wc2026Config = {"performanceId":"10229226725330","queries":[{"cat":1,"gs":1,"category":"Category 1"},{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":3,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":1,"category":"Category 2"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":3,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":1,"category":"Category 3"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":3,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":1,"category":"Category 4"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":3,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[800,1200,1800,2500,3500],"2":[500,800,1200,1800,2500],"3":[300,500,750,1100,1600],"4":[200,350,550,800,1200]},"bucketLabels":{"1":["<$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k\u2013$3.5k","$3.5k+"],"2":["<$500","$500\u2013$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k+"],"3":["<$300","$300\u2013$500","$500\u2013$750","$750\u2013$1.1k","$1.1k\u2013$1.6k","$1.6k+"],"4":["<$200","$200\u2013$350","$350\u2013$550","$550\u2013$800","$800\u2013$1.2k","$1.2k+"]},"catMarketRange":{"1":[400,12000],"2":[200,8000],"3":[150,6000],"4":[100,4000]},"games":[{"pid":"10229226700895","matchup":"Germany vs Cura\u00e7ao","date":"Jun 14"},{"pid":"10229226700896","matchup":"Netherlands vs Japan","date":"Jun 14"},{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226700906","matchup":"Sweden vs Tunisia","date":"Jun 14"},{"pid":"10229226700902","matchup":"Spain vs Cabo Verde","date":"Jun 15"},{"pid":"10229226700903","matchup":"Belgium vs Egypt","date":"Jun 15"},{"pid":"10229226700899","matchup":"Saudi Arabia vs Uruguay","date":"Jun 15"},{"pid":"10229226700901","matchup":"IR Iran vs New Zealand","date":"Jun 15"},{"pid":"10229226700904","matchup":"France vs Senegal","date":"Jun 16"},{"pid":"10229226700905","matchup":"Iraq vs Norway","date":"Jun 16"},{"pid":"10229226700907","matchup":"Argentina vs Algeria","date":"Jun 16"},{"pid":"10229226700908","matchup":"Austria vs Jordan","date":"Jun 16"},{"pid":"10229226700911","matchup":"Portugal vs Congo DR","date":"Jun 17"},{"pid":"10229226700910","matchup":"England vs Croatia","date":"Jun 17"},{"pid":"10229226700909","matchup":"Ghana vs Panama","date":"Jun 17"},{"pid":"10229226700912","matchup":"Uzbekistan vs Colombia","date":"Jun 17"},{"pid":"10229226700913","matchup":"Czechia vs South Africa","date":"Jun 18"},{"pid":"10229226700914","matchup":"Switzerland vs Bosnia and Herzegovina","date":"Jun 18"},{"pid":"10229226700915","matchup":"Canada vs Qatar","date":"Jun 18"},{"pid":"10229226700916","matchup":"Mexico vs Korea Republic","date":"Jun 18"},{"pid":"10229226700920","matchup":"USA vs Australia","date":"Jun 19"},{"pid":"10229226700918","matchup":"Scotland vs Morocco","date":"Jun 19"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 19"},{"pid":"10229226700917","matchup":"Brazil vs Haiti","date":"Jun 19"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700921","matchup":"Germany vs C\u00f4te d'Ivoire","date":"Jun 20"},{"pid":"10229226700922","matchup":"Ecuador vs Cura\u00e7ao","date":"Jun 20"},{"pid":"10229226700924","matchup":"Tunisia vs Japan","date":"Jun 20"},{"pid":"10229226700926","matchup":"Spain vs Saudi Arabia","date":"Jun 21"},{"pid":"10229226700927","matchup":"Belgium vs IR Iran","date":"Jun 21"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 21"},{"pid":"10229226700931","matchup":"Argentina vs Austria","date":"Jun 22"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 22"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 22"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700936","matchup":"Colombia vs Congo DR","date":"Jun 23"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700942","matchup":"Bosnia and Herzegovina vs Qatar","date":"Jun 24"},{"pid":"10229226700937","matchup":"Scotland vs Brazil","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700939","matchup":"South Africa vs Korea Republic","date":"Jun 24"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 24"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700945","matchup":"Japan vs Sweden","date":"Jun 25"},{"pid":"10229226700946","matchup":"Tunisia vs Netherlands","date":"Jun 25"},{"pid":"10229226700947","matchup":"T\u00fcrkiye vs USA","date":"Jun 25"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 25"},{"pid":"10229226700949","matchup":"Norway vs France","date":"Jun 26"},{"pid":"10229226700950","matchup":"Senegal vs Iraq","date":"Jun 26"},{"pid":"10229226700954","matchup":"Uruguay vs Spain","date":"Jun 26"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 26"},{"pid":"10229226700951","matchup":"Egypt vs IR Iran","date":"Jun 26"},{"pid":"10229226700952","matchup":"New Zealand vs Belgium","date":"Jun 26"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226700959","matchup":"Algeria vs Austria","date":"Jun 27"},{"pid":"10229226700960","matchup":"Jordan vs Argentina","date":"Jun 27"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725331","matchup":"1C vs 2F","date":"Jun 29"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725330","matchup":"1F vs 2C","date":"Jun 29"},{"pid":"10229226725333","matchup":"2E vs 2I","date":"Jun 30"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jun 30"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725337","matchup":"1G vs 3AEHIJ","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 1"},{"pid":"10229226725339","matchup":"1H vs 2J","date":"Jul 2"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 2"},{"pid":"10229226725343","matchup":"2D vs 2G","date":"Jul 3"},{"pid":"10229226725341","matchup":"1J vs 2H","date":"Jul 3"},{"pid":"10229226725342","matchup":"1K vs 3DEIJL","date":"Jul 3"},{"pid":"10229226725346","matchup":"Winner 73 vs Winner 75","date":"Jul 4"},{"pid":"10229226725345","matchup":"Winner 74 vs Winner 77","date":"Jul 4"},{"pid":"10229226725347","matchup":"Winner 76 vs Winner 78","date":"Jul 5"},{"pid":"10229226725348","matchup":"Winner 79 vs Winner 80","date":"Jul 5"},{"pid":"10229226725349","matchup":"Winner 83 vs Winner 84","date":"Jul 6"},{"pid":"10229226725350","matchup":"Winner 81 vs Winner 82","date":"Jul 6"},{"pid":"10229226725351","matchup":"Winner 86 vs Winner 88","date":"Jul 7"},{"pid":"10229226725352","matchup":"Winner 85 vs Winner 87","date":"Jul 7"},{"pid":"10229226725353","matchup":"Winner 89 vs Winner 90","date":"Jul 9"},{"pid":"10229226725354","matchup":"Winner 93 vs Winner 94","date":"Jul 10"},{"pid":"10229226725355","matchup":"Winner 91 vs Winner 92","date":"Jul 11"},{"pid":"10229226725356","matchup":"Winner 95 vs Winner 96","date":"Jul 11"},{"pid":"10229226725357","matchup":"Winner 97 vs Winner 98","date":"Jul 14"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"},{"pid":"10229226725361","matchup":"Bronze 101 vs Bronze 102","date":"Jul 18"},{"pid":"10229226725360","matchup":"Winner 101 vs Winner 102","date":"Jul 19"}]};</script>
 </head>
 <body>
 <div class="page">
+  <div class="top-bar">
+    <a href="#" id="back-link" class="back-link">&#8592; All matches</a>
+    <p class="last-updated" id="last-updated">Last updated: <strong>Jun 14, 2026 at 3:45 AM ET</strong></p>
+  </div>
   <p class="event-label">1F vs 2C</p>
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Monterrey Stadium · June 29, 2026</p>
-  <div class="game-nav-wrap" id="game-nav-wrap" style="display:none">
-    <select id="game-nav" class="game-nav-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
-  </div>
-  <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 3:39 AM ET</strong></p>
-    <div class="header-controls">
-      <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
-        <option value="" selected>Jun 14, 2026 · 3:39 AM ET · Latest</option>
+  <div class="controls-row">
+    <div class="control-group" id="game-nav-group" style="display:none">
+      <span class="control-label">Game</span>
+      <select id="game-nav" class="ctrl-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Snapshot</span>
+      <select id="snapshot-picker" class="ctrl-select" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        <option value="" selected>Jun 14, 2026 · 3:45 AM ET · Latest</option>
       </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Live data</span>
       <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
         <span id="refresh-btn-label">Refresh now</span>
       </button>
@@ -275,9 +280,17 @@ function goGame(pid) {
 
 (function() {
   const cfg = window.__wc2026Config;
+
+  // Back link: resolve path for both reports/ (local) and docs/games/ (deployed)
+  const backLink = document.getElementById('back-link');
+  if (backLink) {
+    backLink.href = location.pathname.endsWith('/dashboard.html') ? '../index.html' : '../../';
+  }
+
+  // Game nav dropdown
   const nav = document.getElementById('game-nav');
-  const wrap = document.getElementById('game-nav-wrap');
-  if (!cfg || !cfg.games || cfg.games.length < 2 || !nav || !wrap) return;
+  const group = document.getElementById('game-nav-group');
+  if (!cfg || !cfg.games || cfg.games.length < 2 || !nav || !group) return;
   cfg.games.forEach(function(g) {
     const opt = document.createElement('option');
     opt.value = g.pid;
@@ -285,7 +298,7 @@ function goGame(pid) {
     if (g.pid === cfg.performanceId) opt.selected = true;
     nav.appendChild(opt);
   });
-  wrap.style.display = '';
+  group.style.display = '';
 })();
 
 function goSnapshot(date) {
