@@ -17,7 +17,7 @@
   --purple-bg: #EEEDFE; --purple-txt: #3C3489;
   --amber-bg: #FAEEDA; --amber-txt: #633806;
   --amber: #BA7517;
-  --chart-2: #B5D4F4; --chart-4: #378ADD;
+  --chart-bar: #378ADD;
 }
 body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 .page { max-width: 1120px; margin: 0 auto; padding: 48px 40px 60px; }
@@ -64,40 +64,28 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
   background: var(--green-bg); padding: 2px 6px; border-radius: 4px;
   margin-left: 4px; vertical-align: middle;
 }
-hr.divider    { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
 
-/* Tabs */
-.cat-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-.cat-tab {
+/* Ticket count tabs */
+.gs-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+.gs-tab {
   padding: 7px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
   cursor: pointer; border: 1px solid var(--border); background: var(--card);
   color: var(--muted); transition: all 0.15s; user-select: none;
 }
-.cat-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
-.cat-section { display: none; }
-.cat-section.active { display: block; }
+.gs-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
 
-/* Metrics rows */
-.metrics-grid { margin-bottom: 20px; }
-.metrics-row-label {
-  font-size: 10px; font-weight: 600; color: var(--muted);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  margin-bottom: 6px; padding-left: 1px;
+/* Category wrap sections (stacked) */
+.cat-wrap { margin-bottom: 40px; }
+.cat-wrap-title {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;
 }
-.metrics-row-label + .metrics { margin-bottom: 12px; }
-.metrics {
-  display: grid; grid-template-columns: repeat(4,1fr);
-  border: 1px solid var(--border); border-radius: 10px;
-  overflow: hidden;
-}
-.metric { background: var(--bg); padding: 14px 16px 16px; border-right: 1px solid var(--border); }
-.metric:last-child { border-right: none; }
-.metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
-.metric-value { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 3px; }
-.metric-sub   { font-size: 11px; color: var(--hint); }
 
-/* Two-col */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; align-items: stretch; }
+/* Chart card (full width) */
+.chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 12px; }
+.chart-card-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.chart-card-sub   { font-size: 11px; color: var(--hint); margin-bottom: 16px; }
 
 /* Cards */
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; }
@@ -111,8 +99,8 @@ hr.divider    { border: none; border-top: 1px solid var(--border); margin-bottom
   padding: 13px 0; border-bottom: 1px solid var(--border);
 }
 .deal:last-child { border-bottom: none; }
-  .top3-inner { display: flex; flex-direction: column; flex: 1; }
-  .top3-inner .deal { flex: 1; }
+.top3-inner { display: flex; flex-direction: column; }
+.top3-inner .deal { flex: 1; }
 .deal-rank      { font-size: 18px; font-weight: 600; color: var(--hint); text-align: center; line-height: 1; }
 .deal-rank.gold { color: var(--amber); }
 .deal-loc       { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
@@ -133,35 +121,16 @@ hr.divider    { border: none; border-top: 1px solid var(--border); margin-bottom
 .badge-front    { background: var(--purple-bg); color: var(--purple-txt); }
 .badge-derived  { background: var(--amber-bg); color: var(--amber-txt); }
 .badge-gs       { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
-
-/* Section titles */
-.section-title {
-  font-size: 11px; font-weight: 600; color: var(--muted);
-  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px;
-}
+.badge-cat1     { background: var(--amber-bg); color: var(--amber-txt); }
+.badge-cat2     { background: var(--blue-bg);  color: var(--blue-txt); }
+.badge-cat3     { background: var(--green-bg); color: var(--green-txt); }
+.badge-cat4     { background: var(--purple-bg);color: var(--purple-txt); }
 
 /* List card */
-.list-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0 20px; margin-bottom: 6px; }
+.list-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0 20px; }
 .list-card .deal:first-child { padding-top: 16px; }
 .list-card .deal:last-child  { padding-bottom: 16px; }
-.note { font-size: 11px; color: var(--hint); margin-bottom: 28px; padding-left: 2px; }
-
-/* Inventory table */
-.inv-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 32px; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-thead tr { background: var(--bg); }
-th { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-.block-pill { display: inline-flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 5px; padding: 3px 10px; font-size: 12px; font-weight: 600; min-width: 40px; }
-.group-count { font-weight: 600; font-size: 13px; }
-.group-min   { font-size: 11px; color: var(--muted); margin-left: 5px; }
-.nil         { color: var(--hint); }
-
-/* Legend */
-.legend { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
-.legend-item { display: flex; align-items: center; gap: 6px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.note { font-size: 11px; color: var(--hint); margin-top: 8px; padding-left: 2px; }
 
 /* Footer */
 .footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--hint); }
@@ -176,55 +145,27 @@ tr:last-child td { border-bottom: none; }
   .header-controls { width: 100%; flex-direction: row; align-items: center; }
   .snapshot-picker { flex: 1 1 160px; max-width: none; }
   .refresh-btn { flex: 0 0 auto; width: auto; }
-  .cat-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    margin-bottom: 20px;
+  .gs-tabs {
+    overflow-x: auto; flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-bottom: 20px;
   }
-  .cat-tabs::-webkit-scrollbar { display: none; }
-  .cat-tab { flex-shrink: 0; padding: 8px 16px; }
-  .metrics { grid-template-columns: repeat(2, 1fr); }
-  .metric { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .metric:nth-child(2n) { border-right: none; }
-  .metric:nth-child(n+3) { border-bottom: none; }
-  .metric-value { font-size: 20px; }
-  .two-col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .gs-tabs::-webkit-scrollbar { display: none; }
+  .gs-tab { flex-shrink: 0; padding: 8px 16px; }
+  .two-col { grid-template-columns: 1fr; gap: 12px; }
   .card { padding: 16px; }
   .card .deal-tags { flex-wrap: wrap; overflow: visible; }
   .deal {
-    grid-template-columns: 28px 1fr;
-    gap: 8px 10px;
-    align-items: start;
-    padding: 14px 0;
+    grid-template-columns: 28px 1fr; gap: 8px 10px;
+    align-items: start; padding: 14px 0;
   }
-  .deal-prices {
-    grid-column: 2;
-    text-align: left;
-    white-space: normal;
-  }
+  .deal-prices { grid-column: 2; text-align: left; white-space: normal; }
   .list-card { padding: 0 14px; }
-  .section-title { font-size: 10px; line-height: 1.4; }
-  .inv-card {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 10px;
-  }
-  .inv-card table { min-width: 520px; font-size: 11px; }
-  th, td { padding: 8px 10px; }
-  .group-min { display: block; margin-left: 0; margin-top: 2px; }
-  .legend { flex-wrap: wrap; gap: 8px; }
   .footer { font-size: 10px; line-height: 1.6; }
 }
 
 @media (max-width: 400px) {
   .page { padding: 20px 12px 32px; }
   .report-title { font-size: 20px; }
-  .metrics { grid-template-columns: 1fr; }
-  .metric { border-right: none !important; border-bottom: 1px solid var(--border); }
-  .metric:last-child { border-bottom: none; }
-  .metric-value { font-size: 18px; }
   .deal-loc { font-size: 13px; }
   .deal-per { font-size: 14px; }
 }
@@ -232,16 +173,14 @@ tr:last-child td { border-bottom: none; }
 @media print {
   body { background: white; }
   .page { padding: 0; max-width: 100%; }
-  .cat-tabs, .refresh-btn { display: none; }
-  .cat-section { display: block !important; }
-  .page-break-before { break-before: page; }
-  .metrics, .two-col, .card, .list-card, .inv-card, .deal, tr { break-inside: avoid; }
-  thead { display: table-header-group; }
-  .section-title { break-after: avoid; }
+  .gs-tabs, .refresh-btn { display: none; }
+  .cat-wrap { display: block !important; }
+  .two-col, .card, .list-card, .deal { break-inside: avoid; }
+  .cat-wrap-title { break-after: avoid; }
   @page { margin: 0.5in; size: 11in 8.5in landscape; }
 }
 </style>
-<script>window.__wc2026Config = {"performanceId":"10229226725351","queries":[{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[1000,1500,2200,3200,4500],"2":[600,1000,1500,2200,3200],"3":[400,650,1000,1500,2200],"4":[300,500,800,1200,1800]},"bucketLabels":{"1":["<$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k\u2013$3.2k","$3.2k\u2013$4.5k","$4.5k+"],"2":["<$600","$600\u2013$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k\u2013$3.2k","$3.2k+"],"3":["<$400","$400\u2013$650","$650\u2013$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k+"],"4":["<$300","$300\u2013$500","$500\u2013$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k+"]},"catMarketRange":{"1":[500,15000],"2":[300,10000],"3":[200,7000],"4":[150,5000]},"games":[{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226700899","matchup":"Saudi Arabia vs Uruguay","date":"Jun 15"},{"pid":"10229226700901","matchup":"IR Iran vs New Zealand","date":"Jun 15"},{"pid":"10229226700904","matchup":"France vs Senegal","date":"Jun 16"},{"pid":"10229226700907","matchup":"Argentina vs Algeria","date":"Jun 16"},{"pid":"10229226700908","matchup":"Austria vs Jordan","date":"Jun 16"},{"pid":"10229226700911","matchup":"Portugal vs Congo DR","date":"Jun 17"},{"pid":"10229226700912","matchup":"Uzbekistan vs Colombia","date":"Jun 17"},{"pid":"10229226700913","matchup":"Czechia vs South Africa","date":"Jun 18"},{"pid":"10229226700914","matchup":"Switzerland vs Bosnia and Herzegovina","date":"Jun 18"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 19"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 21"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 22"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 22"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 24"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 25"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 26"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jun 30"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 1"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 2"},{"pid":"10229226725341","matchup":"1J vs 2H","date":"Jul 3"},{"pid":"10229226725346","matchup":"Winner 73 vs Winner 75","date":"Jul 4"},{"pid":"10229226725345","matchup":"Winner 74 vs Winner 77","date":"Jul 4"},{"pid":"10229226725347","matchup":"Winner 76 vs Winner 78","date":"Jul 5"},{"pid":"10229226725348","matchup":"Winner 79 vs Winner 80","date":"Jul 5"},{"pid":"10229226725351","matchup":"Winner 86 vs Winner 88","date":"Jul 7"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"}]};</script>
+<script>window.__wc2026Config = {"performanceId":"10229226725351","queries":[{"cat":1,"gs":1,"category":"Category 1"},{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":3,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":1,"category":"Category 2"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":3,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":1,"category":"Category 3"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":3,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":1,"category":"Category 4"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":3,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[1000,1500,2200,3200,4500],"2":[600,1000,1500,2200,3200],"3":[400,650,1000,1500,2200],"4":[300,500,800,1200,1800]},"bucketLabels":{"1":["<$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k\u2013$3.2k","$3.2k\u2013$4.5k","$4.5k+"],"2":["<$600","$600\u2013$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k\u2013$3.2k","$3.2k+"],"3":["<$400","$400\u2013$650","$650\u2013$1k","$1k\u2013$1.5k","$1.5k\u2013$2.2k","$2.2k+"],"4":["<$300","$300\u2013$500","$500\u2013$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k+"]},"catMarketRange":{"1":[500,15000],"2":[300,10000],"3":[200,7000],"4":[150,5000]},"games":[{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226700899","matchup":"Saudi Arabia vs Uruguay","date":"Jun 15"},{"pid":"10229226700901","matchup":"IR Iran vs New Zealand","date":"Jun 15"},{"pid":"10229226700904","matchup":"France vs Senegal","date":"Jun 16"},{"pid":"10229226700907","matchup":"Argentina vs Algeria","date":"Jun 16"},{"pid":"10229226700908","matchup":"Austria vs Jordan","date":"Jun 16"},{"pid":"10229226700911","matchup":"Portugal vs Congo DR","date":"Jun 17"},{"pid":"10229226700912","matchup":"Uzbekistan vs Colombia","date":"Jun 17"},{"pid":"10229226700913","matchup":"Czechia vs South Africa","date":"Jun 18"},{"pid":"10229226700914","matchup":"Switzerland vs Bosnia and Herzegovina","date":"Jun 18"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 19"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 21"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 22"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 22"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 24"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 25"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 26"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jun 30"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 1"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 2"},{"pid":"10229226725341","matchup":"1J vs 2H","date":"Jul 3"},{"pid":"10229226725346","matchup":"Winner 73 vs Winner 75","date":"Jul 4"},{"pid":"10229226725345","matchup":"Winner 74 vs Winner 77","date":"Jul 4"},{"pid":"10229226725347","matchup":"Winner 76 vs Winner 78","date":"Jul 5"},{"pid":"10229226725348","matchup":"Winner 79 vs Winner 80","date":"Jul 5"},{"pid":"10229226725351","matchup":"Winner 86 vs Winner 88","date":"Jul 7"},{"pid":"10229226725353","matchup":"Winner 89 vs Winner 90","date":"Jul 9"},{"pid":"10229226725354","matchup":"Winner 93 vs Winner 94","date":"Jul 10"},{"pid":"10229226725355","matchup":"Winner 91 vs Winner 92","date":"Jul 11"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"},{"pid":"10229226725361","matchup":"Bronze 101 vs Bronze 102","date":"Jul 18"},{"pid":"10229226725360","matchup":"Winner 101 vs Winner 102","date":"Jul 19"}]};</script>
 </head>
 <body>
 <div class="page">
@@ -252,7 +191,7 @@ tr:last-child td { border-bottom: none; }
     <select id="game-nav" class="game-nav-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
   </div>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 2:17 AM ET</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 3:35 AM ET</strong></p>
     <div class="header-controls">
       <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
         <option value="">Latest</option>
@@ -264,206 +203,63 @@ tr:last-child td { border-bottom: none; }
   </div>
   <hr class="divider">
 
-  <div class="cat-tabs">
-    <div class="cat-tab active" onclick="switchCat('cat1',this)">Category 1</div>
-    <div class="cat-tab" onclick="switchCat('cat2',this)">Category 2</div>
-    <div class="cat-tab" onclick="switchCat('cat3',this)">Category 3</div>
-    <div class="cat-tab" id="cat4-tab" onclick="switchCat('cat4',this)" hidden>Category 4</div>
+  <div class="gs-tabs">
+    <button id="gs-tab-1" class="gs-tab" onclick="switchGs(1,this)">1 Ticket</button>
+    <button id="gs-tab-2" class="gs-tab" onclick="switchGs(2,this)">2 Tickets</button>
+    <button id="gs-tab-3" class="gs-tab" onclick="switchGs(3,this)">3 Tickets</button>
+    <button id="gs-tab-4" class="gs-tab" onclick="switchGs(4,this)">4 Tickets</button>
   </div>
 
-  <!-- ══ CAT 1 ══ -->
-  <div id="cat1" class="cat-section active">
-    <div class="metrics-grid">
-      <div class="metrics-row-label">Groups of 2</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">128</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,627</div><div class="metric-sub">Section 122 · Row 35</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$3,335</div><div class="metric-sub">Across 128 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$3,254</div><div class="metric-sub">Section 122, Row 35</div></div>
-      </div>
-      <div class="metrics-row-label">Groups of 4</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">74</div><div class="metric-sub">Groups of 4 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,627</div><div class="metric-sub">Section 122 · Row 35</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$3,680</div><div class="metric-sub">Across 74 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$6,509</div><div class="metric-sub">Section 122, Row 35</div></div>
-      </div>
+  <!-- Category sections (stacked, shown/hidden per tab by JS) -->
+  <div id="cat1-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 1</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat1-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Top 3 deals</div>
-        <div class="card-sub">Cheapest available — avg per ticket</div>
-        <div id="cat1-top3" class="top3-inner"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Price distribution</div>
-        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
-        </div>
-        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat1-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 1</div>
-    <div class="list-card" id="cat1-list2"></div>
-    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title">Top 10 listings (4 tickets) — Category 1</div>
-    <div class="list-card" id="cat1-list4"></div>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 1</div>
-    <div class="inv-card"><table>
-      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
-      <tbody id="cat1-inv"></tbody>
-    </table></div>
+    <div class="list-card" id="cat1-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
   </div>
 
-  <!-- ══ CAT 2 ══ -->
-  <div id="cat2" class="cat-section">
-    <div class="metrics-grid">
-      <div class="metrics-row-label">Groups of 2</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">93</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,121</div><div class="metric-sub">Section 336 · Row 26</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$2,300</div><div class="metric-sub">Across 93 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$2,242</div><div class="metric-sub">Section 336, Row 26</div></div>
-      </div>
-      <div class="metrics-row-label">Groups of 4</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">59</div><div class="metric-sub">Groups of 4 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,121</div><div class="metric-sub">Section 336 · Row 26</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$2,300</div><div class="metric-sub">Across 59 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$4,485</div><div class="metric-sub">Section 336, Row 26</div></div>
-      </div>
+  <div id="cat2-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 2</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat2-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Top 3 deals</div>
-        <div class="card-sub">Cheapest available — avg per ticket</div>
-        <div id="cat2-top3" class="top3-inner"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Price distribution</div>
-        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
-        </div>
-        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat2-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 2</div>
-    <div class="list-card" id="cat2-list2"></div>
-    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title">Top 10 listings (4 tickets) — Category 2</div>
-    <div class="list-card" id="cat2-list4"></div>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 2</div>
-    <div class="inv-card"><table>
-      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
-      <tbody id="cat2-inv"></tbody>
-    </table></div>
+    <div class="list-card" id="cat2-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
   </div>
 
-  <!-- ══ CAT 3 ══ -->
-  <div id="cat3" class="cat-section">
-    <div class="metrics-grid">
-      <div class="metrics-row-label">Groups of 2</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">76</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,149</div><div class="metric-sub">Section 306 · Row 26</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$2,294</div><div class="metric-sub">Across 76 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$2,298</div><div class="metric-sub">Section 306, Row 26</div></div>
-      </div>
-      <div class="metrics-row-label">Groups of 4</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">40</div><div class="metric-sub">Groups of 4 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,265</div><div class="metric-sub">Section 327 · Row 10</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$2,142</div><div class="metric-sub">Across 40 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$5,060</div><div class="metric-sub">Section 327, Row 10</div></div>
-      </div>
+  <div id="cat3-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 3</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat3-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Top 3 deals</div>
-        <div class="card-sub">Cheapest available — avg per ticket</div>
-        <div id="cat3-top3" class="top3-inner"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Price distribution</div>
-        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
-        </div>
-        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat3-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 3</div>
-    <div class="list-card" id="cat3-list2"></div>
-    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title">Top 10 listings (4 tickets) — Category 3</div>
-    <div class="list-card" id="cat3-list4"></div>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 3</div>
-    <div class="inv-card"><table>
-      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
-      <tbody id="cat3-inv"></tbody>
-    </table></div>
+    <div class="list-card" id="cat3-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
   </div>
 
-  <!-- ══ CAT 4 ══ -->
-  <div id="cat4" class="cat-section">
-    <div class="metrics-grid">
-      <div class="metrics-row-label">Groups of 2</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">7</div><div class="metric-sub">Groups of 2 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,380</div><div class="metric-sub">Section 314 · Row 31</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$2,300</div><div class="metric-sub">Across 7 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$2,760</div><div class="metric-sub">Section 314, Row 31</div></div>
-      </div>
-      <div class="metrics-row-label">Groups of 4</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">2</div><div class="metric-sub">Groups of 4 tickets</div></div>
-        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$1,552</div><div class="metric-sub">Section 311 · Row 34</div></div>
-        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$1,926</div><div class="metric-sub">Across 2 groups</div></div>
-        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$6,210</div><div class="metric-sub">Section 311, Row 34</div></div>
-      </div>
+  <div id="cat4-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 4</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat4-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Top 3 deals</div>
-        <div class="card-sub">Cheapest available — avg per ticket</div>
-        <div id="cat4-top3" class="top3-inner"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Price distribution</div>
-        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
-        </div>
-        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat4-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 4</div>
-    <div class="list-card" id="cat4-list2"></div>
-    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title">Top 10 listings (4 tickets) — Category 4</div>
-    <div class="list-card" id="cat4-list4"></div>
-    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
-    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 4</div>
-    <div class="inv-card"><table>
-      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
-      <tbody id="cat4-inv"></tbody>
-    </table></div>
+    <div class="list-card" id="cat4-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
   </div>
 
-  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured Jun 14, 2026. Prices reflect resale market and may change. Avg per ticket = total cost ÷ group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
+  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured Jun 14, 2026. Prices reflect resale market and may change. Avg per ticket = total cost &divide; group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -485,7 +281,7 @@ function goGame(pid) {
   cfg.games.forEach(function(g) {
     const opt = document.createElement('option');
     opt.value = g.pid;
-    opt.textContent = g.matchup + ' · ' + g.date;
+    opt.textContent = g.matchup + ' \xb7 ' + g.date;
     if (g.pid === cfg.performanceId) opt.selected = true;
     nav.appendChild(opt);
   });
@@ -501,25 +297,17 @@ function goSnapshot(date) {
   }
 }
 
-function switchCat(id, el) {
-  document.querySelectorAll('.cat-section:not([hidden])').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.cat-tab:not([hidden])').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  el.classList.add('active');
-}
-
 const sideClass = { Right:'badge-right', Left:'badge-left', Opposite:'badge-opposite', Center:'badge-center' };
 
-function dealHTML(g, i, showGs) {
+function dealHTML(g, i) {
   const mixed = g.mixed ? '<span style="color:var(--hint);font-size:10px"> *</span>' : '';
-  const gsBadge = showGs ? `<span class="badge badge-gs">${g.gs} tickets</span> &middot; ` : '';
-  const frontBadge = (!showGs && g.front) ? ` &middot; <span class="badge badge-front">front section</span>` : '';
-  const derivedBadge = (!showGs && g.derived) ? ` &middot; <span class="badge badge-derived">from 4-pack</span>` : '';
+  const frontBadge = g.front ? ` &middot; <span class="badge badge-front">front section</span>` : '';
+  const derivedBadge = g.derived ? ` &middot; <span class="badge badge-derived">from 4-pack</span>` : '';
   return `<div class="deal">
     <div class="deal-rank${i===0?' gold':''}">${i+1}</div>
     <div>
       <div class="deal-loc">Section ${g.sec} &middot; Row ${g.row}</div>
-      <div class="deal-tags">${gsBadge}${g.stand} Stand &middot; <span class="badge ${sideClass[g.side]}">${g.side}</span> &middot; Seats ${g.seats}${frontBadge}${derivedBadge}</div>
+      <div class="deal-tags">${g.stand} Stand &middot; <span class="badge ${sideClass[g.side]||''}">${g.side}</span> &middot; Seats ${g.seats}${frontBadge}${derivedBadge}</div>
     </div>
     <div class="deal-prices">
       <div class="deal-per">$${g.avg.toLocaleString()}${mixed} <span>/ea avg</span></div>
@@ -528,279 +316,95 @@ function dealHTML(g, i, showGs) {
   </div>`;
 }
 
-function renderDeals(top3, list2, list4, t3id, l2id, l4id) {
-  document.getElementById(t3id).innerHTML = top3.slice(0,3).map((g,i)=>dealHTML(g,i,true)).join('');
-  document.getElementById(l2id).innerHTML = list2.slice(0,10).map((g,i)=>dealHTML(g,i,false)).join('');
-  document.getElementById(l4id).innerHTML = list4.slice(0,10).map((g,i)=>dealHTML(g,i,false)).join('');
-}
-
-function renderInv(blocks, id) {
-  const tbody = document.getElementById(id);
-  tbody.innerHTML = '';
-  [...blocks].sort((a,b)=>(b.g2c+b.g4c)-(a.g2c+a.g4c)).forEach(b => {
-    const tr = document.createElement('tr');
-    const sc = b.side ? `<span class="badge ${sideClass[b.side]}">${b.side}</span>` : '<span class="nil">—</span>';
-    const g2 = b.g2c ? `<span class="group-count">${b.g2c}</span><span class="group-min">min $${b.g2m.toLocaleString()}/ea</span>` : '<span class="nil">—</span>';
-    const g4 = b.g4c ? `<span class="group-count">${b.g4c}</span><span class="group-min">min $${b.g4m.toLocaleString()}/ea</span>` : '<span class="nil">—</span>';
-    tr.innerHTML = `<td><span class="block-pill">${b.sec}</span></td><td style="color:var(--muted)">${b.stand}</td><td>${sc}</td><td>${g2}</td><td>${g4}</td>`;
-    tbody.appendChild(tr);
-  });
+function renderList(deals, id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = (deals || []).slice(0,10).map(function(g,i){return dealHTML(g,i);}).join('') ||
+    '<p style="padding:16px;color:var(--hint);font-size:12px">No listings in market range.</p>';
 }
 
 const chartInstances = {};
-function makeChart(id, c2, c4, labels, ymax, ystep) {
-  if (chartInstances[id]) {
-    chartInstances[id].destroy();
-    delete chartInstances[id];
-  }
-  chartInstances[id] = new Chart(document.getElementById(id), {
-    type:'bar',
-    data:{ labels, datasets:[
-      {label:'Groups of 2', data:c2, backgroundColor:'#B5D4F4', borderWidth:0, borderRadius:3},
-      {label:'Groups of 4', data:c4, backgroundColor:'#378ADD', borderWidth:0, borderRadius:3}
-    ]},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' '+ctx.dataset.label.toLowerCase()}}},
-      layout:{padding:{top:20}},
-      scales:{
-        x:{grid:{display:false}, ticks:{color:'#A5A49F',font:{size:10,family:'Inter'}}},
-        y:{grid:{color:'#F0EEE8'}, ticks:{color:'#A5A49F',font:{size:10,family:'Inter'},stepSize:ystep}, max:ymax}
+function makeChart(id, c, labels, ymax, ystep) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  chartInstances[id] = new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets: [{ label:'Listings', data:c, backgroundColor:'#378ADD', borderWidth:0, borderRadius:3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display:false }, tooltip: { callbacks: { label: function(ctx){ return ' '+ctx.raw+' listings'; } } } },
+      layout: { padding: { top:20 } },
+      scales: {
+        x: { grid: { display:false }, ticks: { color:'#A5A49F', font: { size:10, family:'Inter' } } },
+        y: { grid: { color:'#F0EEE8' }, ticks: { color:'#A5A49F', font: { size:10, family:'Inter' }, stepSize:ystep }, max:ymax }
       }
     },
-    plugins:[{afterDatasetsDraw(chart){
-      const ctx=chart.ctx;
-      chart.data.datasets.forEach((ds,di)=>{
-        ds.data.forEach((val,i)=>{
-          if(!val)return;
-          const bar=chart.getDatasetMeta(di).data[i];
-          ctx.fillStyle='#555'; ctx.font='500 10px Inter,sans-serif';
-          ctx.textAlign='center'; ctx.fillText(val,bar.x,bar.y-5);
+    plugins: [{ afterDatasetsDraw: function(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach(function(ds, di) {
+        ds.data.forEach(function(val, i) {
+          if (!val) return;
+          const bar = chart.getDatasetMeta(di).data[i];
+          ctx.fillStyle = '#555'; ctx.font = '500 10px Inter,sans-serif';
+          ctx.textAlign = 'center'; ctx.fillText(val, bar.x, bar.y - 5);
         });
       });
     }}]
   });
 }
 
-// ── CAT 1 ─────────────────────────────────────────────────────────────────
-const cat1g2 = [
-  {sec:'122',row:35,seats:'34–35',stand:'Main',side:'Right',total:3254,avg:1627,gs:2,front:false,mixed:false,derived:true},
-  {sec:'122',row:35,seats:'35–36',stand:'Main',side:'Right',total:3254,avg:1627,gs:2,front:false,mixed:false,derived:true},
-  {sec:'122',row:35,seats:'36–37',stand:'Main',side:'Right',total:3254,avg:1627,gs:2,front:false,mixed:false,derived:true},
-  {sec:'116',row:14,seats:'11–12',stand:'Main',side:'Right',total:3335,avg:1668,gs:2,front:true,mixed:false,derived:false},
-  {sec:'116',row:31,seats:'2–3',stand:'Main',side:'Right',total:3668,avg:1834,gs:2,front:false,mixed:false,derived:false},
-  {sec:'124',row:35,seats:'23–24',stand:'Main',side:'Center',total:3749,avg:1874,gs:2,front:false,mixed:false,derived:false},
-  {sec:'104',row:43,seats:'1–2',stand:'Main',side:'Left',total:3795,avg:1898,gs:2,front:false,mixed:false,derived:false},
-  {sec:'135',row:28,seats:'1–2',stand:'Main',side:'Left',total:3910,avg:1955,gs:2,front:false,mixed:false,derived:false},
-  {sec:'117',row:29,seats:'17–18',stand:'Main',side:'Right',total:3958,avg:1979,gs:2,front:false,mixed:false,derived:false},
-  {sec:'113',row:27,seats:'7–8',stand:'Opposite',side:'Opposite',total:4062,avg:2031,gs:2,front:false,mixed:false,derived:false},
-];
-const cat1g4 = [
-  {sec:'122',row:35,seats:'34–37',stand:'Main',side:'Right',total:6509,avg:1627,gs:4,front:false,mixed:false,derived:false},
-  {sec:'133',row:36,seats:'16–19',stand:'Main',side:'Center',total:7360,avg:1840,gs:4,front:false,mixed:false,derived:false},
-  {sec:'135',row:16,seats:'7–10',stand:'Main',side:'Left',total:8027,avg:2007,gs:4,front:true,mixed:false,derived:false},
-  {sec:'134',row:29,seats:'1–4',stand:'Main',side:'Left',total:8280,avg:2070,gs:4,front:false,mixed:false,derived:false},
-  {sec:'136',row:16,seats:'5–8',stand:'Main',side:'Left',total:8280,avg:2070,gs:4,front:true,mixed:false,derived:false},
-  {sec:'136',row:33,seats:'20–23',stand:'Main',side:'Left',total:8653,avg:2163,gs:4,front:false,mixed:false,derived:false},
-  {sec:'120',row:34,seats:'1–4',stand:'Main',side:'Right',total:8832,avg:2208,gs:4,front:false,mixed:false,derived:false},
-  {sec:'133',row:35,seats:'5–8',stand:'Main',side:'Center',total:8970,avg:2242,gs:4,front:false,mixed:false,derived:false},
-  {sec:'117',row:20,seats:'4–7',stand:'Main',side:'Right',total:9200,avg:2300,gs:4,front:false,mixed:false,derived:false},
-  {sec:'121',row:38,seats:'20–23',stand:'Main',side:'Right',total:9200,avg:2300,gs:4,front:false,mixed:false,derived:false},
-];
-const cat1top3 = [{sec:'122',row:35,seats:'34–35',stand:'Main',side:'Right',total:3254,avg:1627,gs:2,front:false,mixed:false,derived:true}, {sec:'122',row:35,seats:'34–37',stand:'Main',side:'Right',total:6509,avg:1627,gs:4,front:false,mixed:false,derived:false}, {sec:'116',row:14,seats:'11–12',stand:'Main',side:'Right',total:3335,avg:1668,gs:2,front:true,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
-const cat1inv = [
-  {sec:'104',stand:'Main',side:'Left',g2c:12,g2m:1898,g4c:7,g4m:2602},
-  {sec:'121',stand:'Main',side:'Right',g2c:10,g2m:2070,g4c:7,g4m:2300},
-  {sec:'116',stand:'Main',side:'Right',g2c:10,g2m:1668,g4c:6,g4m:2600},
-  {sec:'117',stand:'Main',side:'Right',g2c:9,g2m:1979,g4c:7,g4m:2300},
-  {sec:'122',stand:'Main',side:'Right',g2c:10,g2m:1627,g4c:4,g4m:1627},
-  {sec:'120',stand:'Main',side:'Right',g2c:9,g2m:2156,g4c:5,g4m:2208},
-  {sec:'135',stand:'Main',side:'Left',g2c:6,g2m:1955,g4c:5,g4m:2007},
-  {sec:'123',stand:'Main',side:'Center',g2c:5,g2m:2300,g4c:3,g4m:2300},
-  {sec:'115',stand:'Opposite',side:'Opposite',g2c:7,g2m:2300,g4c:1,g4m:2474},
-  {sec:'134',stand:'Main',side:'Left',g2c:2,g2m:5980,g4c:6,g4m:2070},
-  {sec:'133',stand:'Main',side:'Center',g2c:3,g2m:2185,g4c:4,g4m:1840},
-  {sec:'136',stand:'Main',side:'Left',g2c:4,g2m:3450,g4c:3,g4m:2070},
-  {sec:'234',stand:'Main',side:'Center',g2c:5,g2m:2300,g4c:1,g4m:2875},
-  {sec:'103',stand:'Main',side:'Left',g2c:1,g2m:2530,g4c:4,g4m:3680},
-  {sec:'109C',stand:'Opposite',side:'Opposite',g2c:4,g2m:2990,g4c:1,g4m:3450},
-  {sec:'240',stand:'Main',side:'Center',g2c:2,g2m:11500,g4c:3,g4m:2760},
-  {sec:'235',stand:'Main',side:'Center',g2c:2,g2m:2185,g4c:2,g4m:2875},
-  {sec:'111C',stand:'Opposite',side:'Opposite',g2c:3,g2m:2645,g4c:1,g4m:6900},
-  {sec:'110C',stand:'Opposite',side:'Opposite',g2c:3,g2m:3565,g4c:0,g4m:null},
-  {sec:'238C',stand:'Main',side:'Center',g2c:2,g2m:3958,g4c:1,g4m:3019},
-  {sec:'209',stand:'Opposite',side:'Opposite',g2c:2,g2m:2082,g4c:0,g4m:null},
-  {sec:'132',stand:'Main',side:'Center',g2c:1,g2m:2185,g4c:1,g4m:2559},
-  {sec:'212C',stand:'Opposite',side:'Opposite',g2c:2,g2m:2294,g4c:0,g4m:null},
-  {sec:'210C',stand:'Opposite',side:'Opposite',g2c:2,g2m:2300,g4c:0,g4m:null},
-  {sec:'131',stand:'Main',side:'Center',g2c:2,g2m:2702,g4c:0,g4m:null},
-  {sec:'214',stand:'Opposite',side:'Opposite',g2c:1,g2m:4025,g4c:1,g4m:3954},
-  {sec:'236C',stand:'Main',side:'Center',g2c:2,g2m:4945,g4c:0,g4m:null},
-  {sec:'239',stand:'Main',side:'Center',g2c:1,g2m:5175,g4c:1,g4m:5750},
-  {sec:'124',stand:'Main',side:'Center',g2c:1,g2m:1874,g4c:0,g4m:null},
-  {sec:'113',stand:'Opposite',side:'Opposite',g2c:1,g2m:2031,g4c:0,g4m:null},
-  {sec:'101',stand:'Main',side:'Left',g2c:1,g2m:2288,g4c:0,g4m:null},
-  {sec:'112C',stand:'Opposite',side:'Opposite',g2c:1,g2m:3561,g4c:0,g4m:null},
-  {sec:'106',stand:'Opposite',side:'Opposite',g2c:1,g2m:4025,g4c:0,g4m:null},
-  {sec:'105',stand:'Opposite',side:'Opposite',g2c:1,g2m:8625,g4c:0,g4m:null},
-];
-renderDeals(cat1top3, cat1g2, cat1g4, 'cat1-top3','cat1-list2','cat1-list4');
-renderInv(cat1inv,'cat1-inv');
-makeChart('cat1-chart',[2, 4, 5, 6, 5, 63],[0, 0, 1, 4, 3, 18],
-  ["<$4.5k", "$4.5\u20135k", "$5\u20135.5k", "$5.5\u20136k", "$6\u20136.5k", "$6.5k+"],75,15);
+var activeGs = 2;
 
-// ── CAT 2 ─────────────────────────────────────────────────────────────────
-const cat2g2 = [
-  {sec:'336',row:26,seats:'13–14',stand:'Main',side:'Center',total:2242,avg:1121,gs:2,front:false,mixed:false,derived:true},
-  {sec:'336',row:26,seats:'14–15',stand:'Main',side:'Center',total:2242,avg:1121,gs:2,front:false,mixed:false,derived:true},
-  {sec:'336',row:26,seats:'15–16',stand:'Main',side:'Center',total:2242,avg:1121,gs:2,front:false,mixed:false,derived:true},
-  {sec:'343',row:24,seats:'5–6',stand:'Main',side:'Center',total:2300,avg:1150,gs:2,front:false,mixed:false,derived:false},
-  {sec:'341',row:18,seats:'17–18',stand:'Main',side:'Center',total:2760,avg:1380,gs:2,front:true,mixed:false,derived:false},
-  {sec:'338',row:8,seats:'17–18',stand:'Main',side:'Center',total:2946,avg:1473,gs:2,front:true,mixed:true,derived:false},
-  {sec:'308',row:20,seats:'10–11',stand:'Opposite',side:'Opposite',total:2999,avg:1500,gs:2,front:false,mixed:false,derived:false},
-  {sec:'313',row:7,seats:'11–12',stand:'Opposite',side:'Opposite',total:3220,avg:1610,gs:2,front:true,mixed:false,derived:false},
-  {sec:'314',row:23,seats:'23–24',stand:'Opposite',side:'Opposite',total:3220,avg:1610,gs:2,front:false,mixed:false,derived:false},
-  {sec:'342',row:18,seats:'23–24',stand:'Main',side:'Center',total:3220,avg:1610,gs:2,front:true,mixed:false,derived:false},
-];
-const cat2g4 = [
-  {sec:'336',row:26,seats:'13–16',stand:'Main',side:'Center',total:4485,avg:1121,gs:4,front:false,mixed:false,derived:false},
-  {sec:'309',row:23,seats:'9–12',stand:'Opposite',side:'Opposite',total:5801,avg:1450,gs:4,front:false,mixed:false,derived:false},
-  {sec:'309',row:18,seats:'13–16',stand:'Opposite',side:'Opposite',total:5842,avg:1460,gs:4,front:true,mixed:true,derived:false},
-  {sec:'308',row:24,seats:'1–4',stand:'Opposite',side:'Opposite',total:5980,avg:1495,gs:4,front:false,mixed:false,derived:false},
-  {sec:'337',row:25,seats:'17–20',stand:'Main',side:'Center',total:5980,avg:1495,gs:4,front:false,mixed:false,derived:false},
-  {sec:'310',row:26,seats:'1–4',stand:'Opposite',side:'Opposite',total:6440,avg:1610,gs:4,front:false,mixed:false,derived:false},
-  {sec:'315',row:11,seats:'9–12',stand:'Opposite',side:'Opposite',total:6440,avg:1610,gs:4,front:true,mixed:false,derived:false},
-  {sec:'341',row:26,seats:'6–9',stand:'Main',side:'Center',total:6461,avg:1615,gs:4,front:false,mixed:true,derived:false},
-  {sec:'341',row:9,seats:'21–24',stand:'Main',side:'Center',total:6597,avg:1649,gs:4,front:true,mixed:false,derived:false},
-  {sec:'341',row:12,seats:'17–20',stand:'Main',side:'Center',total:6831,avg:1708,gs:4,front:true,mixed:false,derived:false},
-];
-const cat2top3 = [{sec:'336',row:26,seats:'13–14',stand:'Main',side:'Center',total:2242,avg:1121,gs:2,front:false,mixed:false,derived:true}, {sec:'336',row:26,seats:'13–16',stand:'Main',side:'Center',total:4485,avg:1121,gs:4,front:false,mixed:false,derived:false}, {sec:'343',row:24,seats:'5–6',stand:'Main',side:'Center',total:2300,avg:1150,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
-const cat2inv = [
-  {sec:'337',stand:'Main',side:'Center',g2c:9,g2m:1981,g4c:8,g4m:1495},
-  {sec:'314',stand:'Opposite',side:'Opposite',g2c:12,g2m:1610,g4c:3,g4m:2904},
-  {sec:'341',stand:'Main',side:'Center',g2c:6,g2m:1380,g4c:5,g4m:1615},
-  {sec:'313',stand:'Opposite',side:'Opposite',g2c:6,g2m:1610,g4c:5,g4m:3002},
-  {sec:'310',stand:'Opposite',side:'Opposite',g2c:7,g2m:1719,g4c:4,g4m:1610},
-  {sec:'309',stand:'Opposite',side:'Opposite',g2c:4,g2m:1725,g4c:7,g4m:1450},
-  {sec:'336',stand:'Main',side:'Center',g2c:6,g2m:1121,g4c:4,g4m:1121},
-  {sec:'342',stand:'Main',side:'Center',g2c:6,g2m:1610,g4c:4,g4m:2168},
-  {sec:'311',stand:'Opposite',side:'Opposite',g2c:8,g2m:1649,g4c:2,g4m:2070},
-  {sec:'308',stand:'Opposite',side:'Opposite',g2c:2,g2m:1500,g4c:4,g4m:1495},
-  {sec:'312',stand:'Opposite',side:'Opposite',g2c:4,g2m:1725,g4c:2,g4m:2185},
-  {sec:'338',stand:'Main',side:'Center',g2c:4,g2m:1473,g4c:1,g4m:2242},
-  {sec:'315',stand:'Opposite',side:'Opposite',g2c:2,g2m:2875,g4c:3,g4m:1610},
-  {sec:'343',stand:'Main',side:'Center',g2c:2,g2m:1150,g4c:2,g4m:2904},
-  {sec:'201',stand:'Main',side:'Left',g2c:3,g2m:1840,g4c:1,g4m:4600},
-  {sec:'247',stand:'Main',side:'Left',g2c:2,g2m:2299,g4c:1,g4m:2184},
-  {sec:'221',stand:'Main',side:'Right',g2c:2,g2m:1840,g4c:0,g4m:null},
-  {sec:'220',stand:'Main',side:'Right',g2c:2,g2m:3450,g4c:0,g4m:null},
-  {sec:'103',stand:'Main',side:'Left',g2c:2,g2m:4025,g4c:0,g4m:null},
-  {sec:'246',stand:'Main',side:'Left',g2c:1,g2m:1955,g4c:0,g4m:null},
-  {sec:'218',stand:'Main',side:'Right',g2c:1,g2m:2242,g4c:0,g4m:null},
-  {sec:'245',stand:'Main',side:'Left',g2c:1,g2m:2300,g4c:0,g4m:null},
-  {sec:'227',stand:'Main',side:'Right',g2c:1,g2m:4255,g4c:0,g4m:null},
-  {sec:'243',stand:'Main',side:'Center',g2c:0,g2m:null,g4c:1,g4m:2012},
-  {sec:'216',stand:'Opposite',side:'Opposite',g2c:0,g2m:null,g4c:1,g4m:3140},
-  {sec:'217',stand:'Opposite',side:'Opposite',g2c:0,g2m:null,g4c:1,g4m:3392},
-];
-renderDeals(cat2top3, cat2g2, cat2g4, 'cat2-top3','cat2-list2','cat2-list4');
-renderInv(cat2inv,'cat2-inv');
-makeChart('cat2-chart',[3, 10, 14, 17, 18, 41],[1, 0, 6, 2, 7, 37],
-  ["<$3k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20134.5k", "$4.5\u20135k", "$5k+"],50,10);
+function switchGs(gs, tabEl) {
+  activeGs = gs;
+  document.querySelectorAll('.gs-tab').forEach(function(t){ t.classList.remove('active'); });
+  if (tabEl) tabEl.classList.add('active');
 
-// ── CAT 3 ─────────────────────────────────────────────────────────────────
-const cat3g2 = [
-  {sec:'306',row:26,seats:'15–16',stand:'Main',side:'Left',total:2298,avg:1149,gs:2,front:false,mixed:false,derived:false},
-  {sec:'317',row:2,seats:'9–10',stand:'Main',side:'Right',total:2530,avg:1265,gs:2,front:true,mixed:false,derived:false},
-  {sec:'302',row:1,seats:'28–29',stand:'Main',side:'Left',total:2530,avg:1265,gs:2,front:true,mixed:false,derived:false},
-  {sec:'302',row:16,seats:'5–6',stand:'Main',side:'Left',total:2721,avg:1361,gs:2,front:true,mixed:false,derived:false},
-  {sec:'341',row:32,seats:'1–2',stand:'Main',side:'Center',total:2760,avg:1380,gs:2,front:false,mixed:false,derived:false},
-  {sec:'317',row:9,seats:'23–24',stand:'Main',side:'Right',total:2760,avg:1380,gs:2,front:true,mixed:false,derived:false},
-  {sec:'330',row:16,seats:'1–2',stand:'Main',side:'Right',total:2760,avg:1380,gs:2,front:true,mixed:false,derived:false},
-  {sec:'329',row:17,seats:'24–25',stand:'Main',side:'Right',total:2760,avg:1380,gs:2,front:true,mixed:false,derived:false},
-  {sec:'335',row:22,seats:'3–4',stand:'Main',side:'Center',total:2875,avg:1438,gs:2,front:false,mixed:false,derived:false},
-  {sec:'323',row:9,seats:'1–2',stand:'Main',side:'Right',total:2875,avg:1438,gs:2,front:true,mixed:false,derived:false},
-];
-const cat3g4 = [
-  {sec:'327',row:10,seats:'9–12',stand:'Main',side:'Right',total:5060,avg:1265,gs:4,front:true,mixed:false,derived:false},
-  {sec:'303',row:2,seats:'5–8',stand:'Main',side:'Left',total:5221,avg:1305,gs:4,front:true,mixed:false,derived:false},
-  {sec:'348',row:14,seats:'18–21',stand:'Main',side:'Left',total:5520,avg:1380,gs:4,front:true,mixed:false,derived:false},
-  {sec:'330',row:19,seats:'1–4',stand:'Main',side:'Right',total:5520,avg:1380,gs:4,front:true,mixed:false,derived:false},
-  {sec:'327',row:4,seats:'1–4',stand:'Main',side:'Right',total:5727,avg:1432,gs:4,front:true,mixed:false,derived:false},
-  {sec:'302',row:20,seats:'10–13',stand:'Main',side:'Left',total:5957,avg:1489,gs:4,front:false,mixed:false,derived:false},
-  {sec:'320',row:16,seats:'3–6',stand:'Main',side:'Right',total:6765,avg:1691,gs:4,front:true,mixed:false,derived:false},
-  {sec:'329',row:15,seats:'9–12',stand:'Main',side:'Right',total:6895,avg:1724,gs:4,front:true,mixed:false,derived:false},
-  {sec:'303',row:12,seats:'9–12',stand:'Main',side:'Left',total:6900,avg:1725,gs:4,front:true,mixed:false,derived:false},
-  {sec:'334',row:26,seats:'21–24',stand:'Main',side:'Right',total:6900,avg:1725,gs:4,front:false,mixed:false,derived:false},
-];
-const cat3top3 = [{sec:'306',row:26,seats:'15–16',stand:'Main',side:'Left',total:2298,avg:1149,gs:2,front:false,mixed:false,derived:false}, {sec:'317',row:2,seats:'9–10',stand:'Main',side:'Right',total:2530,avg:1265,gs:2,front:true,mixed:false,derived:false}, {sec:'302',row:1,seats:'28–29',stand:'Main',side:'Left',total:2530,avg:1265,gs:2,front:true,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
-const cat3inv = [
-  {sec:'317',stand:'Main',side:'Right',g2c:9,g2m:1265,g4c:0,g4m:null},
-  {sec:'306',stand:'Main',side:'Left',g2c:4,g2m:1149,g4c:3,g4m:1898},
-  {sec:'302',stand:'Main',side:'Left',g2c:5,g2m:1265,g4c:2,g4m:1489},
-  {sec:'320',stand:'Main',side:'Right',g2c:2,g2m:2300,g4c:4,g4m:1691},
-  {sec:'341',stand:'Main',side:'Center',g2c:5,g2m:1380,g4c:0,g4m:null},
-  {sec:'330',stand:'Main',side:'Right',g2c:4,g2m:1380,g4c:1,g4m:1380},
-  {sec:'329',stand:'Main',side:'Right',g2c:4,g2m:1380,g4c:1,g4m:1724},
-  {sec:'319',stand:'Main',side:'Right',g2c:2,g2m:1443,g4c:3,g4m:1955},
-  {sec:'334',stand:'Main',side:'Right',g2c:2,g2m:1725,g4c:3,g4m:1725},
-  {sec:'328',stand:'Main',side:'Right',g2c:4,g2m:1725,g4c:1,g4m:2644},
-  {sec:'327',stand:'Main',side:'Right',g2c:2,g2m:3450,g4c:3,g4m:1265},
-  {sec:'307',stand:'Opposite',side:'Opposite',g2c:2,g2m:2288,g4c:2,g4m:2708},
-  {sec:'335',stand:'Main',side:'Center',g2c:2,g2m:1438,g4c:1,g4m:3105},
-  {sec:'323',stand:'Main',side:'Right',g2c:3,g2m:1438,g4c:0,g4m:null},
-  {sec:'350',stand:'Main',side:'Left',g2c:2,g2m:1610,g4c:1,g4m:1840},
-  {sec:'322',stand:'Main',side:'Right',g2c:1,g2m:2329,g4c:2,g4m:2530},
-  {sec:'339',stand:'Main',side:'Center',g2c:2,g2m:3335,g4c:1,g4m:2588},
-  {sec:'340',stand:'Main',side:'Center',g2c:2,g2m:3450,g4c:1,g4m:3705},
-  {sec:'303',stand:'Main',side:'Left',g2c:0,g2m:null,g4c:3,g4m:1305},
-  {sec:'301',stand:'Main',side:'Left',g2c:2,g2m:1604,g4c:0,g4m:null},
-  {sec:'349',stand:'Main',side:'Left',g2c:2,g2m:1725,g4c:0,g4m:null},
-  {sec:'333',stand:'Main',side:'Right',g2c:2,g2m:1840,g4c:0,g4m:null},
-  {sec:'324',stand:'Main',side:'Right',g2c:1,g2m:1955,g4c:1,g4m:5635},
-  {sec:'332',stand:'Main',side:'Right',g2c:2,g2m:2300,g4c:0,g4m:null},
-  {sec:'318',stand:'Main',side:'Right',g2c:1,g2m:2645,g4c:1,g4m:1834},
-  {sec:'331',stand:'Main',side:'Right',g2c:1,g2m:3105,g4c:1,g4m:3450},
-  {sec:'348',stand:'Main',side:'Left',g2c:1,g2m:3450,g4c:1,g4m:1380},
-  {sec:'325',stand:'Main',side:'Right',g2c:1,g2m:4600,g4c:1,g4m:1978},
-  {sec:'321',stand:'Main',side:'Right',g2c:2,g2m:5175,g4c:0,g4m:null},
-  {sec:'326',stand:'Main',side:'Right',g2c:1,g2m:1781,g4c:0,g4m:null},
-  {sec:'344',stand:'Main',side:'Center',g2c:1,g2m:2070,g4c:0,g4m:null},
-  {sec:'345',stand:'Main',side:'Left',g2c:1,g2m:3450,g4c:0,g4m:null},
-  {sec:'304',stand:'Main',side:'Left',g2c:1,g2m:4600,g4c:0,g4m:null},
-  {sec:'316',stand:'Opposite',side:'Opposite',g2c:0,g2m:null,g4c:1,g4m:1949},
-  {sec:'342',stand:'Main',side:'Center',g2c:0,g2m:null,g4c:1,g4m:2588},
-  {sec:'305',stand:'Main',side:'Left',g2c:0,g2m:null,g4c:1,g4m:3392},
-];
-renderDeals(cat3top3, cat3g2, cat3g4, 'cat3-top3','cat3-list2','cat3-list4');
-renderInv(cat3inv,'cat3-inv');
-makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
-  ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
-const cat4g2 = [
-  {sec:'314',row:31,seats:'3–4',stand:'Opposite',side:'Opposite',total:2760,avg:1380,gs:2,front:false,mixed:false,derived:false},
-  {sec:'311',row:29,seats:'12–13',stand:'Opposite',side:'Opposite',total:3105,avg:1552,gs:2,front:false,mixed:false,derived:false},
-  {sec:'314',row:31,seats:'13–14',stand:'Opposite',side:'Opposite',total:3220,avg:1610,gs:2,front:false,mixed:false,derived:false},
-  {sec:'311',row:31,seats:'22–23',stand:'Opposite',side:'Opposite',total:4600,avg:2300,gs:2,front:false,mixed:false,derived:false},
-  {sec:'313',row:30,seats:'8–9',stand:'Opposite',side:'Opposite',total:5089,avg:2544,gs:2,front:false,mixed:true,derived:false},
-  {sec:'312',row:30,seats:'1–2',stand:'Opposite',side:'Opposite',total:5175,avg:2588,gs:2,front:false,mixed:false,derived:false},
-  {sec:'314',row:30,seats:'9–10',stand:'Opposite',side:'Opposite',total:5750,avg:2875,gs:2,front:false,mixed:false,derived:false},
-];
-const cat4g4 = [
-  {sec:'311',row:34,seats:'22–25',stand:'Opposite',side:'Opposite',total:6210,avg:1552,gs:4,front:false,mixed:false,derived:false},
-  {sec:'310',row:29,seats:'6–9',stand:'Opposite',side:'Opposite',total:9200,avg:2300,gs:4,front:false,mixed:false,derived:false},
-];
-const cat4top3 = [{sec:'314',row:31,seats:'3–4',stand:'Opposite',side:'Opposite',total:2760,avg:1380,gs:2,front:false,mixed:false,derived:false}, {sec:'311',row:29,seats:'12–13',stand:'Opposite',side:'Opposite',total:3105,avg:1552,gs:2,front:false,mixed:false,derived:false}, {sec:'311',row:34,seats:'22–25',stand:'Opposite',side:'Opposite',total:6210,avg:1552,gs:4,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
-const cat4inv = [
-  {sec:'314',stand:'Opposite',side:'Opposite',g2c:3,g2m:1380,g4c:0,g4m:null},
-  {sec:'311',stand:'Opposite',side:'Opposite',g2c:2,g2m:1552,g4c:1,g4m:1552},
-  {sec:'313',stand:'Opposite',side:'Opposite',g2c:1,g2m:2544,g4c:0,g4m:null},
-  {sec:'312',stand:'Opposite',side:'Opposite',g2c:1,g2m:2588,g4c:0,g4m:null},
-  {sec:'310',stand:'Opposite',side:'Opposite',g2c:0,g2m:null,g4c:1,g4m:2300},
-];
-renderDeals(cat4top3, cat4g2, cat4g4, 'cat4-top3','cat4-list2','cat4-list4');
-renderInv(cat4inv,'cat4-inv');
-makeChart('cat4-chart',[0,0,0,0,0,0],[0,0,0,0,0,0],
-  ["<$150", "$150\u2013250", "$250\u2013400", "$400\u2013600", "$600\u2013900", "$900+"],5,1);
+  const data = window.__wc2026Data;
+  if (!data) return;
+
+  // Show/hide derived note (only relevant for gs=2)
+  document.querySelectorAll('.derived-note').forEach(function(n){ n.style.display = gs === 2 ? '' : 'none'; });
+
+  const cfg = window.__wc2026Config;
+  [1,2,3,4].forEach(function(cat) {
+    const wrap = document.getElementById('cat' + cat + '-wrap');
+    if (!wrap) return;
+    const catData = data.cats[cat] || data.cats[String(cat)];
+    const gsd = catData && (catData[gs] || catData[String(gs)]);
+    if (gsd && gsd.deals && gsd.deals.length > 0) {
+      wrap.hidden = false;
+      renderList(gsd.deals, 'cat' + cat + '-list');
+      const bl = cfg && cfg.bucketLabels && (cfg.bucketLabels[cat] || cfg.bucketLabels[String(cat)]);
+      const labels = bl || ['<$500','$500–1k','$1k–2k','$2k–4k','$4k–8k','$8k+'];
+      makeChart('cat' + cat + '-chart', gsd.chart.c, labels, gsd.chart.ymax, gsd.chart.ystep);
+    } else {
+      wrap.hidden = true;
+    }
+  });
+}
+
+</script>
+<script>window.__wc2026Data={"top3":{"1":[],"2":[{"sec":"336","row":26,"seats":"13\u201314","stand":"Main","side":"Center","total":2242,"avg":1121,"gs":2,"cat":2,"front":false,"mixed":false,"derived":true},{"sec":"306","row":26,"seats":"15\u201316","stand":"Main","side":"Left","total":2298,"avg":1149,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"343","row":24,"seats":"5\u20136","stand":"Main","side":"Center","total":2300,"avg":1150,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false}],"3":[],"4":[{"sec":"336","row":26,"seats":"13\u201316","stand":"Main","side":"Center","total":4485,"avg":1121,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"327","row":10,"seats":"9\u201312","stand":"Main","side":"Right","total":5060,"avg":1265,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"303","row":2,"seats":"5\u20138","stand":"Main","side":"Left","total":5221,"avg":1305,"gs":4,"cat":3,"front":true,"mixed":false,"derived":false}]},"cats":{"1":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"122","row":35,"seats":"34\u201335","stand":"Main","side":"Right","total":3254,"avg":1627,"gs":2,"cat":1,"front":false,"mixed":false,"derived":true},{"sec":"122","row":35,"seats":"35\u201336","stand":"Main","side":"Right","total":3254,"avg":1627,"gs":2,"cat":1,"front":false,"mixed":false,"derived":true},{"sec":"122","row":35,"seats":"36\u201337","stand":"Main","side":"Right","total":3254,"avg":1627,"gs":2,"cat":1,"front":false,"mixed":false,"derived":true},{"sec":"116","row":14,"seats":"11\u201312","stand":"Main","side":"Right","total":3335,"avg":1668,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"116","row":31,"seats":"2\u20133","stand":"Main","side":"Right","total":3668,"avg":1834,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"124","row":35,"seats":"23\u201324","stand":"Main","side":"Center","total":3749,"avg":1874,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"104","row":43,"seats":"1\u20132","stand":"Main","side":"Left","total":3795,"avg":1898,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"135","row":28,"seats":"1\u20132","stand":"Main","side":"Left","total":3910,"avg":1955,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"117","row":29,"seats":"17\u201318","stand":"Main","side":"Right","total":3958,"avg":1979,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"113","row":27,"seats":"7\u20138","stand":"Opposite","side":"Opposite","total":4062,"avg":2031,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,19,43,30,36],"ymax":50,"ystep":10}},"3":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"122","row":35,"seats":"34\u201337","stand":"Main","side":"Right","total":6509,"avg":1627,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"133","row":36,"seats":"16\u201319","stand":"Main","side":"Center","total":7360,"avg":1840,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"135","row":16,"seats":"7\u201310","stand":"Main","side":"Left","total":8027,"avg":2007,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"134","row":29,"seats":"1\u20134","stand":"Main","side":"Left","total":8280,"avg":2070,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"136","row":16,"seats":"5\u20138","stand":"Main","side":"Left","total":8280,"avg":2070,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"136","row":33,"seats":"20\u201323","stand":"Main","side":"Left","total":8653,"avg":2163,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"120","row":34,"seats":"1\u20134","stand":"Main","side":"Right","total":8832,"avg":2208,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"133","row":35,"seats":"5\u20138","stand":"Main","side":"Center","total":8970,"avg":2242,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"117","row":20,"seats":"4\u20137","stand":"Main","side":"Right","total":9200,"avg":2300,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"121","row":38,"seats":"20\u201323","stand":"Main","side":"Right","total":9200,"avg":2300,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,6,20,19,29],"ymax":35,"ystep":7}}},"2":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"336","row":26,"seats":"13\u201314","stand":"Main","side":"Center","total":2242,"avg":1121,"gs":2,"cat":2,"front":false,"mixed":false,"derived":true},{"sec":"336","row":26,"seats":"14\u201315","stand":"Main","side":"Center","total":2242,"avg":1121,"gs":2,"cat":2,"front":false,"mixed":false,"derived":true},{"sec":"336","row":26,"seats":"15\u201316","stand":"Main","side":"Center","total":2242,"avg":1121,"gs":2,"cat":2,"front":false,"mixed":false,"derived":true},{"sec":"343","row":24,"seats":"5\u20136","stand":"Main","side":"Center","total":2300,"avg":1150,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"341","row":18,"seats":"17\u201318","stand":"Main","side":"Center","total":2760,"avg":1380,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"338","row":8,"seats":"17\u201318","stand":"Main","side":"Center","total":2946,"avg":1473,"gs":2,"cat":2,"front":true,"mixed":true,"derived":false},{"sec":"308","row":20,"seats":"10\u201311","stand":"Opposite","side":"Opposite","total":2999,"avg":1500,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"313","row":7,"seats":"11\u201312","stand":"Opposite","side":"Opposite","total":3220,"avg":1610,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"314","row":23,"seats":"23\u201324","stand":"Opposite","side":"Opposite","total":3220,"avg":1610,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"342","row":18,"seats":"23\u201324","stand":"Main","side":"Center","total":3220,"avg":1610,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,6,28,34,25],"ymax":40,"ystep":8}},"3":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"336","row":26,"seats":"13\u201316","stand":"Main","side":"Center","total":4485,"avg":1121,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"309","row":23,"seats":"9\u201312","stand":"Opposite","side":"Opposite","total":5801,"avg":1450,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"309","row":18,"seats":"13\u201316","stand":"Opposite","side":"Opposite","total":5842,"avg":1460,"gs":4,"cat":2,"front":false,"mixed":true,"derived":false},{"sec":"308","row":24,"seats":"1\u20134","stand":"Opposite","side":"Opposite","total":5980,"avg":1495,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"337","row":25,"seats":"17\u201320","stand":"Main","side":"Center","total":5980,"avg":1495,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"310","row":26,"seats":"1\u20134","stand":"Opposite","side":"Opposite","total":6440,"avg":1610,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"315","row":11,"seats":"9\u201312","stand":"Opposite","side":"Opposite","total":6440,"avg":1610,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"341","row":26,"seats":"6\u20139","stand":"Main","side":"Center","total":6461,"avg":1615,"gs":4,"cat":2,"front":false,"mixed":true,"derived":false},{"sec":"341","row":9,"seats":"21\u201324","stand":"Main","side":"Center","total":6597,"avg":1649,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"341","row":12,"seats":"17\u201320","stand":"Main","side":"Center","total":6831,"avg":1708,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,5,18,19,17],"ymax":25,"ystep":5}}},"3":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"306","row":26,"seats":"15\u201316","stand":"Main","side":"Left","total":2298,"avg":1149,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"317","row":2,"seats":"9\u201310","stand":"Main","side":"Right","total":2530,"avg":1265,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"302","row":1,"seats":"28\u201329","stand":"Main","side":"Left","total":2530,"avg":1265,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"302","row":16,"seats":"5\u20136","stand":"Main","side":"Left","total":2721,"avg":1361,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"341","row":32,"seats":"1\u20132","stand":"Main","side":"Center","total":2760,"avg":1380,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"317","row":9,"seats":"23\u201324","stand":"Main","side":"Right","total":2760,"avg":1380,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"330","row":16,"seats":"1\u20132","stand":"Main","side":"Right","total":2760,"avg":1380,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"329","row":17,"seats":"24\u201325","stand":"Main","side":"Right","total":2760,"avg":1380,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"335","row":22,"seats":"3\u20134","stand":"Main","side":"Center","total":2875,"avg":1438,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"323","row":9,"seats":"1\u20132","stand":"Main","side":"Right","total":2875,"avg":1438,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,14,22,40],"ymax":50,"ystep":10}},"3":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"327","row":10,"seats":"9\u201312","stand":"Main","side":"Right","total":5060,"avg":1265,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"303","row":2,"seats":"5\u20138","stand":"Main","side":"Left","total":5221,"avg":1305,"gs":4,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"348","row":14,"seats":"18\u201321","stand":"Main","side":"Left","total":5520,"avg":1380,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"330","row":19,"seats":"1\u20134","stand":"Main","side":"Right","total":5520,"avg":1380,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"327","row":4,"seats":"1\u20134","stand":"Main","side":"Right","total":5727,"avg":1432,"gs":4,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"302","row":20,"seats":"10\u201313","stand":"Main","side":"Left","total":5957,"avg":1489,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"320","row":16,"seats":"3\u20136","stand":"Main","side":"Right","total":6765,"avg":1691,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"329","row":15,"seats":"9\u201312","stand":"Main","side":"Right","total":6895,"avg":1724,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"303","row":12,"seats":"9\u201312","stand":"Main","side":"Left","total":6900,"avg":1725,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"334","row":26,"seats":"21\u201324","stand":"Main","side":"Right","total":6900,"avg":1725,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,6,15,19],"ymax":25,"ystep":5}}},"4":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"314","row":31,"seats":"3\u20134","stand":"Opposite","side":"Opposite","total":2760,"avg":1380,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"311","row":29,"seats":"12\u201313","stand":"Opposite","side":"Opposite","total":3105,"avg":1552,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"314","row":31,"seats":"13\u201314","stand":"Opposite","side":"Opposite","total":3220,"avg":1610,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"311","row":31,"seats":"22\u201323","stand":"Opposite","side":"Opposite","total":4600,"avg":2300,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"313","row":30,"seats":"8\u20139","stand":"Opposite","side":"Opposite","total":5089,"avg":2544,"gs":2,"cat":4,"front":false,"mixed":true,"derived":false},{"sec":"312","row":30,"seats":"1\u20132","stand":"Opposite","side":"Opposite","total":5175,"avg":2588,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"314","row":30,"seats":"9\u201310","stand":"Opposite","side":"Opposite","total":5750,"avg":2875,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,3,4],"ymax":5,"ystep":1}},"3":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"311","row":34,"seats":"22\u201325","stand":"Opposite","side":"Opposite","total":6210,"avg":1552,"gs":4,"cat":4,"front":false,"mixed":false,"derived":false},{"sec":"310","row":29,"seats":"6\u20139","stand":"Opposite","side":"Opposite","total":9200,"avg":2300,"gs":4,"cat":4,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,1,1],"ymax":5,"ystep":1}}}}};</script>
+<script>
+(function() {
+  const data = window.__wc2026Data;
+  if (!data) return;
+
+  // Hide ticket-count tabs that have no data (but always keep gs=2 visible)
+  [1,3,4].forEach(function(gs) {
+    const tab = document.getElementById('gs-tab-' + gs);
+    if (!tab) return;
+    const hasData = Object.values(data.cats).some(function(cat) {
+      const gsd = cat[gs] || cat[String(gs)];
+      return gsd && gsd.deals && gsd.deals.length > 0;
+    });
+    if (!hasData) tab.hidden = true;
+  });
+
+  switchGs(2, document.getElementById('gs-tab-2'));
+})();
 </script>
 <script src="refresh.js"></script>
 </body>
