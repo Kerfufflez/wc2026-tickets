@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="snapshot-context" content="index">
+<meta name="snapshot-context" content="archive">
 <meta name="tz-label" content="ET">
 <title>FIFA World Cup · Ticket Inventory · Atlanta</title>
 <style>
@@ -244,7 +244,16 @@ tr:last-child td { border-bottom: none; }
     <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 12:23 AM ET</strong></p>
     <div class="header-controls">
       <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
-        <option value="">Latest</option>
+        <option value="">Jun 14, 2026 · 12:23 AM ET · Latest</option>
+          <option value="2026-06-13">Jun 13, 2026 · 3:41 PM ET</option>
+          <option value="2026-06-12">Jun 12, 2026 · 4:15 PM ET</option>
+          <option value="2026-06-11">Jun 11, 2026 · 4:26 PM ET</option>
+          <option value="2026-06-10">Jun 10, 2026 · 4:34 PM ET</option>
+          <option value="2026-06-09">Jun 9, 2026 · 4:10 PM ET</option>
+          <option value="2026-06-08">Jun 8, 2026 · 4:22 PM ET</option>
+          <option value="2026-06-07">Jun 7, 2026 · 3:27 PM ET</option>
+          <option value="2026-06-06">Jun 6, 2026 · 3:28 PM ET</option>
+          <option value="2026-06-05">June 5, 2026 · 6:19 PM ET</option>
       </select>
       <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
         <span id="refresh-btn-label">Refresh now</span>
@@ -662,6 +671,6 @@ renderInv(cat3inv,'cat3-inv');
 makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
   ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
 </script>
-<script src="refresh.js"></script>
+<script src="../refresh.js"></script>
 </body>
 </html>
