@@ -26,6 +26,13 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 .event-label  { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
 .report-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
 .report-sub   { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+.game-nav-wrap { margin-bottom: 18px; }
+.game-nav-select {
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 10px; cursor: pointer; max-width: 340px;
+}
 .last-updated {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 500; color: var(--muted);
@@ -234,18 +241,21 @@ tr:last-child td { border-bottom: none; }
   @page { margin: 0.5in; size: 11in 8.5in landscape; }
 }
 </style>
-<script>window.__wc2026Config = {"performanceId":"10229226725358","queries":[{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[4500,5000,5500,6000,6500],"2":[3000,3500,4000,4500,5000],"3":[2500,3000,3500,4000,5000],"4":[1500,2000,2800,3800,5000]},"bucketLabels":{"1":["<$4.5k","$4.5k\u2013$5k","$5k\u2013$5.5k","$5.5k\u2013$6k","$6k\u2013$6.5k","$6.5k+"],"2":["<$3k","$3k\u2013$3.5k","$3.5k\u2013$4k","$4k\u2013$4.5k","$4.5k\u2013$5k","$5k+"],"3":["<$2.5k","$2.5k\u2013$3k","$3k\u2013$3.5k","$3.5k\u2013$4k","$4k\u2013$5k","$5k+"],"4":["<$1.5k","$1.5k\u2013$2k","$2k\u2013$2.8k","$2.8k\u2013$3.8k","$3.8k\u2013$5k","$5k+"]},"catMarketRange":{"1":[3000,35000],"2":[500,25000],"3":[1500,15000],"4":[1000,10000]}};</script>
+<script>window.__wc2026Config = {"performanceId":"10229226725358","queries":[{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[4500,5000,5500,6000,6500],"2":[3000,3500,4000,4500,5000],"3":[2500,3000,3500,4000,5000],"4":[1500,2000,2800,3800,5000]},"bucketLabels":{"1":["<$4.5k","$4.5k\u2013$5k","$5k\u2013$5.5k","$5.5k\u2013$6k","$6k\u2013$6.5k","$6.5k+"],"2":["<$3k","$3k\u2013$3.5k","$3.5k\u2013$4k","$4k\u2013$4.5k","$4.5k\u2013$5k","$5k+"],"3":["<$2.5k","$2.5k\u2013$3k","$3k\u2013$3.5k","$3.5k\u2013$4k","$4k\u2013$5k","$5k+"],"4":["<$1.5k","$1.5k\u2013$2k","$2k\u2013$2.8k","$2.8k\u2013$3.8k","$3.8k\u2013$5k","$5k+"]},"catMarketRange":{"1":[3000,35000],"2":[500,25000],"3":[1500,15000],"4":[1000,10000]},"games":[{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"}]};</script>
 </head>
 <body>
 <div class="page">
   <p class="event-label">Winner 99 vs Winner 100</p>
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
   <p class="report-sub">Atlanta Stadium · July 15, 2026</p>
+  <div class="game-nav-wrap" id="game-nav-wrap" style="display:none">
+    <select id="game-nav" class="game-nav-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
+  </div>
   <div class="header-row">
-    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 1:46 AM ET</strong></p>
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 2:02 AM ET</strong></p>
     <div class="header-controls">
       <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
-        <option value="" selected>Jun 14, 2026 · 1:46 AM ET · Latest</option>
+        <option value="" selected>Jun 14, 2026 · 2:02 AM ET · Latest</option>
           <option value="2026-06-13">Jun 13, 2026 · 3:41 PM ET</option>
           <option value="2026-06-12">Jun 12, 2026 · 4:15 PM ET</option>
           <option value="2026-06-11">Jun 11, 2026 · 4:26 PM ET</option>
@@ -467,6 +477,30 @@ tr:last-child td { border-bottom: none; }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+function goGame(pid) {
+  const p = location.pathname;
+  if (p.endsWith('/dashboard.html')) {
+    location.href = '../' + pid + '/dashboard.html';
+  } else {
+    location.href = '../../games/' + pid + '/';
+  }
+}
+
+(function() {
+  const cfg = window.__wc2026Config;
+  const nav = document.getElementById('game-nav');
+  const wrap = document.getElementById('game-nav-wrap');
+  if (!cfg || !cfg.games || cfg.games.length < 2 || !nav || !wrap) return;
+  cfg.games.forEach(function(g) {
+    const opt = document.createElement('option');
+    opt.value = g.pid;
+    opt.textContent = g.matchup + ' · ' + g.date;
+    if (g.pid === cfg.performanceId) opt.selected = true;
+    nav.appendChild(opt);
+  });
+  wrap.style.display = '';
+})();
+
 function goSnapshot(date) {
   const ctx = document.querySelector('meta[name="snapshot-context"]')?.content || 'index';
   if (!date) {

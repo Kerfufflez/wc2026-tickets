@@ -6,6 +6,7 @@ import json
 import re
 
 from wc2026.config import (
+    ROOT,
     TEMPLATE,
     game_fetch_meta,
     game_raw_path,
@@ -189,6 +190,29 @@ def build_inventory_from_deals(g2: list, g4: list) -> list:
     return list(blocks.values())
 
 
+def _collect_built_games(current_pid: str, current_match: dict) -> list[dict]:
+    """Return all games with a built reports dashboard, always including current."""
+    try:
+        from wc2026.games import load_matches
+        all_matches = load_matches()
+    except FileNotFoundError:
+        return [current_match]
+
+    pid_to_match = {str(m["pid"]): m for m in all_matches}
+    result = []
+    reports_dir = ROOT / "reports"
+    if reports_dir.exists():
+        for pid_dir in sorted(reports_dir.iterdir()):
+            if pid_dir.is_dir() and (pid_dir / "dashboard.html").exists():
+                m = pid_to_match.get(pid_dir.name)
+                if m:
+                    result.append(m)
+    if current_pid not in {str(m["pid"]) for m in result}:
+        result.append(current_match)
+    result.sort(key=lambda m: m.get("date", ""))
+    return result
+
+
 def patch_html(
     pid: str,
     match: dict,
@@ -196,6 +220,7 @@ def patch_html(
     category_data: list[dict],
     bucket_ranges: dict[int, list[int]],
     bucket_labels: dict[int, list[str]],
+    built_games: list[dict] | None = None,
 ) -> None:
     source = TEMPLATE if TEMPLATE.exists() else game_report_html(pid)
     html = source.read_text(encoding="utf-8")
@@ -223,7 +248,7 @@ def patch_html(
     )
 
     # Inject game config script (replaces placeholder or appends before </head>)
-    config_script = game_config_js(match)
+    config_script = game_config_js(match, built_games)
     if "<!-- __GAME_CONFIG__ -->" in html:
         html = html.replace("<!-- __GAME_CONFIG__ -->", config_script)
     else:
@@ -375,7 +400,8 @@ def main(match: dict) -> int:
             build_category(cat_num, pid, g2_file, g4_file, market_range, bucket_ranges)
         )
 
-    patch_html(pid, match, cats, category_data, bucket_ranges, bucket_labels)
+    built_games = _collect_built_games(pid, match)
+    patch_html(pid, match, cats, category_data, bucket_ranges, bucket_labels, built_games)
 
     for d in category_data:
         print(

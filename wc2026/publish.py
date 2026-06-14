@@ -11,6 +11,7 @@ from wc2026.config import (
     DEAL_LOG_JS,
     DOCS,
     REFRESH_JS,
+    ROOT,
     game_deal_log_html,
     game_docs_archive,
     game_docs_dir,
@@ -291,44 +292,35 @@ def publish_docs(pid: str, match: dict) -> None:
     _publish_index(pid)
 
 
-def _publish_index(updated_pid: str | None = None) -> None:
-    """Regenerate docs/index.html with links to all tracked games."""
-    try:
-        matches = load_matches()
-    except FileNotFoundError:
-        return
-
-    # Only list games that have a built dashboard
-    tracked = []
-    for m in matches:
-        pid = str(m["pid"])
-        game_dir = game_docs_dir(pid)
-        if (game_dir / "index.html").exists():
-            tracked.append(m)
-
-    # Sort by date
-    tracked.sort(key=lambda m: m.get("date", ""))
-
+def _game_picker_html(
+    all_matches: list[dict],
+    built_pids: set[str],
+    link_prefix: str,
+    link_suffix: str = "/",
+) -> str:
+    """Generate game-picker HTML. Built games are linked; others are plain text."""
     rows = ""
-    for m in tracked:
+    for m in all_matches:
         pid = str(m["pid"])
         matchup = m.get("matchup", pid)
         venue = m.get("venue", "")
         stage = m.get("stage", "")
         game_date = format_game_date(m)
+        if pid in built_pids:
+            name_cell = f'<a href="{link_prefix}{pid}{link_suffix}">{matchup}</a>'
+        else:
+            name_cell = f'<span style="color:#999">{matchup}</span>'
         rows += (
             f'<tr>'
-            f'<td><a href="games/{pid}/">{matchup}</a></td>'
+            f'<td>{name_cell}</td>'
             f'<td>{stage}</td>'
             f'<td>{game_date}</td>'
             f'<td>{venue}</td>'
             f'</tr>\n'
         )
-
     if not rows:
-        rows = '<tr><td colspan="4">No games tracked yet.</td></tr>'
-
-    html = f"""<!DOCTYPE html>
+        rows = '<tr><td colspan="4">No games in data/matches.json.</td></tr>'
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -359,5 +351,23 @@ def _publish_index(updated_pid: str | None = None) -> None:
 </body>
 </html>
 """
-    (DOCS / "index.html").write_text(html, encoding="utf-8")
-    print(f"Published docs/index.html ({len(tracked)} games listed)")
+
+
+def _publish_index(updated_pid: str | None = None) -> None:
+    """Regenerate docs/index.html and reports/index.html listing all upcoming games."""
+    try:
+        matches = load_matches()
+    except FileNotFoundError:
+        return
+
+    all_matches = sorted(matches, key=lambda m: m.get("date", ""))
+
+    docs_built = {str(m["pid"]) for m in matches if (game_docs_dir(str(m["pid"])) / "index.html").exists()}
+    docs_html = _game_picker_html(all_matches, docs_built, link_prefix="games/")
+    (DOCS / "index.html").write_text(docs_html, encoding="utf-8")
+    print(f"Published docs/index.html ({len(all_matches)} games, {len(docs_built)} with dashboards)")
+
+    reports_built = {str(m["pid"]) for m in matches if (ROOT / "reports" / str(m["pid"]) / "dashboard.html").exists()}
+    reports_html = _game_picker_html(all_matches, reports_built, link_prefix="", link_suffix="/dashboard.html")
+    (ROOT / "reports" / "index.html").write_text(reports_html, encoding="utf-8")
+    print(f"Published reports/index.html ({len(all_matches)} games, {len(reports_built)} with dashboards)")

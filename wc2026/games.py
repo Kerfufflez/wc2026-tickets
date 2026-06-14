@@ -130,7 +130,7 @@ def game_categories(match: dict) -> list[tuple[int, str, str]]:
     return result
 
 
-def game_config_js(match: dict) -> str:
+def game_config_js(match: dict, built_games: list[dict] | None = None) -> str:
     """Return an inline <script> block setting window.__wc2026Config."""
     pid = str(match["pid"])
     stage = match.get("stage", "Semi-final")
@@ -153,12 +153,25 @@ def game_config_js(match: dict) -> str:
         bucket_labels[cat_num] = _bucket_labels(bp)
         cat_market_range[cat_num] = list(mr)
 
+    games_list = []
+    for g in (built_games or []):
+        raw = g.get("date", "")
+        date_short = ""
+        if raw:
+            try:
+                dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+                date_short = dt.strftime("%b %-d")
+            except ValueError:
+                date_short = raw[:10]
+        games_list.append({"pid": str(g["pid"]), "matchup": g.get("matchup", ""), "date": date_short})
+
     config = {
         "performanceId": pid,
         "queries": queries,
         "bucketRanges": {str(k): v for k, v in bucket_ranges.items()},
         "bucketLabels": {str(k): v for k, v in bucket_labels.items()},
         "catMarketRange": {str(k): v for k, v in cat_market_range.items()},
+        "games": games_list,
     }
     return f"<script>window.__wc2026Config = {json.dumps(config, separators=(',', ':'))};</script>"
 
