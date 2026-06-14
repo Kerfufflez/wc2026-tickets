@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 import json
 
-from wc2026.config import REPORT_DEAL_LOG_HTML, REPORT_DEAL_LOG_JSON, TEMPLATE_DEAL_LOG
+from wc2026.config import TEMPLATE_DEAL_LOG, game_deal_log_html, game_deal_log_json
 from wc2026.dates import format_est, now_est
 from wc2026.tracker import load_deal_log_entries
 
@@ -158,16 +158,12 @@ def render_entry_card(entry: dict) -> str:
     is_baseline = entry.get("is_baseline", False)
     categories = entry.get("categories", {})
 
+    cat_keys = sorted(categories.keys(), key=lambda k: int(k.replace("cat", "")))
     preview_rows = "".join(
-        render_cat_preview(k, categories[k], is_baseline)
-        for k in ("cat1", "cat2", "cat3")
-        if k in categories
+        render_cat_preview(k, categories[k], is_baseline) for k in cat_keys
     )
-
     detail_sections = "".join(
-        render_cat_detail(categories[k], is_baseline)
-        for k in ("cat1", "cat2", "cat3")
-        if k in categories
+        render_cat_detail(categories[k], is_baseline) for k in cat_keys
     )
 
     badge = ""
@@ -196,17 +192,17 @@ def render_entry_card(entry: dict) -> str:
 </article>"""
 
 
-def render_deal_log() -> None:
+def render_deal_log(pid: str) -> None:
     TEMPLATE_DEAL_LOG.parent.mkdir(parents=True, exist_ok=True)
     template = TEMPLATE_DEAL_LOG.read_text(encoding="utf-8")
 
-    entries = load_deal_log_entries()
+    entries = load_deal_log_entries(pid)
     if entries:
         cards = "\n".join(render_entry_card(e) for e in entries)
     else:
         cards = (
             '<p class="changelog-empty">No refresh entries yet. Run '
-            '<code>python3 -m wc2026 build</code> after fetching data.</p>'
+            '<code>python3 -m wc2026 build --game {pid}</code> after fetching data.</p>'
         )
 
     generated = format_est(now_est())
@@ -216,18 +212,11 @@ def render_deal_log() -> None:
         .replace("__BACK_LINK__", "../dashboard.html")
     )
 
-    REPORT_DEAL_LOG_HTML.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_DEAL_LOG_HTML.write_text(html_out, encoding="utf-8")
-    print(f"Rendered {REPORT_DEAL_LOG_HTML} ({len(entries)} entries)")
-
-
-def main() -> int:
-    if not REPORT_DEAL_LOG_JSON.exists():
-        print(f"No {REPORT_DEAL_LOG_JSON} — run tracker first")
-        return 1
-    render_deal_log()
-    return 0
+    out = game_deal_log_html(pid)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html_out, encoding="utf-8")
+    print(f"Rendered {out} ({len(entries)} entries)")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("Use: python3 -m wc2026 build --game <pid>")

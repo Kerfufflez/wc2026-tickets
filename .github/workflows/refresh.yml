@@ -2,7 +2,7 @@ name: Refresh ticket data
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 permissions:
@@ -18,14 +18,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Fetch and rebuild dashboard
-        run: python3 -m wc2026 fetch && python3 -m wc2026 build
+      - name: Fetch match list
+        run: python3 -m wc2026 fetch-games
+
+      - name: Refresh all games
+        run: python3 -m wc2026 refresh-all
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/ reports/ data/raw/ templates/
+          git add docs/ reports/ data/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

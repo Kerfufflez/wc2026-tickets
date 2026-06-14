@@ -7,8 +7,11 @@ import re
 from pathlib import Path
 from typing import Any
 
-from wc2026.build import build_category, merge_derived_pairs
-from wc2026.config import CATEGORIES, REPORT_DEAL_LOG_JSON, REPORT_SNAPSHOTS, raw_path
+from wc2026.config import (
+    game_deal_log_json,
+    game_deal_log_md,
+    game_snapshots,
+)
 from wc2026.dates import (
     _HAS_OFFSET,
     format_est,
@@ -17,7 +20,6 @@ from wc2026.dates import (
     parse_captured_at,
     snapshot_id,
 )
-from wc2026.utils import load_json, market_deal, row_to_deal
 
 TIMESTAMPED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{6}$")
 
@@ -32,6 +34,7 @@ def deal_id(row: dict[str, Any]) -> str:
 
 
 def listing_record(row: dict[str, Any], cat_num: int) -> dict[str, Any]:
+    from wc2026.utils import row_to_deal
     d = row_to_deal(row, cat_num)
     return {
         "id": deal_id(row),
@@ -83,22 +86,39 @@ def is_legacy_daily_stem(stem: str) -> bool:
     return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", stem))
 
 
-def build_snapshot() -> dict[str, Any]:
+def build_snapshot(pid: str) -> dict[str, Any]:
+    from wc2026.build import build_category, merge_derived_pairs
+    from wc2026.config import game_raw_path
+    from wc2026.games import game_categories, get_game
+    from wc2026.utils import load_json, market_deal, row_to_deal
+
+    match = get_game(pid)
+    categories = game_categories(match)
+
+    from wc2026.games import (
+        _STAGE_MARKET_RANGE, _DEFAULT_MARKET_RANGE,
+        _STAGE_BUCKETS, _DEFAULT_BUCKETS,
+    )
+    stage = match.get("stage", "Semi-final")
+    market_range = _STAGE_MARKET_RANGE.get(stage, _DEFAULT_MARKET_RANGE)
+    bucket_preset = _STAGE_BUCKETS.get(stage, _DEFAULT_BUCKETS)
+    bucket_ranges = {cat_num: bucket_preset.get(cat_num, [500, 1000, 2000, 4000, 8000])
+                    for cat_num, _, _ in categories}
+
     now = now_est()
     sid = snapshot_id(now)
-    categories: dict[str, Any] = {}
-    for cat_label, g2_file, g4_file in CATEGORIES:
-        cat_num = int(cat_label.replace("cat", ""))
-        g2_raw = load_json(raw_path(g2_file))
-        g4_raw = load_json(raw_path(g4_file))
+    cats: dict[str, Any] = {}
+    for cat_num, g2_file, g4_file in categories:
+        g2_raw = load_json(game_raw_path(pid, g2_file))
+        g4_raw = load_json(game_raw_path(pid, g4_file))
         g2_merged = merge_derived_pairs(g2_raw, g4_raw)
-        built = build_category(cat_num, g2_file, g4_file)
+        built = build_category(cat_num, pid, g2_file, g4_file, market_range, bucket_ranges)
 
         listings: dict[str, dict] = {}
         for row in g2_merged + g4_raw:
             listings[deal_id(row)] = listing_record(row, cat_num)
 
-        categories[f"cat{cat_num}"] = {
+        cats[f"cat{cat_num}"] = {
             "counts": {"g2": built["g2_count"], "g4": built["g4_count"]},
             "cheapest_g2": built["g2_top"][0] if built["g2_top"] else None,
             "cheapest_g4": built["g4_top"][0] if built["g4_top"] else None,
@@ -113,7 +133,7 @@ def build_snapshot() -> dict[str, Any]:
         "captured_at": iso_est(now),
         "captured_label": format_est(now),
         "date": now.date().isoformat(),
-        "categories": categories,
+        "categories": cats,
     }
 
 
@@ -157,41 +177,43 @@ def top10_entered(prev_top: list, curr_top: list, cat_key: str) -> list[dict]:
     ]
 
 
-def cleanup_legacy_snapshots() -> None:
-    """Remove duplicate daily JSON when timestamped snapshots exist for that day."""
-    if not REPORT_SNAPSHOTS.exists():
+def cleanup_legacy_snapshots(pid: str) -> None:
+    snaps = game_snapshots(pid)
+    if not snaps.exists():
         return
-    ts_dates = _dates_with_timestamped()
-    for path in REPORT_SNAPSHOTS.glob("*.json"):
+    ts_dates = _dates_with_timestamped(pid)
+    for path in snaps.glob("*.json"):
         if is_legacy_daily_stem(path.stem) and path.stem in ts_dates:
             path.unlink()
             print(f"Removed legacy snapshot: {path.name}")
 
 
-def list_snapshot_files() -> list[Path]:
-    if not REPORT_SNAPSHOTS.exists():
+def list_snapshot_files(pid: str) -> list[Path]:
+    snaps = game_snapshots(pid)
+    if not snaps.exists():
         return []
-    files = list(REPORT_SNAPSHOTS.glob("*.json"))
+    files = list(snaps.glob("*.json"))
     return sorted(files, key=_snapshot_sort_key, reverse=True)
 
 
-def _dates_with_timestamped() -> set[str]:
+def _dates_with_timestamped(pid: str) -> set[str]:
     dates: set[str] = set()
-    if not REPORT_SNAPSHOTS.exists():
+    snaps = game_snapshots(pid)
+    if not snaps.exists():
         return dates
-    for path in REPORT_SNAPSHOTS.glob("*.json"):
+    for path in snaps.glob("*.json"):
         if is_timestamped_stem(path.stem):
             dates.add(path.stem[:10])
     return dates
 
 
-def list_chain_snapshot_paths() -> list[Path]:
-    """Snapshot files used for scan-to-scan deal log (chronological order)."""
-    if not REPORT_SNAPSHOTS.exists():
+def list_chain_snapshot_paths(pid: str) -> list[Path]:
+    snaps = game_snapshots(pid)
+    if not snaps.exists():
         return []
-    ts_dates = _dates_with_timestamped()
+    ts_dates = _dates_with_timestamped(pid)
     selected: list[Path] = []
-    for path in REPORT_SNAPSHOTS.glob("*.json"):
+    for path in snaps.glob("*.json"):
         stem = path.stem
         if is_timestamped_stem(stem):
             selected.append(path)
@@ -200,8 +222,8 @@ def list_chain_snapshot_paths() -> list[Path]:
     return sorted(selected, key=_snapshot_sort_key)
 
 
-def previous_snapshot(exclude_id: str) -> tuple[dict[str, Any] | None, str | None]:
-    for path in reversed(list_chain_snapshot_paths()):
+def previous_snapshot(pid: str, exclude_id: str) -> tuple[dict[str, Any] | None, str | None]:
+    for path in reversed(list_chain_snapshot_paths(pid)):
         if path.stem == exclude_id:
             continue
         data = normalize_snapshot(load_snapshot(path), path)
@@ -270,8 +292,7 @@ def _deal_brief(
 
 def extract_inventory(snapshot: dict[str, Any]) -> dict[str, dict]:
     inv: dict[str, dict] = {}
-    for cat_key in ("cat1", "cat2", "cat3"):
-        cat = snapshot["categories"][cat_key]
+    for cat_key, cat in snapshot["categories"].items():
         inv[cat_key] = {
             "g2": cat["counts"]["g2"],
             "g4": cat["counts"]["g4"],
@@ -281,59 +302,48 @@ def extract_inventory(snapshot: dict[str, Any]) -> dict[str, dict]:
     return inv
 
 
-def _inventory_detail_lines(inventory: dict[str, dict]) -> list[str]:
-    lines = ["Current inventory:"]
-    for cat_key in ("cat1", "cat2", "cat3"):
-        cat_num = cat_key.replace("cat", "")
-        inv = inventory[cat_key]
-        lines.append(f"  Cat {cat_num}: {inv['g2']} G2 / {inv['g4']} G4")
-        if inv.get("cheapest_g2"):
-            lines.append(f"    Cheapest G2: {fmt_deal(inv['cheapest_g2'])}")
-        if inv.get("cheapest_g4"):
-            lines.append(f"    Cheapest G4: {fmt_deal(inv['cheapest_g4'])}")
-    return lines
-
-
-def _empty_cat_detail(cat_num: str, inventory: dict, cat_key: str) -> dict:
-    inv = inventory[cat_key]
-    return {
-        "label": f"Category {cat_num}",
-        "g2_count": inv["g2"],
-        "g4_count": inv["g4"],
-        "g2_delta": 0,
-        "g4_delta": 0,
-        "cheaper": [],
-        "top10_new_g2": [],
-        "top10_new_g4": [],
-    }
-
-
 def build_log_entry(
+    pid: str,
     snapshot: dict[str, Any],
     prev: dict[str, Any] | None,
     prev_id: str | None,
 ) -> dict[str, Any]:
+    from wc2026.games import _STAGE_MARKET_RANGE, _DEFAULT_MARKET_RANGE, get_game
+    match = get_game(pid)
+    stage = match.get("stage", "Semi-final")
+    market_range = _STAGE_MARKET_RANGE.get(stage, _DEFAULT_MARKET_RANGE)
+
     inventory = extract_inventory(snapshot)
     categories_detail: dict[str, dict] = {}
 
-    if prev is None:
-        for cat_key in ("cat1", "cat2", "cat3"):
-            cat_num = cat_key.replace("cat", "")
-            categories_detail[cat_key] = _empty_cat_detail(cat_num, inventory, cat_key)
-    else:
-        for cat_key in ("cat1", "cat2", "cat3"):
-            cat_num = cat_key.replace("cat", "")
+    for cat_key in snapshot["categories"]:
+        cat_num_str = cat_key.replace("cat", "")
+        cat_num = int(cat_num_str)
+        ccat = snapshot["categories"][cat_key]
+
+        if prev is None or cat_key not in prev.get("categories", {}):
+            inv = inventory[cat_key]
+            categories_detail[cat_key] = {
+                "label": f"Category {cat_num}",
+                "g2_count": inv["g2"],
+                "g4_count": inv["g4"],
+                "g2_delta": 0,
+                "g4_delta": 0,
+                "cheaper": [],
+                "top10_new_g2": [],
+                "top10_new_g4": [],
+            }
+        else:
+            from wc2026.utils import market_deal
             pcat = prev["categories"][cat_key]
-            ccat = snapshot["categories"][cat_key]
             diff = compare_listings(pcat["listings"], ccat["listings"])
             g2_delta = ccat["counts"]["g2"] - pcat["counts"]["g2"]
             g4_delta = ccat["counts"]["g4"] - pcat["counts"]["g4"]
 
             drop_rows: list[tuple[int, dict]] = []
             for p, c in diff["drops"]:
-                cat_num = int(cat_key.replace("cat", ""))
                 saved = p["avg"] - c["avg"]
-                if saved < 1 or not market_deal(c, cat_num):
+                if saved < 1 or not market_deal(c, cat_num, market_range):
                     continue
                 drop_rows.append(
                     (
@@ -347,7 +357,6 @@ def build_log_entry(
                     )
                 )
             drop_rows.sort(key=lambda x: x[0], reverse=True)
-            cheaper = [d for _, d in drop_rows]
 
             categories_detail[cat_key] = {
                 "label": f"Category {cat_num}",
@@ -355,7 +364,7 @@ def build_log_entry(
                 "g4_count": ccat["counts"]["g4"],
                 "g2_delta": g2_delta,
                 "g4_delta": g4_delta,
-                "cheaper": cheaper[:5],
+                "cheaper": [d for _, d in drop_rows][:5],
                 "top10_new_g2": top10_entered(
                     pcat.get("top10_g2", []), ccat.get("top10_g2", []), cat_key
                 ),
@@ -375,24 +384,25 @@ def build_log_entry(
     }
 
 
-def load_deal_log_entries() -> list[dict]:
-    if not REPORT_DEAL_LOG_JSON.exists():
+def load_deal_log_entries(pid: str) -> list[dict]:
+    path = game_deal_log_json(pid)
+    if not path.exists():
         return []
-    data = json.loads(REPORT_DEAL_LOG_JSON.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
     return data.get("entries", [])
 
 
-def save_deal_log_entries(entries: list[dict]) -> None:
-    REPORT_DEAL_LOG_JSON.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_DEAL_LOG_JSON.write_text(
+def save_deal_log_entries(pid: str, entries: list[dict]) -> None:
+    path = game_deal_log_json(pid)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
         json.dumps({"entries": entries}, indent=2) + "\n",
         encoding="utf-8",
     )
 
 
-def rebuild_deal_log() -> list[dict]:
-    """Rebuild changelog from all stored snapshots (newest first)."""
-    paths = list_chain_snapshot_paths()
+def rebuild_deal_log(pid: str) -> list[dict]:
+    paths = list_chain_snapshot_paths(pid)
     chronological: list[dict] = []
     for path in paths:
         chronological.append(normalize_snapshot(load_snapshot(path), path))
@@ -401,40 +411,40 @@ def rebuild_deal_log() -> list[dict]:
     prev: dict[str, Any] | None = None
     prev_id: str | None = None
     for snap in chronological:
-        entries.append(build_log_entry(snap, prev, prev_id))
+        entries.append(build_log_entry(pid, snap, prev, prev_id))
         prev, prev_id = snap, snap["id"]
 
     entries.reverse()
-    save_deal_log_entries(entries)
+    save_deal_log_entries(pid, entries)
     return entries
 
 
-def log_deals() -> Path:
-    cleanup_legacy_snapshots()
-    snapshot = build_snapshot()
+def log_deals(pid: str) -> Path:
+    cleanup_legacy_snapshots(pid)
+    snapshot = build_snapshot(pid)
     sid = snapshot["id"]
 
-    REPORT_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
-    snap_path = REPORT_SNAPSHOTS / f"{sid}.json"
+    snaps_dir = game_snapshots(pid)
+    snaps_dir.mkdir(parents=True, exist_ok=True)
+    snap_path = snaps_dir / f"{sid}.json"
     snap_path.write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
     print(f"Snapshot saved: {snap_path}")
 
-    entries = rebuild_deal_log()
+    entries = rebuild_deal_log(pid)
     latest = entries[0] if entries else None
-    print(f"Deal log rebuilt: {REPORT_DEAL_LOG_JSON} ({len(entries)} entries)")
+    print(f"Deal log rebuilt: {game_deal_log_json(pid)} ({len(entries)} entries)")
     if latest:
         print(f"  Latest: {latest['captured_label']}")
         if latest.get("prev_id"):
             print(f"  Compared against: {latest['prev_id']}")
-    return REPORT_DEAL_LOG_JSON
+    return game_deal_log_json(pid)
 
 
-def snapshot_dates_manifest() -> list[dict]:
-    """Fallback manifest from timestamped snapshots only (prefer archive HTML in publish)."""
+def snapshot_dates_manifest(pid: str) -> list[dict]:
     from wc2026.dates import format_dropdown_label
 
     by_date: dict[str, dict] = {}
-    for path in list_snapshot_files():
+    for path in list_snapshot_files(pid):
         if not is_timestamped_stem(path.stem):
             continue
         try:
@@ -455,10 +465,5 @@ def snapshot_dates_manifest() -> list[dict]:
     return sorted(items, key=lambda x: x["date"], reverse=True)
 
 
-def main() -> int:
-    log_deals()
-    return 0
-
-
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("Use: python3 -m wc2026 refresh --game <pid>")

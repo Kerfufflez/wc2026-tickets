@@ -1,4 +1,4 @@
-"""Fetch SeatSidekick match_seat_groups for WC2026 Semi-Final Atlanta."""
+"""Fetch SeatSidekick match_seat_groups for a given game."""
 
 from __future__ import annotations
 
@@ -12,22 +12,26 @@ import urllib.request
 from wc2026.config import (
     API_BASE,
     API_HEADERS,
-    DATA_RAW,
-    FETCH_META,
-    FETCH_QUERIES,
     MAX_SINGLE_LIMIT,
     PAGE_SIZE,
-    PERFORMANCE_ID,
-    raw_path,
+    game_fetch_meta,
+    game_raw_dir,
+    game_raw_path,
 )
 
 
 def build_url(
-    category: str, group_size: int, *, limit: int, offset: int = 0, select: str = "*"
+    pid: str,
+    category: str,
+    group_size: int,
+    *,
+    limit: int,
+    offset: int = 0,
+    select: str = "*",
 ) -> str:
     params = {
         "select": select,
-        "performance_id": f"eq.{PERFORMANCE_ID}",
+        "performance_id": f"eq.{pid}",
         "dominant_bucket": "eq.Standard",
         "dominant_category": f"eq.{category}",
         "order": "total_price.asc",
@@ -53,8 +57,8 @@ def parse_content_range_total(headers: dict) -> int | None:
     return int(m.group(1)) if m else None
 
 
-def get_total_count(category: str, group_size: int) -> int | None:
-    url = build_url(category, group_size, limit=0, select="group_id")
+def get_total_count(pid: str, category: str, group_size: int) -> int | None:
+    url = build_url(pid, category, group_size, limit=0, select="group_id")
     try:
         status, headers, body = http_request(
             url, {"Prefer": "count=exact", "Range-Unit": "items"}
@@ -71,9 +75,14 @@ def get_total_count(category: str, group_size: int) -> int | None:
 
 
 def fetch_page(
-    category: str, group_size: int, limit: int, offset: int, max_attempts: int = 5
+    pid: str,
+    category: str,
+    group_size: int,
+    limit: int,
+    offset: int,
+    max_attempts: int = 5,
 ) -> list | None:
-    url = build_url(category, group_size, limit=limit, offset=offset)
+    url = build_url(pid, category, group_size, limit=limit, offset=offset)
     for attempt in range(1, max_attempts + 1):
         try:
             status, _, body = http_request(url)
@@ -94,18 +103,18 @@ def fetch_page(
     return None
 
 
-def fetch_all(category: str, group_size: int) -> tuple[list | None, int | None]:
+def fetch_all(pid: str, category: str, group_size: int) -> tuple[list | None, int | None]:
     """Fetch complete inventory: high limit first, offset pages as fallback."""
-    total = get_total_count(category, group_size)
+    total = get_total_count(pid, category, group_size)
     if total is not None and total <= MAX_SINGLE_LIMIT:
-        batch = fetch_page(category, group_size, limit=max(total, 1), offset=0)
+        batch = fetch_page(pid, category, group_size, limit=max(total, 1), offset=0)
         if batch is not None and len(batch) >= total:
             return batch, total
 
     all_rows: list = []
     offset = 0
     while True:
-        batch = fetch_page(category, group_size, limit=PAGE_SIZE, offset=offset)
+        batch = fetch_page(pid, category, group_size, limit=PAGE_SIZE, offset=offset)
         if batch is None:
             return (all_rows if all_rows else None), total
         all_rows.extend(batch)
@@ -117,18 +126,29 @@ def fetch_all(category: str, group_size: int) -> tuple[list | None, int | None]:
     return all_rows, total if total is not None else len(all_rows)
 
 
-def main() -> int:
-    DATA_RAW.mkdir(parents=True, exist_ok=True)
+def main(pid: str, categories: list[tuple[int, str, str]]) -> int:
+    """Fetch all category/group-size combinations for a game.
+
+    categories: [(cat_num, g2_filename, g4_filename), ...]
+    """
+    raw_dir = game_raw_dir(pid)
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    fetch_queries = []
+    for cat_num, g2_file, g4_file in categories:
+        fetch_queries.append((g2_file, f"Category {cat_num}", 2))
+        fetch_queries.append((g4_file, f"Category {cat_num}", 4))
+
     errors = []
     meta: dict[str, dict] = {}
-    for filename, category, group_size in FETCH_QUERIES:
+    for filename, category, group_size in fetch_queries:
         print(f"Fetching {filename}...")
-        data, expected = fetch_all(category, group_size)
+        data, expected = fetch_all(pid, category, group_size)
         if data is None:
             errors.append(filename)
             print("  FAILED after retries")
             continue
-        out = raw_path(filename)
+        out = game_raw_path(pid, filename)
         out.write_text(json.dumps(data, indent=2), encoding="utf-8")
         truncated = expected is not None and len(data) < expected
         meta[filename] = {
@@ -141,8 +161,9 @@ def main() -> int:
             note = f" (WARNING: expected {expected}, got {len(data)})"
         elif expected is not None and len(data) > 100:
             note = f" (full inventory; {len(data)} total)"
-        print(f"  saved {len(data)} groups -> data/raw/{filename}{note}")
-    FETCH_META.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+        print(f"  saved {len(data)} groups -> data/raw/{pid}/{filename}{note}")
+
+    game_fetch_meta(pid).write_text(json.dumps(meta, indent=2), encoding="utf-8")
     if errors:
         print(f"\nFailed files: {', '.join(errors)}")
         return 1
@@ -150,4 +171,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("Use: python3 -m wc2026 fetch --game <pid>")

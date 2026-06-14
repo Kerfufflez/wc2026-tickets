@@ -8,19 +8,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-from wc2026.config import CATEGORIES, DATA_RAW, raw_path
-
-BUCKET_RANGES = {
-    1: [4500, 5000, 5500, 6000, 6500],
-    2: [3000, 3500, 4000, 4500, 5000],
-    3: [2500, 3000, 3500, 4000, 5000],
-}
-
-BUCKET_LABELS = {
-    1: ["<$4.5k", "$4.5–5k", "$5–5.5k", "$5.5–6k", "$6–6.5k", "$6.5k+"],
-    2: ["<$3k", "$3–3.5k", "$3.5–4k", "$4–4.5k", "$4.5–5k", "$5k+"],
-    3: ["<$2.5k", "$2.5–3k", "$3–3.5k", "$3.5–4k", "$4–5k", "$5k+"],
-}
+from wc2026.config import game_raw_path
 
 
 def load_json(path: Path) -> list[dict[str, Any]]:
@@ -48,28 +36,13 @@ def format_seats(seat_numbers: str) -> str:
     return f"{seats[0]}–{seats[-1]}"
 
 
-# Typical market range per category — used to surface buyable deals in rankings
-# and metrics. Listings outside this range are kept in inventory but excluded
-# from Top 3 / Top 10 / cheapest (e.g. $92k ask prices stay as-is).
-CAT_MARKET_RANGE: dict[int, tuple[int, int]] = {
-    1: (3_000, 35_000),
-    2: (500, 25_000),
-    3: (1_500, 15_000),
-}
-
-
-def market_avg(avg: int | float, cat_num: int) -> bool:
-    lo, hi = CAT_MARKET_RANGE[cat_num]
+def market_avg(avg: int | float, cat_num: int, cat_market_range: dict[int, tuple[int, int]]) -> bool:
+    lo, hi = cat_market_range[cat_num]
     return lo <= avg <= hi
 
 
-def market_deal(deal: dict[str, Any], cat_num: int) -> bool:
-    return market_avg(deal.get("avg", 0), cat_num)
-
-
-# Back-compat aliases used across build/tracker
-plausible_avg = market_avg
-plausible_deal = market_deal
+def market_deal(deal: dict[str, Any], cat_num: int, cat_market_range: dict[int, tuple[int, int]]) -> bool:
+    return market_avg(deal.get("avg", 0), cat_num, cat_market_range)
 
 
 def row_to_deal(row: dict[str, Any], cat_num: int | None = None) -> dict[str, Any]:
@@ -93,13 +66,13 @@ def g2_key(row: dict[str, Any]) -> tuple:
     return (str(row["block"]), str(row["row"]), int(row["first_seat"]), int(row["last_seat"]))
 
 
-def validate_all() -> list[str]:
+def validate_all(
+    pid: str, categories: list[tuple[int, str, str]]
+) -> list[str]:
     errors: list[str] = []
-    loaded: dict[str, tuple[list, list]] = {}
-
-    for cat, g2_file, g4_file in CATEGORIES:
+    for cat_num, g2_file, g4_file in categories:
         for fname in (g2_file, g4_file):
-            path = raw_path(fname)
+            path = game_raw_path(pid, fname)
             if not path.exists():
                 errors.append(f"Missing file: {fname}")
                 continue
@@ -127,26 +100,25 @@ def validate_all() -> list[str]:
                         f"{fname}: missing block on {row.get('group_id', '?')}"
                     )
 
-        g2_path, g4_path = raw_path(g2_file), raw_path(g4_file)
+        g2_path = game_raw_path(pid, g2_file)
+        g4_path = game_raw_path(pid, g4_file)
         if g2_path.exists() and g4_path.exists():
             g2 = load_json(g2_path)
             g4 = load_json(g4_path)
-            loaded[cat] = (g2, g4)
             if len(g2) < 1:
-                errors.append(f"{cat}: no G2 results")
+                errors.append(f"cat{cat_num}: no G2 results")
             if len(g4) < 1:
-                errors.append(f"{cat}: no G4 results")
+                errors.append(f"cat{cat_num}: no G4 results")
             deals = [row_to_deal(r) for r in g2 + g4]
-            if len(deals) < 3:
+            if len(deals) < 1:
                 errors.append(
-                    f"{cat}: combined pool has {len(deals)} items, need 3 for top3"
+                    f"cat{cat_num}: combined pool is empty"
                 )
-
     return errors
 
 
-def bucket_index(cat_num: int, avg: int) -> int:
-    bounds = BUCKET_RANGES[cat_num]
+def bucket_index(cat_num: int, avg: int, bucket_ranges: dict[int, list[int]]) -> int:
+    bounds = bucket_ranges[cat_num]
     if avg < bounds[0]:
         return 0
     for i, bound in enumerate(bounds[1:], start=1):
@@ -155,13 +127,18 @@ def bucket_index(cat_num: int, avg: int) -> int:
     return len(bounds)
 
 
-def chart_buckets(cat_num: int, g2: list[dict], g4: list[dict]) -> tuple[list[int], list[int], int, int]:
+def chart_buckets(
+    cat_num: int,
+    g2: list[dict],
+    g4: list[dict],
+    bucket_ranges: dict[int, list[int]],
+) -> tuple[list[int], list[int], int, int]:
     c2 = [0] * 6
     c4 = [0] * 6
     for row in g2:
-        c2[bucket_index(cat_num, round(row["avg_price"]))] += 1
+        c2[bucket_index(cat_num, round(row["avg_price"]), bucket_ranges)] += 1
     for row in g4:
-        c4[bucket_index(cat_num, round(row["avg_price"]))] += 1
+        c4[bucket_index(cat_num, round(row["avg_price"]), bucket_ranges)] += 1
     peak = max(c2 + c4) if (c2 or c4) else 0
     ymax = max(5, math.ceil((peak * 1.15) / 5) * 5) if peak else 5
     ystep = max(1, round(ymax / 5))
@@ -172,40 +149,16 @@ def median_rounded(values: list[float]) -> int:
     return round(statistics.median(values))
 
 
-def build_inventory(g2: list[dict], g4: list[dict]) -> list[dict]:
-    blocks: dict[str, dict] = {}
-    for rows, cnt_key, min_key in (
-        (g2, "g2c", "g2m"),
-        (g4, "g4c", "g4m"),
-    ):
-        for row in rows:
-            sec = str(row["block"])
-            if sec not in blocks:
-                deal = row_to_deal(row)
-                blocks[sec] = {
-                    "sec": sec,
-                    "stand": deal["stand"],
-                    "side": deal["side"],
-                    "g2c": 0,
-                    "g2m": None,
-                    "g4c": 0,
-                    "g4m": None,
-                }
-            b = blocks[sec]
-            b[cnt_key] += 1
-            avg = round(row["avg_price"])
-            if b[min_key] is None or avg < b[min_key]:
-                b[min_key] = avg
-    return list(blocks.values())
-
-
 def metrics_for(
-    rows: list[dict], ticket_label: str, cat_num: int
+    rows: list[dict],
+    ticket_label: str,
+    cat_num: int,
+    cat_market_range: dict[int, tuple[int, int]],
 ) -> dict[str, str]:
     rows = [
         r
         for r in rows
-        if market_avg(round(r["avg_price"]), cat_num)
+        if market_avg(round(r["avg_price"]), cat_num, cat_market_range)
     ]
     if not rows:
         return {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="snapshot-context" content="index">
 <meta name="tz-label" content="ET">
-<title>FIFA World Cup · Ticket Inventory · Atlanta</title>
+<title>FIFA World Cup · Ticket Inventory</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -234,12 +234,13 @@ tr:last-child td { border-bottom: none; }
   @page { margin: 0.5in; size: 11in 8.5in landscape; }
 }
 </style>
+<!-- __GAME_CONFIG__ -->
 </head>
 <body>
 <div class="page">
-  <p class="event-label">2026 FIFA World Cup — Semi-Final</p>
+  <p class="event-label">{{game_title}}</p>
   <h1 class="report-title">Official FIFA Resale Marketplace</h1>
-  <p class="report-sub">Atlanta Stadium &middot; July 15, 2026 &middot; Category 1, 2 &amp; 3 Ticket Inventory</p>
+  <p class="report-sub">{{game_subtitle}}</p>
   <div class="header-row">
     <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>June 5, 2026 at 5:01 PM ET</strong></p>
     <div class="header-controls">
@@ -257,6 +258,7 @@ tr:last-child td { border-bottom: none; }
     <div class="cat-tab active" onclick="switchCat('cat1',this)">Category 1</div>
     <div class="cat-tab" onclick="switchCat('cat2',this)">Category 2</div>
     <div class="cat-tab" onclick="switchCat('cat3',this)">Category 3</div>
+    <div class="cat-tab" id="cat4-tab" onclick="switchCat('cat4',this)" hidden>Category 4</div>
   </div>
 
   <!-- ══ CAT 1 ══ -->
@@ -403,6 +405,54 @@ tr:last-child td { border-bottom: none; }
     </table></div>
   </div>
 
+  <!-- ══ CAT 4 ══ -->
+  <div id="cat4" class="cat-section" hidden>
+    <div class="metrics-grid">
+      <div class="metrics-row-label">Groups of 2</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">—</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+      </div>
+      <div class="metrics-row-label">Groups of 4</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">—</div><div class="metric-sub">Groups of 4 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">—</div><div class="metric-sub">—</div></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Top 3 deals</div>
+        <div class="card-sub">Cheapest available — avg per ticket</div>
+        <div id="cat4-top3" class="top3-inner"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Price distribution</div>
+        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat4-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 4</div>
+    <div class="list-card" id="cat4-list2"></div>
+    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title">Top 10 listings (4 tickets) — Category 4</div>
+    <div class="list-card" id="cat4-list4"></div>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 4</div>
+    <div class="inv-card"><table>
+      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
+      <tbody id="cat4-inv"></tbody>
+    </table></div>
+  </div>
+
   <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured June 5, 2026. Prices reflect resale market and may change. Avg per ticket = total cost ÷ group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
 </div>
 
@@ -418,8 +468,8 @@ function goSnapshot(date) {
 }
 
 function switchCat(id, el) {
-  document.querySelectorAll('.cat-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.cat-section:not([hidden])').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.cat-tab:not([hidden])').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   el.classList.add('active');
 }
@@ -666,6 +716,15 @@ renderDeals(cat3top3, cat3g2, cat3g4, 'cat3-top3','cat3-list2','cat3-list4');
 renderInv(cat3inv,'cat3-inv');
 makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
   ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
+const cat4g2 = [];
+const cat4g4 = [];
+const cat4top3 = [].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat4inv = [
+];
+renderDeals(cat4top3, cat4g2, cat4g4, 'cat4-top3','cat4-list2','cat4-list4');
+renderInv(cat4inv,'cat4-inv');
+makeChart('cat4-chart',[0,0,0,0,0,0],[0,0,0,0,0,0],
+  ["<$150", "$150\u2013250", "$250\u2013400", "$400\u2013600", "$600\u2013900", "$900+"],5,1);
 </script>
 <script src="refresh.js"></script>
 </body>

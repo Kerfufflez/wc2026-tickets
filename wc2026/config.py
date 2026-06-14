@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# API
+# Seat groups API
 API_BASE = "https://dlvtfsmonledyyjaqjcn.supabase.co/rest/v1/match_seat_groups"
 APIKEY = (
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsdnRmc21vbmxlZHl5amFxamNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MDk3NDcsImV4cCI6MjA5MTk4NTc0N30.warYGD7rBH_x_qx9i56WfcJ3RKhCALBEarzHSUpkq5k"
@@ -14,46 +14,85 @@ API_HEADERS = {
     "accept-profile": "api",
     "origin": "https://seatsidekick.com",
 }
-PERFORMANCE_ID = "10229226725358"
 PAGE_SIZE = 100
 MAX_SINGLE_LIMIT = 1000
 
-# Paths
+# Matches list API
+MATCHES_API = "https://seatsidekick.com/api/matches"
+MATCHES_CACHE = ROOT / "data" / "matches.json"
+
+# Template sources (shared across all games)
 TEMPLATE = ROOT / "templates" / "dashboard.html"
-DATA_RAW = ROOT / "data" / "raw"
-FETCH_META = ROOT / "data" / "fetch_meta.json"
-REPORT_HTML = ROOT / "reports" / "dashboard.html"
-REPORT_HISTORY = ROOT / "reports" / "history"
-REPORT_SNAPSHOTS = REPORT_HISTORY / "snapshots"
-REPORT_DEAL_LOG = REPORT_HISTORY / "DEAL_LOG.md"
-REPORT_DEAL_LOG_JSON = REPORT_HISTORY / "deal_log.json"
-REPORT_DEAL_LOG_HTML = REPORT_HISTORY / "deal-log.html"
 TEMPLATE_DEAL_LOG = ROOT / "templates" / "deal_log.html"
-REPORT_OVERLAP = ROOT / "reports" / "overlap_analysis.md"
-DOCS = ROOT / "docs"
-DOCS_ARCHIVE = DOCS / "archive"
-DOCS_HISTORY = DOCS / "history"
-DOCS_MANIFEST = DOCS_HISTORY / "manifest.json"
 STATIC = ROOT / "static"
 REFRESH_JS = STATIC / "refresh.js"
 DEAL_LOG_JS = STATIC / "deal_log.js"
-DOCS_DEAL_LOG = DOCS_HISTORY / "deal-log.html"
 
-CATEGORIES = [
-    ("cat1", "cat1_g2.json", "cat1_g4.json"),
-    ("cat2", "cat2_g2.json", "cat2_g4.json"),
-    ("cat3", "cat3_g2.json", "cat3_g4.json"),
-]
-
-FETCH_QUERIES = [
-    ("cat1_g2.json", "Category 1", 2),
-    ("cat1_g4.json", "Category 1", 4),
-    ("cat2_g2.json", "Category 2", 2),
-    ("cat2_g4.json", "Category 2", 4),
-    ("cat3_g2.json", "Category 3", 2),
-    ("cat3_g4.json", "Category 3", 4),
-]
+# Docs root
+DOCS = ROOT / "docs"
 
 
-def raw_path(filename: str) -> Path:
-    return DATA_RAW / filename
+# --- Per-game path helpers ---
+
+def game_raw_dir(pid: str) -> Path:
+    return ROOT / "data" / "raw" / pid
+
+
+def game_raw_path(pid: str, filename: str) -> Path:
+    return game_raw_dir(pid) / filename
+
+
+def game_fetch_meta(pid: str) -> Path:
+    return game_raw_dir(pid) / "fetch_meta.json"
+
+
+def game_report_dir(pid: str) -> Path:
+    return ROOT / "reports" / pid
+
+
+def game_report_html(pid: str) -> Path:
+    return game_report_dir(pid) / "dashboard.html"
+
+
+def game_overlap(pid: str) -> Path:
+    return game_report_dir(pid) / "overlap_analysis.md"
+
+
+def game_history(pid: str) -> Path:
+    return game_report_dir(pid) / "history"
+
+
+def game_snapshots(pid: str) -> Path:
+    return game_history(pid) / "snapshots"
+
+
+def game_deal_log_json(pid: str) -> Path:
+    return game_history(pid) / "deal_log.json"
+
+
+def game_deal_log_md(pid: str) -> Path:
+    return game_history(pid) / "DEAL_LOG.md"
+
+
+def game_deal_log_html(pid: str) -> Path:
+    return game_history(pid) / "deal-log.html"
+
+
+def game_docs_dir(pid: str) -> Path:
+    return DOCS / "games" / pid
+
+
+def game_docs_archive(pid: str) -> Path:
+    return game_docs_dir(pid) / "archive"
+
+
+def game_docs_history(pid: str) -> Path:
+    return game_docs_dir(pid) / "history"
+
+
+def game_docs_manifest(pid: str) -> Path:
+    return game_docs_history(pid) / "manifest.json"
+
+
+def game_docs_deal_log(pid: str) -> Path:
+    return game_docs_history(pid) / "deal-log.html"

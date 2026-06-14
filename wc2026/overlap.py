@@ -1,14 +1,12 @@
-"""G4 pair derivation overlap analysis -> reports/overlap_analysis.md"""
+"""G4 pair derivation overlap analysis -> reports/{pid}/overlap_analysis.md"""
 
 from __future__ import annotations
 
 from datetime import date
 
-from wc2026.config import CATEGORIES, REPORT_OVERLAP, raw_path
+from wc2026.config import game_overlap, game_raw_path
 from wc2026.derive import derive_pairs
 from wc2026.utils import g2_key, load_json, validate_all
-
-CAT_NAMES = {1: "Category 1", 2: "Category 2", 3: "Category 3"}
 
 
 def classify_pair(pair: dict, g2_lookup: set, g2_min: float, g2_max: float) -> str:
@@ -89,8 +87,9 @@ def analyze_category(cat_num: int, g2: list, g4: list) -> dict:
 def format_section(r: dict) -> str:
     c = r["counts"]
     total = r["derived_count"] or 1
+    cat_name = f"Category {r['cat_num']}"
     lines = [
-        f"## {CAT_NAMES[r['cat_num']]} — Pair Derivation Analysis",
+        f"## {cat_name} — Pair Derivation Analysis",
         f"Date: {date.today().strftime('%B %-d, %Y')}",
         "",
         f"G2 fetched: {r['g2_count']} groups, price range "
@@ -145,8 +144,8 @@ def overall_recommendation(results: list[dict]) -> str:
     return "SKIP"
 
 
-def main() -> int:
-    errors = validate_all()
+def main(pid: str, categories: list[tuple[int, str, str]]) -> int:
+    errors = validate_all(pid, categories)
     if errors:
         print("Validation FAILED:")
         for e in errors:
@@ -154,10 +153,9 @@ def main() -> int:
         return 1
 
     results = []
-    for cat_label, g2_file, g4_file in CATEGORIES:
-        cat_num = int(cat_label.replace("cat", ""))
-        g2 = load_json(raw_path(g2_file))
-        g4 = load_json(raw_path(g4_file))
+    for cat_num, g2_file, g4_file in categories:
+        g2 = load_json(game_raw_path(pid, g2_file))
+        g4 = load_json(game_raw_path(pid, g4_file))
         results.append(analyze_category(cat_num, g2, g4))
 
     sections = [format_section(r) for r in results]
@@ -179,17 +177,14 @@ def main() -> int:
             "",
             f"Overall recommendation: **{overall}**",
             "",
-            "Prior per-category fetch note: Cat 1 previously showed only 2 G2 listings "
-            "under a shared 100-slot query; dedicated Cat 1 G2 fetch now returns "
-            f"{results[0]['g2_count']} groups, which may materially change overlap vs "
-            "older combined-query estimates.",
         ]
     )
 
-    REPORT_OVERLAP.parent.mkdir(parents=True, exist_ok=True)
+    out = game_overlap(pid)
+    out.parent.mkdir(parents=True, exist_ok=True)
     body = "\n".join(sections) + "\n" + "\n".join(summary_rows) + "\n"
-    REPORT_OVERLAP.write_text(body, encoding="utf-8")
-    print(f"Wrote {REPORT_OVERLAP}")
+    out.write_text(body, encoding="utf-8")
+    print(f"Wrote {out}")
     for r in results:
         print(
             f"  Cat {r['cat_num']}: overlap {r['overlap_rate']:.1f}%, "
@@ -199,4 +194,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("Use: python3 -m wc2026 overlap --game <pid>")

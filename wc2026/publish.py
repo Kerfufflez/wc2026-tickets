@@ -1,4 +1,4 @@
-"""Publish dashboard to docs/ for GitHub Pages."""
+"""Publish dashboard to docs/games/{pid}/ for GitHub Pages."""
 
 from __future__ import annotations
 
@@ -10,15 +10,17 @@ from datetime import date
 from wc2026.config import (
     DEAL_LOG_JS,
     DOCS,
-    DOCS_ARCHIVE,
-    DOCS_DEAL_LOG,
-    DOCS_HISTORY,
-    DOCS_MANIFEST,
     REFRESH_JS,
-    REPORT_DEAL_LOG_HTML,
-    REPORT_HTML,
+    game_deal_log_html,
+    game_docs_archive,
+    game_docs_dir,
+    game_docs_history,
+    game_docs_manifest,
+    game_docs_deal_log,
+    game_report_html,
 )
 from wc2026.dates import format_dropdown_label, label_from_last_updated, now_est
+from wc2026.games import format_game_date, load_matches
 
 CONTEXT_RE = re.compile(
     r'<meta name="snapshot-context" content="[^"]*">'
@@ -65,7 +67,7 @@ def inject_dropdown(
 
 
 def render_header_row(
-    last_updated: str, dates: list[dict], current: str | None, latest_label: str
+    last_updated: str, dates: list[dict], current: str | None, latest_label: str, pid: str
 ) -> str:
     options = build_options(dates, current, latest_label)
     return f"""<div class="header-row">
@@ -83,7 +85,6 @@ def render_header_row(
 
 
 def patch_header_styles(html: str) -> str:
-    """Keep snapshot dropdown compact on pages built from older templates."""
     html = re.sub(r"\.snapshot-label \{[^}]+\}\s*", "", html, flags=re.DOTALL)
     if ".header-controls {" not in html:
         html = html.replace(
@@ -132,22 +133,22 @@ def patch_header_styles(html: str) -> str:
 
 
 def standardize_header(
-    html: str, dates: list[dict], current: str | None, latest_label: str
+    html: str, dates: list[dict], current: str | None, latest_label: str, pid: str = ""
 ) -> str:
-    """Normalize header row (compact dropdown + always-visible refresh)."""
     html = patch_header_styles(html)
     last_updated = _last_updated_text(html) or format_dropdown_label(now_est())
-    block = render_header_row(last_updated, dates, current, latest_label)
+    block = render_header_row(last_updated, dates, current, latest_label, pid)
     if HEADER_ROW_RE.search(html):
         return HEADER_ROW_RE.sub(block, html, count=1)
     return inject_dropdown(html, dates, current, latest_label)
 
 
-def list_archive_dates() -> list[str]:
-    if not DOCS_ARCHIVE.exists():
+def list_archive_dates(pid: str) -> list[str]:
+    archive = game_docs_archive(pid)
+    if not archive.exists():
         return []
     return sorted(
-        (p.stem for p in DOCS_ARCHIVE.glob("*.html")),
+        (p.stem for p in archive.glob("*.html")),
         reverse=True,
     )
 
@@ -156,17 +157,17 @@ def _last_updated_text(html: str) -> str | None:
     m = LAST_UPDATED_RE.search(html)
     if not m:
         return None
-    block = html[m.start() : m.end()]
+    block = html[m.start(): m.end()]
     strong = re.search(r"<strong>([^<]+)</strong>", block)
     return strong.group(1).strip() if strong else None
 
 
-def archive_manifest(exclude_date: str | None = None) -> list[dict]:
-    """Dropdown archive labels from each saved HTML (source of truth for display time)."""
-    if not DOCS_ARCHIVE.exists():
+def archive_manifest(pid: str, exclude_date: str | None = None) -> list[dict]:
+    archive = game_docs_archive(pid)
+    if not archive.exists():
         return []
     items: list[dict] = []
-    for path in sorted(DOCS_ARCHIVE.glob("*.html"), key=lambda p: p.stem, reverse=True):
+    for path in sorted(archive.glob("*.html"), key=lambda p: p.stem, reverse=True):
         day = path.stem
         if exclude_date and day == exclude_date:
             continue
@@ -188,79 +189,175 @@ def latest_option_label(html: str) -> str:
     return f"{format_dropdown_label(now_est())} · Latest"
 
 
-def publish_docs() -> None:
-    if not REPORT_HTML.exists():
-        raise FileNotFoundError(f"Missing built report: {REPORT_HTML}")
+def _refresh_js_depth(depth: int) -> str:
+    """Relative path from docs/games/{pid}/[archive/] to docs/refresh.js."""
+    return "../" * depth + "../../refresh.js"
+
+
+def _deal_log_js_depth(depth: int) -> str:
+    return "../" * depth + "../../games/{pid}/history/deal_log.js"
+
+
+def publish_docs(pid: str, match: dict) -> None:
+    report_html = game_report_html(pid)
+    if not report_html.exists():
+        raise FileNotFoundError(f"Missing built report: {report_html}")
 
     today = date.today().isoformat()
-    DOCS_ARCHIVE.mkdir(parents=True, exist_ok=True)
-    DOCS_HISTORY.mkdir(parents=True, exist_ok=True)
+    docs_dir = game_docs_dir(pid)
+    archive_dir = game_docs_archive(pid)
+    history_dir = game_docs_history(pid)
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    history_dir.mkdir(parents=True, exist_ok=True)
 
-    base_html = REPORT_HTML.read_text(encoding="utf-8")
-    archive_path = DOCS_ARCHIVE / f"{today}.html"
-    archive_path.write_text(base_html, encoding="utf-8")
+    # Ensure shared refresh.js is at docs root
+    docs_root = DOCS
+    docs_root.mkdir(parents=True, exist_ok=True)
+    if REFRESH_JS.exists():
+        shutil.copy2(REFRESH_JS, docs_root / "refresh.js")
 
-    manifest_dates = archive_manifest(exclude_date=today)
-    DOCS_MANIFEST.write_text(
+    base_html = report_html.read_text(encoding="utf-8")
+
+    # Fix relative paths for docs/games/{pid}/ (2 levels deeper than docs root)
+    base_html_docs = base_html.replace(
+        'src="refresh.js"', 'src="../../refresh.js"'
+    )
+
+    # Save today's archive
+    archive_path = archive_dir / f"{today}.html"
+    archive_path.write_text(base_html_docs, encoding="utf-8")
+
+    manifest_dates = archive_manifest(pid, exclude_date=today)
+    game_docs_manifest(pid).write_text(
         json.dumps({"dates": manifest_dates}, indent=2) + "\n",
         encoding="utf-8",
     )
 
+    latest_label = latest_option_label(base_html_docs)
     dates_for_dropdown = manifest_dates
-    latest_label = latest_option_label(base_html)
 
-    if REFRESH_JS.exists():
-        shutil.copy2(REFRESH_JS, DOCS / "refresh.js")
-
-    if REPORT_DEAL_LOG_HTML.exists():
-        published_log = REPORT_DEAL_LOG_HTML.read_text(encoding="utf-8")
+    # Publish deal log
+    deal_log_src = game_deal_log_html(pid)
+    if deal_log_src.exists():
+        published_log = deal_log_src.read_text(encoding="utf-8")
         published_log = published_log.replace(
             'href="../dashboard.html"', 'href="../index.html"'
         )
-        DOCS_DEAL_LOG.write_text(published_log, encoding="utf-8")
-        if DEAL_LOG_JS.exists():
-            shutil.copy2(DEAL_LOG_JS, DOCS_HISTORY / "deal_log.js")
+        game_docs_deal_log(pid).write_text(published_log, encoding="utf-8")
+        deal_log_js_src = DEAL_LOG_JS
+        if deal_log_js_src.exists():
+            shutil.copy2(deal_log_js_src, history_dir / "deal_log.js")
 
+    # Build docs/games/{pid}/index.html
     index_html = standardize_header(
-        set_snapshot_context(base_html, "index"),
+        set_snapshot_context(base_html_docs, "index"),
         dates_for_dropdown,
         current=None,
         latest_label=latest_label,
+        pid=pid,
     )
     index_html = index_html.replace(
         'href="history/DEAL_LOG.md"', 'href="history/deal-log.html"'
     )
-    (DOCS / "index.html").write_text(index_html, encoding="utf-8")
+    (docs_dir / "index.html").write_text(index_html, encoding="utf-8")
 
-    archive_dates = list_archive_dates()
+    # Patch archive pages
+    archive_dates = list_archive_dates(pid)
     for d in archive_dates:
-        path = DOCS_ARCHIVE / f"{d}.html"
-        raw = base_html if d == today else path.read_text(encoding="utf-8")
+        path = archive_dir / f"{d}.html"
+        raw = base_html_docs if d == today else path.read_text(encoding="utf-8")
         published = standardize_header(
             set_snapshot_context(raw, "archive"),
             dates_for_dropdown,
             current=d,
             latest_label=latest_label,
+            pid=pid,
         )
         published = published.replace(
             'href="history/DEAL_LOG.md"', 'href="../history/deal-log.html"'
         )
-        published = published.replace('src="refresh.js"', 'src="../refresh.js"')
+        published = published.replace('src="../../refresh.js"', 'src="../../../refresh.js"')
         path.write_text(published, encoding="utf-8")
 
-    print("Published docs/index.html")
-    print(f"Published docs/archive/{today}.html")
-    if REPORT_DEAL_LOG_HTML.exists():
-        print("Published docs/history/deal-log.html")
+    print(f"Published docs/games/{pid}/index.html")
+    print(f"Published docs/games/{pid}/archive/{today}.html")
+    if deal_log_src.exists():
+        print(f"Published docs/games/{pid}/history/deal-log.html")
     print(
         f"Archive dates: {', '.join(archive_dates) if archive_dates else '(none)'}"
     )
 
-
-def main() -> int:
-    publish_docs()
-    return 0
+    # Regenerate the top-level game-picker landing page
+    _publish_index(pid)
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+def _publish_index(updated_pid: str | None = None) -> None:
+    """Regenerate docs/index.html with links to all tracked games."""
+    try:
+        matches = load_matches()
+    except FileNotFoundError:
+        return
+
+    # Only list games that have a built dashboard
+    tracked = []
+    for m in matches:
+        pid = str(m["pid"])
+        game_dir = game_docs_dir(pid)
+        if (game_dir / "index.html").exists():
+            tracked.append(m)
+
+    # Sort by date
+    tracked.sort(key=lambda m: m.get("date", ""))
+
+    rows = ""
+    for m in tracked:
+        pid = str(m["pid"])
+        matchup = m.get("matchup", pid)
+        venue = m.get("venue", "")
+        stage = m.get("stage", "")
+        game_date = format_game_date(m)
+        rows += (
+            f'<tr>'
+            f'<td><a href="games/{pid}/">{matchup}</a></td>'
+            f'<td>{stage}</td>'
+            f'<td>{game_date}</td>'
+            f'<td>{venue}</td>'
+            f'</tr>\n'
+        )
+
+    if not rows:
+        rows = '<tr><td colspan="4">No games tracked yet.</td></tr>'
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WC2026 Ticket Tracker</title>
+  <style>
+    body {{ font-family: system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }}
+    h1 {{ font-size: 1.5rem; margin-bottom: 4px; }}
+    p.sub {{ color: #666; margin-top: 0; margin-bottom: 24px; }}
+    table {{ width: 100%; border-collapse: collapse; }}
+    th, td {{ text-align: left; padding: 10px 12px; border-bottom: 1px solid #e5e5e5; }}
+    th {{ font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; }}
+    tr:hover td {{ background: #f9f9f9; }}
+    a {{ color: #1d6bd4; text-decoration: none; font-weight: 500; }}
+    a:hover {{ text-decoration: underline; }}
+  </style>
+</head>
+<body>
+  <h1>WC2026 Ticket Tracker</h1>
+  <p class="sub">Live SeatSidekick inventory dashboards, refreshed every 12 hours.</p>
+  <table>
+    <thead>
+      <tr><th>Match</th><th>Stage</th><th>Date</th><th>Venue</th></tr>
+    </thead>
+    <tbody>
+{rows}    </tbody>
+  </table>
+</body>
+</html>
+"""
+    (DOCS / "index.html").write_text(html, encoding="utf-8")
+    print(f"Published docs/index.html ({len(tracked)} games listed)")

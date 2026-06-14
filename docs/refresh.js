@@ -1,45 +1,20 @@
 /** Live refresh from SeatSidekick API — 60s cooldown via localStorage. */
 (function () {
+  const cfg = window.__wc2026Config;
+  if (!cfg) return;
+
   const API_BASE =
     "https://dlvtfsmonledyyjaqjcn.supabase.co/rest/v1/match_seat_groups";
   const APIKEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsdnRmc21vbmxlZHl5amFxamNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MDk3NDcsImV4cCI6MjA5MTk4NTc0N30.warYGD7rBH_x_qx9i56WfcJ3RKhCALBEarzHSUpkq5k";
-  const PERFORMANCE_ID = "10229226725358";
   const COOLDOWN_MS = 60_000;
   const LS_KEY = "wc2026_last_refresh";
   const FETCH_LIMIT = 1000;
 
-  const QUERIES = [
-    { cat: 1, gs: 2, category: "Category 1" },
-    { cat: 1, gs: 4, category: "Category 1" },
-    { cat: 2, gs: 2, category: "Category 2" },
-    { cat: 2, gs: 4, category: "Category 2" },
-    { cat: 3, gs: 2, category: "Category 3" },
-    { cat: 3, gs: 4, category: "Category 3" },
-  ];
-
-  const BUCKET_RANGES = {
-    1: [4500, 5000, 5500, 6000, 6500],
-    2: [3000, 3500, 4000, 4500, 5000],
-    3: [2500, 3000, 3500, 4000, 5000],
-  };
-
-  const BUCKET_LABELS = {
-    1: ["<$4.5k", "$4.5–5k", "$5–5.5k", "$5.5–6k", "$6–6.5k", "$6.5k+"],
-    2: ["<$3k", "$3–3.5k", "$3.5–4k", "$4–4.5k", "$4.5–5k", "$5k+"],
-    3: ["<$2.5k", "$2.5–3k", "$3–3.5k", "$3.5–4k", "$4–5k", "$5k+"],
-  };
-
-  // Typical market range — listings outside are real but excluded from rankings
-  const CAT_MARKET_RANGE = {
-    1: [3000, 35000],
-    2: [500, 25000],
-    3: [1500, 15000],
-  };
-
   function marketAvg(avg, catNum) {
-    const [lo, hi] = CAT_MARKET_RANGE[catNum];
-    return avg >= lo && avg <= hi;
+    const range = cfg.catMarketRange[String(catNum)];
+    if (!range) return true;
+    return avg >= range[0] && avg <= range[1];
   }
 
   function marketDeal(deal, catNum) {
@@ -49,7 +24,7 @@
   function buildUrl(category, groupSize) {
     const params = new URLSearchParams({
       select: "*",
-      performance_id: `eq.${PERFORMANCE_ID}`,
+      performance_id: `eq.${cfg.performanceId}`,
       dominant_bucket: "eq.Standard",
       dominant_category: `eq.${category}`,
       order: "total_price.asc",
@@ -167,7 +142,8 @@
   }
 
   function bucketIndex(catNum, avg) {
-    const bounds = BUCKET_RANGES[catNum];
+    const bounds = cfg.bucketRanges[String(catNum)];
+    if (!bounds) return 0;
     if (avg < bounds[0]) return 0;
     for (let i = 1; i < bounds.length; i++) {
       if (avg < bounds[i]) return i;
@@ -276,12 +252,13 @@
       (a, b) => b.g2c + b.g4c - (a.g2c + a.g4c)
     );
     const { c2, c4, ymax, ystep } = chartBuckets(catNum, g2Merged, g4Native);
+    const labels = cfg.bucketLabels[String(catNum)] || [];
     return {
       g2_top: [...g2Deals].sort((a, b) => a.avg - b.avg).slice(0, 10),
       g4_top: [...g4Deals].sort((a, b) => a.avg - b.avg).slice(0, 10),
       top3,
       inv,
-      chart: { c2, c4, labels: BUCKET_LABELS[catNum], ymax, ystep },
+      chart: { c2, c4, labels, ymax, ystep },
       metrics_g2: metricsFor(g2Merged, "Groups of 2 tickets", catNum),
       metrics_g4: metricsFor(g4Native, "Groups of 4 tickets", catNum),
     };
@@ -303,6 +280,7 @@
   function applyCategory(catNum, data) {
     const prefix = `cat${catNum}`;
     const section = document.getElementById(prefix);
+    if (!section) return;
     const metricBlocks = section.querySelectorAll(".metrics");
     updateMetricsBlock(metricBlocks[0], data.metrics_g2);
     updateMetricsBlock(metricBlocks[1], data.metrics_g4);
@@ -382,21 +360,29 @@
     setButtonState(btn, "Refreshing…", true, true);
     try {
       const results = await Promise.all(
-        QUERIES.map((q) => fetchQuery(q.category, q.gs))
+        cfg.queries.map((q) => fetchQuery(q.category, q.gs))
       );
-      const byCat = {
-        1: { g2: null, g4: null },
-        2: { g2: null, g4: null },
-        3: { g2: null, g4: null },
-      };
-      QUERIES.forEach((q, i) => {
+
+      // Group by cat + gs
+      const byCat = {};
+      cfg.queries.forEach((q, i) => {
+        if (!byCat[q.cat]) byCat[q.cat] = { g2: null, g4: null };
         byCat[q.cat][q.gs === 2 ? "g2" : "g4"] = results[i];
       });
 
-      for (const catNum of [1, 2, 3]) {
+      // Unhide cat sections/tabs for active cats
+      const activeCats = new Set(cfg.queries.map((q) => q.cat));
+      activeCats.forEach((catNum) => {
+        const sec = document.getElementById(`cat${catNum}`);
+        const tab = document.getElementById(`cat${catNum}-tab`);
+        if (sec) sec.removeAttribute("hidden");
+        if (tab) tab.removeAttribute("hidden");
+      });
+
+      for (const catNum of Object.keys(byCat).map(Number)) {
         applyCategory(
           catNum,
-          buildCategory(catNum, byCat[catNum].g2, byCat[catNum].g4)
+          buildCategory(catNum, byCat[catNum].g2 || [], byCat[catNum].g4 || [])
         );
       }
 
