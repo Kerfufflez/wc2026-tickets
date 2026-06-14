@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="snapshot-context" content="archive">
+<meta name="tz-label" content="ET">
+<title>FIFA World Cup · Ticket Inventory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F6F3; --card: #FFFFFF; --border: #E5E3DC;
+  --text: #1A1A18; --muted: #6B6A65; --hint: #A5A49F;
+  --blue-bg: #E6F1FB; --blue-txt: #0C447C;
+  --green-bg: #EAF3DE; --green-txt: #27500A;
+  --purple-bg: #EEEDFE; --purple-txt: #3C3489;
+  --amber-bg: #FAEEDA; --amber-txt: #633806;
+  --amber: #BA7517;
+  --chart-2: #B5D4F4; --chart-4: #378ADD;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1120px; margin: 0 auto; padding: 48px 40px 60px; }
+
+/* Header */
+.event-label  { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.report-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+.report-sub   { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+.game-nav-wrap { margin-bottom: 18px; }
+.game-nav-select {
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 10px; cursor: pointer; max-width: 340px;
+}
+.last-updated {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 12px; margin-bottom: 28px;
+}
+.last-updated strong { color: var(--text); font-weight: 600; white-space: nowrap; }
+.header-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
+.snapshot-picker {
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 10px; cursor: pointer;
+  flex: 0 1 auto; max-width: 300px; min-width: 0;
+  box-sizing: border-box;
+}
+.refresh-btn {
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, opacity 0.15s;
+}
+.refresh-btn:hover:not(:disabled) { border-color: var(--text); }
+.refresh-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.refresh-btn.loading { opacity: 0.7; }
+.live-badge {
+  font-size: 10px; font-weight: 600; color: var(--green-txt);
+  background: var(--green-bg); padding: 2px 6px; border-radius: 4px;
+  margin-left: 4px; vertical-align: middle;
+}
+hr.divider    { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+
+/* Tabs */
+.cat-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+.cat-tab {
+  padding: 7px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border); background: var(--card);
+  color: var(--muted); transition: all 0.15s; user-select: none;
+}
+.cat-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+.cat-section { display: none; }
+.cat-section.active { display: block; }
+
+/* Metrics rows */
+.metrics-grid { margin-bottom: 20px; }
+.metrics-row-label {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 6px; padding-left: 1px;
+}
+.metrics-row-label + .metrics { margin-bottom: 12px; }
+.metrics {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.metric { background: var(--bg); padding: 14px 16px 16px; border-right: 1px solid var(--border); }
+.metric:last-child { border-right: none; }
+.metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 3px; }
+.metric-sub   { font-size: 11px; color: var(--hint); }
+
+/* Two-col */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; align-items: stretch; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; }
+.card-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.card-sub   { font-size: 11px; color: var(--hint); margin-bottom: 16px; }
+
+/* Deal rows */
+.deal {
+  display: grid; grid-template-columns: 26px 1fr auto;
+  align-items: center; gap: 12px;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.deal:last-child { border-bottom: none; }
+  .top3-inner { display: flex; flex-direction: column; flex: 1; }
+  .top3-inner .deal { flex: 1; }
+.deal-rank      { font-size: 18px; font-weight: 600; color: var(--hint); text-align: center; line-height: 1; }
+.deal-rank.gold { color: var(--amber); }
+.deal-loc       { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.deal-tags      { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+.card .deal-tags { flex-wrap: nowrap; overflow: hidden; }
+.card .deal-tags > * { flex-shrink: 0; }
+.deal-prices    { text-align: right; white-space: nowrap; }
+.deal-per       { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+.deal-per span  { font-size: 11px; font-weight: 400; color: var(--hint); }
+.deal-total     { font-size: 11px; color: var(--hint); margin-top: 2px; }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; line-height: 1.5; white-space: nowrap; }
+.badge-right    { background: var(--blue-bg);   color: var(--blue-txt); }
+.badge-left     { background: var(--green-bg);  color: var(--green-txt); }
+.badge-opposite { background: var(--amber-bg);  color: var(--amber-txt); }
+.badge-center   { background: #FBEAF0; color: #72243E; }
+.badge-front    { background: var(--purple-bg); color: var(--purple-txt); }
+.badge-derived  { background: var(--amber-bg); color: var(--amber-txt); }
+.badge-gs       { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+
+/* Section titles */
+.section-title {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px;
+}
+
+/* List card */
+.list-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0 20px; margin-bottom: 6px; }
+.list-card .deal:first-child { padding-top: 16px; }
+.list-card .deal:last-child  { padding-bottom: 16px; }
+.note { font-size: 11px; color: var(--hint); margin-bottom: 28px; padding-left: 2px; }
+
+/* Inventory table */
+.inv-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead tr { background: var(--bg); }
+th { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+.block-pill { display: inline-flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 5px; padding: 3px 10px; font-size: 12px; font-weight: 600; min-width: 40px; }
+.group-count { font-weight: 600; font-size: 13px; }
+.group-min   { font-size: 11px; color: var(--muted); margin-left: 5px; }
+.nil         { color: var(--hint); }
+
+/* Legend */
+.legend { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* Footer */
+.footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--hint); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .page { padding: 24px 16px 40px; }
+  .report-title { font-size: 22px; letter-spacing: -0.3px; }
+  .report-sub { font-size: 13px; }
+  .header-row { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 20px; }
+  .header-row .last-updated { width: 100%; margin-bottom: 0; flex-wrap: wrap; }
+  .header-controls { width: 100%; flex-direction: row; align-items: center; }
+  .snapshot-picker { flex: 1 1 160px; max-width: none; }
+  .refresh-btn { flex: 0 0 auto; width: auto; }
+  .cat-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab { flex-shrink: 0; padding: 8px 16px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .metric { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .metric:nth-child(2n) { border-right: none; }
+  .metric:nth-child(n+3) { border-bottom: none; }
+  .metric-value { font-size: 20px; }
+  .two-col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .card { padding: 16px; }
+  .card .deal-tags { flex-wrap: wrap; overflow: visible; }
+  .deal {
+    grid-template-columns: 28px 1fr;
+    gap: 8px 10px;
+    align-items: start;
+    padding: 14px 0;
+  }
+  .deal-prices {
+    grid-column: 2;
+    text-align: left;
+    white-space: normal;
+  }
+  .list-card { padding: 0 14px; }
+  .section-title { font-size: 10px; line-height: 1.4; }
+  .inv-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+  }
+  .inv-card table { min-width: 520px; font-size: 11px; }
+  th, td { padding: 8px 10px; }
+  .group-min { display: block; margin-left: 0; margin-top: 2px; }
+  .legend { flex-wrap: wrap; gap: 8px; }
+  .footer { font-size: 10px; line-height: 1.6; }
+}
+
+@media (max-width: 400px) {
+  .page { padding: 20px 12px 32px; }
+  .report-title { font-size: 20px; }
+  .metrics { grid-template-columns: 1fr; }
+  .metric { border-right: none !important; border-bottom: 1px solid var(--border); }
+  .metric:last-child { border-bottom: none; }
+  .metric-value { font-size: 18px; }
+  .deal-loc { font-size: 13px; }
+  .deal-per { font-size: 14px; }
+}
+
+@media print {
+  body { background: white; }
+  .page { padding: 0; max-width: 100%; }
+  .cat-tabs, .refresh-btn { display: none; }
+  .cat-section { display: block !important; }
+  .page-break-before { break-before: page; }
+  .metrics, .two-col, .card, .list-card, .inv-card, .deal, tr { break-inside: avoid; }
+  thead { display: table-header-group; }
+  .section-title { break-after: avoid; }
+  @page { margin: 0.5in; size: 11in 8.5in landscape; }
+}
+</style>
+<script>window.__wc2026Config = {"performanceId":"10229226725340","queries":[{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[800,1200,1800,2500,3500],"2":[500,800,1200,1800,2500],"3":[300,500,750,1100,1600],"4":[200,350,550,800,1200]},"bucketLabels":{"1":["<$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k\u2013$3.5k","$3.5k+"],"2":["<$500","$500\u2013$800","$800\u2013$1.2k","$1.2k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k+"],"3":["<$300","$300\u2013$500","$500\u2013$750","$750\u2013$1.1k","$1.1k\u2013$1.6k","$1.6k+"],"4":["<$200","$200\u2013$350","$350\u2013$550","$550\u2013$800","$800\u2013$1.2k","$1.2k+"]},"catMarketRange":{"1":[400,12000],"2":[200,8000],"3":[150,6000],"4":[100,4000]},"games":[{"pid":"10229226700893","matchup":"C\u00f4te d'Ivoire vs Ecuador","date":"Jun 14"},{"pid":"10229226700899","matchup":"Saudi Arabia vs Uruguay","date":"Jun 15"},{"pid":"10229226700901","matchup":"IR Iran vs New Zealand","date":"Jun 15"},{"pid":"10229226700904","matchup":"France vs Senegal","date":"Jun 16"},{"pid":"10229226700907","matchup":"Argentina vs Algeria","date":"Jun 16"},{"pid":"10229226700908","matchup":"Austria vs Jordan","date":"Jun 16"},{"pid":"10229226700911","matchup":"Portugal vs Congo DR","date":"Jun 17"},{"pid":"10229226700912","matchup":"Uzbekistan vs Colombia","date":"Jun 17"},{"pid":"10229226700913","matchup":"Czechia vs South Africa","date":"Jun 18"},{"pid":"10229226700914","matchup":"Switzerland vs Bosnia and Herzegovina","date":"Jun 18"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 19"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 21"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 22"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 22"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 24"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 25"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 26"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jun 30"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 1"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 2"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"}]};</script>
+</head>
+<body>
+<div class="page">
+  <p class="event-label">1B vs 3EFGIJ</p>
+  <h1 class="report-title">Official FIFA Resale Marketplace</h1>
+  <p class="report-sub">BC Place Vancouver · July 2, 2026</p>
+  <div class="game-nav-wrap" id="game-nav-wrap" style="display:none">
+    <select id="game-nav" class="game-nav-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
+  </div>
+  <div class="header-row">
+    <p class="last-updated" id="last-updated" style="margin-bottom:0">Last updated: <strong>Jun 14, 2026 at 2:17 AM ET</strong></p>
+    <div class="header-controls">
+      <select id="snapshot-picker" class="snapshot-picker" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        <option value="">Jun 14, 2026 · 2:17 AM ET · Latest</option>
+      </select>
+      <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
+        <span id="refresh-btn-label">Refresh now</span>
+      </button>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="cat-tabs">
+    <div class="cat-tab active" onclick="switchCat('cat1',this)">Category 1</div>
+    <div class="cat-tab" onclick="switchCat('cat2',this)">Category 2</div>
+    <div class="cat-tab" onclick="switchCat('cat3',this)">Category 3</div>
+    <div class="cat-tab" id="cat4-tab" onclick="switchCat('cat4',this)" hidden>Category 4</div>
+  </div>
+
+  <!-- ══ CAT 1 ══ -->
+  <div id="cat1" class="cat-section active">
+    <div class="metrics-grid">
+      <div class="metrics-row-label">Groups of 2</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">266</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$693</div><div class="metric-sub">Section 253 · Row DD</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$1,237</div><div class="metric-sub">Across 266 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,385</div><div class="metric-sub">Section 253, Row DD</div></div>
+      </div>
+      <div class="metrics-row-label">Groups of 4</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">149</div><div class="metric-sub">Groups of 4 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$716</div><div class="metric-sub">Section 225 · Row CC</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$1,453</div><div class="metric-sub">Across 149 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$2,863</div><div class="metric-sub">Section 225, Row CC</div></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Top 3 deals</div>
+        <div class="card-sub">Cheapest available — avg per ticket</div>
+        <div id="cat1-top3" class="top3-inner"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Price distribution</div>
+        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat1-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 1</div>
+    <div class="list-card" id="cat1-list2"></div>
+    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title">Top 10 listings (4 tickets) — Category 1</div>
+    <div class="list-card" id="cat1-list4"></div>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 1</div>
+    <div class="inv-card"><table>
+      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
+      <tbody id="cat1-inv"></tbody>
+    </table></div>
+  </div>
+
+  <!-- ══ CAT 2 ══ -->
+  <div id="cat2" class="cat-section">
+    <div class="metrics-grid">
+      <div class="metrics-row-label">Groups of 2</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">176</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$544</div><div class="metric-sub">Section 439 · Row YY</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$948</div><div class="metric-sub">Across 176 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,089</div><div class="metric-sub">Section 439, Row YY</div></div>
+      </div>
+      <div class="metrics-row-label">Groups of 4</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">104</div><div class="metric-sub">Groups of 4 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$557</div><div class="metric-sub">Section 436 · Row SS</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$969</div><div class="metric-sub">Across 104 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$2,227</div><div class="metric-sub">Section 436, Row SS</div></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Top 3 deals</div>
+        <div class="card-sub">Cheapest available — avg per ticket</div>
+        <div id="cat2-top3" class="top3-inner"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Price distribution</div>
+        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat2-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 2</div>
+    <div class="list-card" id="cat2-list2"></div>
+    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title">Top 10 listings (4 tickets) — Category 2</div>
+    <div class="list-card" id="cat2-list4"></div>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 2</div>
+    <div class="inv-card"><table>
+      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
+      <tbody id="cat2-inv"></tbody>
+    </table></div>
+  </div>
+
+  <!-- ══ CAT 3 ══ -->
+  <div id="cat3" class="cat-section">
+    <div class="metrics-grid">
+      <div class="metrics-row-label">Groups of 2</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">61</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$503</div><div class="metric-sub">Section 401 · Row RR</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$862</div><div class="metric-sub">Across 61 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,006</div><div class="metric-sub">Section 401, Row RR</div></div>
+      </div>
+      <div class="metrics-row-label">Groups of 4</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">43</div><div class="metric-sub">Groups of 4 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$503</div><div class="metric-sub">Section 401 · Row RR</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$948</div><div class="metric-sub">Across 43 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$2,010</div><div class="metric-sub">Section 401, Row RR</div></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Top 3 deals</div>
+        <div class="card-sub">Cheapest available — avg per ticket</div>
+        <div id="cat3-top3" class="top3-inner"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Price distribution</div>
+        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat3-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 3</div>
+    <div class="list-card" id="cat3-list2"></div>
+    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title">Top 10 listings (4 tickets) — Category 3</div>
+    <div class="list-card" id="cat3-list4"></div>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 3</div>
+    <div class="inv-card"><table>
+      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
+      <tbody id="cat3-inv"></tbody>
+    </table></div>
+  </div>
+
+  <!-- ══ CAT 4 ══ -->
+  <div id="cat4" class="cat-section">
+    <div class="metrics-grid">
+      <div class="metrics-row-label">Groups of 2</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">11</div><div class="metric-sub">Groups of 2 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$690</div><div class="metric-sub">Section 402 · Row ZZ</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$1,155</div><div class="metric-sub">Across 11 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (2 tickets)</div><div class="metric-value">$1,380</div><div class="metric-sub">Section 402, Row ZZ</div></div>
+      </div>
+      <div class="metrics-row-label">Groups of 4</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Listings</div><div class="metric-value">6</div><div class="metric-sub">Groups of 4 tickets</div></div>
+        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div><div class="metric-value">$690</div><div class="metric-sub">Section 402 · Row ZZ</div></div>
+        <div class="metric"><div class="metric-label">Median avg/ticket</div><div class="metric-value">$942</div><div class="metric-sub">Across 6 groups</div></div>
+        <div class="metric"><div class="metric-label">Min total (4 tickets)</div><div class="metric-value">$2,760</div><div class="metric-sub">Section 402, Row ZZ</div></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Top 3 deals</div>
+        <div class="card-sub">Cheapest available — avg per ticket</div>
+        <div id="cat4-top3" class="top3-inner"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Price distribution</div>
+        <div class="card-sub">Avg per ticket &middot; groups of 2 and 4</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-2)"></span>Groups of 2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--chart-4)"></span>Groups of 4</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:160px;"><canvas id="cat4-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="section-title page-break-before">Top 10 listings (2 tickets) — Category 4</div>
+    <div class="list-card" id="cat4-list2"></div>
+    <p class="note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair priced from a group-of-4 listing; not a native group-of-2 SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title">Top 10 listings (4 tickets) — Category 4</div>
+    <div class="list-card" id="cat4-list4"></div>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 20 or below — closer to the pitch.</p>
+    <div class="section-title page-break-before">Total inventory — groups of 2 &amp; 4 · Category 4</div>
+    <div class="inv-card"><table>
+      <thead><tr><th>Section</th><th>Stand</th><th>Side</th><th>Groups of 2</th><th>Groups of 4</th></tr></thead>
+      <tbody id="cat4-inv"></tbody>
+    </table></div>
+  </div>
+
+  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured Jun 14, 2026. Prices reflect resale market and may change. Avg per ticket = total cost ÷ group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function goGame(pid) {
+  const p = location.pathname;
+  if (p.endsWith('/dashboard.html')) {
+    location.href = '../' + pid + '/dashboard.html';
+  } else {
+    location.href = '../../games/' + pid + '/';
+  }
+}
+
+(function() {
+  const cfg = window.__wc2026Config;
+  const nav = document.getElementById('game-nav');
+  const wrap = document.getElementById('game-nav-wrap');
+  if (!cfg || !cfg.games || cfg.games.length < 2 || !nav || !wrap) return;
+  cfg.games.forEach(function(g) {
+    const opt = document.createElement('option');
+    opt.value = g.pid;
+    opt.textContent = g.matchup + ' · ' + g.date;
+    if (g.pid === cfg.performanceId) opt.selected = true;
+    nav.appendChild(opt);
+  });
+  wrap.style.display = '';
+})();
+
+function goSnapshot(date) {
+  const ctx = document.querySelector('meta[name="snapshot-context"]')?.content || 'index';
+  if (!date) {
+    window.location.href = ctx === 'archive' ? '../index.html' : 'index.html';
+  } else {
+    window.location.href = ctx === 'archive' ? `${date}.html` : `archive/${date}.html`;
+  }
+}
+
+function switchCat(id, el) {
+  document.querySelectorAll('.cat-section:not([hidden])').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.cat-tab:not([hidden])').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+const sideClass = { Right:'badge-right', Left:'badge-left', Opposite:'badge-opposite', Center:'badge-center' };
+
+function dealHTML(g, i, showGs) {
+  const mixed = g.mixed ? '<span style="color:var(--hint);font-size:10px"> *</span>' : '';
+  const gsBadge = showGs ? `<span class="badge badge-gs">${g.gs} tickets</span> &middot; ` : '';
+  const frontBadge = (!showGs && g.front) ? ` &middot; <span class="badge badge-front">front section</span>` : '';
+  const derivedBadge = (!showGs && g.derived) ? ` &middot; <span class="badge badge-derived">from 4-pack</span>` : '';
+  return `<div class="deal">
+    <div class="deal-rank${i===0?' gold':''}">${i+1}</div>
+    <div>
+      <div class="deal-loc">Section ${g.sec} &middot; Row ${g.row}</div>
+      <div class="deal-tags">${gsBadge}${g.stand} Stand &middot; <span class="badge ${sideClass[g.side]}">${g.side}</span> &middot; Seats ${g.seats}${frontBadge}${derivedBadge}</div>
+    </div>
+    <div class="deal-prices">
+      <div class="deal-per">$${g.avg.toLocaleString()}${mixed} <span>/ea avg</span></div>
+      <div class="deal-total">$${g.total.toLocaleString()} total</div>
+    </div>
+  </div>`;
+}
+
+function renderDeals(top3, list2, list4, t3id, l2id, l4id) {
+  document.getElementById(t3id).innerHTML = top3.slice(0,3).map((g,i)=>dealHTML(g,i,true)).join('');
+  document.getElementById(l2id).innerHTML = list2.slice(0,10).map((g,i)=>dealHTML(g,i,false)).join('');
+  document.getElementById(l4id).innerHTML = list4.slice(0,10).map((g,i)=>dealHTML(g,i,false)).join('');
+}
+
+function renderInv(blocks, id) {
+  const tbody = document.getElementById(id);
+  tbody.innerHTML = '';
+  [...blocks].sort((a,b)=>(b.g2c+b.g4c)-(a.g2c+a.g4c)).forEach(b => {
+    const tr = document.createElement('tr');
+    const sc = b.side ? `<span class="badge ${sideClass[b.side]}">${b.side}</span>` : '<span class="nil">—</span>';
+    const g2 = b.g2c ? `<span class="group-count">${b.g2c}</span><span class="group-min">min $${b.g2m.toLocaleString()}/ea</span>` : '<span class="nil">—</span>';
+    const g4 = b.g4c ? `<span class="group-count">${b.g4c}</span><span class="group-min">min $${b.g4m.toLocaleString()}/ea</span>` : '<span class="nil">—</span>';
+    tr.innerHTML = `<td><span class="block-pill">${b.sec}</span></td><td style="color:var(--muted)">${b.stand}</td><td>${sc}</td><td>${g2}</td><td>${g4}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+const chartInstances = {};
+function makeChart(id, c2, c4, labels, ymax, ystep) {
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+    delete chartInstances[id];
+  }
+  chartInstances[id] = new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{ labels, datasets:[
+      {label:'Groups of 2', data:c2, backgroundColor:'#B5D4F4', borderWidth:0, borderRadius:3},
+      {label:'Groups of 4', data:c4, backgroundColor:'#378ADD', borderWidth:0, borderRadius:3}
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' '+ctx.dataset.label.toLowerCase()}}},
+      layout:{padding:{top:20}},
+      scales:{
+        x:{grid:{display:false}, ticks:{color:'#A5A49F',font:{size:10,family:'Inter'}}},
+        y:{grid:{color:'#F0EEE8'}, ticks:{color:'#A5A49F',font:{size:10,family:'Inter'},stepSize:ystep}, max:ymax}
+      }
+    },
+    plugins:[{afterDatasetsDraw(chart){
+      const ctx=chart.ctx;
+      chart.data.datasets.forEach((ds,di)=>{
+        ds.data.forEach((val,i)=>{
+          if(!val)return;
+          const bar=chart.getDatasetMeta(di).data[i];
+          ctx.fillStyle='#555'; ctx.font='500 10px Inter,sans-serif';
+          ctx.textAlign='center'; ctx.fillText(val,bar.x,bar.y-5);
+        });
+      });
+    }}]
+  });
+}
+
+// ── CAT 1 ─────────────────────────────────────────────────────────────────
+const cat1g2 = [
+  {sec:'253',row:'DD',seats:'101–102',stand:'Main',side:'Right',total:1385,avg:693,gs:2,front:false,mixed:false,derived:false},
+  {sec:'234',row:'G',seats:'106–107',stand:'Main',side:'Left',total:1402,avg:701,gs:2,front:false,mixed:false,derived:false},
+  {sec:'245',row:'EE',seats:'105–106',stand:'Opposite',side:'Opposite',total:1402,avg:701,gs:2,front:false,mixed:false,derived:false},
+  {sec:'221',row:'GG',seats:'105–106',stand:'Main',side:'Left',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'249',row:'CC',seats:'1–2',stand:'Main',side:'Right',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'221',row:'TT',seats:'1–2',stand:'Main',side:'Left',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'206',row:'P',seats:'102–103',stand:'Main',side:'Right',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'246',row:'K',seats:'1–2',stand:'Opposite',side:'Opposite',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'246',row:'M',seats:'1–2',stand:'Opposite',side:'Opposite',total:1484,avg:742,gs:2,front:false,mixed:false,derived:false},
+  {sec:'228',row:'G',seats:'103–104',stand:'Main',side:'Left',total:1526,avg:763,gs:2,front:false,mixed:false,derived:false},
+];
+const cat1g4 = [
+  {sec:'225',row:'CC',seats:'2–5',stand:'Main',side:'Left',total:2863,avg:716,gs:4,front:false,mixed:false,derived:false},
+  {sec:'234',row:'S',seats:'5–8',stand:'Main',side:'Left',total:2886,avg:722,gs:4,front:false,mixed:false,derived:false},
+  {sec:'218',row:'OO',seats:'9–12',stand:'Main',side:'Center',total:2967,avg:742,gs:4,front:false,mixed:false,derived:false},
+  {sec:'246',row:'DD',seats:'108–111',stand:'Opposite',side:'Opposite',total:2969,avg:742,gs:4,front:false,mixed:false,derived:false},
+  {sec:'206',row:'K',seats:'1–4',stand:'Main',side:'Right',total:2969,avg:742,gs:4,front:false,mixed:false,derived:false},
+  {sec:'253',row:'KK',seats:'105–108',stand:'Main',side:'Right',total:3105,avg:776,gs:4,front:false,mixed:false,derived:false},
+  {sec:'234',row:'T',seats:'5–8',stand:'Main',side:'Left',total:3134,avg:783,gs:4,front:false,mixed:false,derived:false},
+  {sec:'253',row:'MM',seats:'1–4',stand:'Main',side:'Right',total:3220,avg:805,gs:4,front:false,mixed:false,derived:false},
+  {sec:'246',row:'PP',seats:'109–112',stand:'Opposite',side:'Opposite',total:3266,avg:816,gs:4,front:false,mixed:false,derived:false},
+  {sec:'202',row:'C',seats:'103–106',stand:'Main',side:'Right',total:3266,avg:816,gs:4,front:false,mixed:false,derived:false},
+];
+const cat1top3 = [{sec:'253',row:'DD',seats:'101–102',stand:'Main',side:'Right',total:1385,avg:693,gs:2,front:false,mixed:false,derived:false}, {sec:'234',row:'G',seats:'106–107',stand:'Main',side:'Left',total:1402,avg:701,gs:2,front:false,mixed:false,derived:false}, {sec:'245',row:'EE',seats:'105–106',stand:'Opposite',side:'Opposite',total:1402,avg:701,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat1inv = [
+  {sec:'221',stand:'Main',side:'Left',g2c:19,g2m:742,g4c:8,g4m:862},
+  {sec:'246',stand:'Opposite',side:'Opposite',g2c:13,g2m:742,g4c:10,g4m:742},
+  {sec:'202',stand:'Main',side:'Right',g2c:15,g2m:802,g4c:8,g4m:816},
+  {sec:'201',stand:'Main',side:'Right',g2c:13,g2m:1072,g4c:8,g4m:874},
+  {sec:'203',stand:'Main',side:'Right',g2c:16,g2m:816,g4c:4,g4m:884},
+  {sec:'234',stand:'Main',side:'Left',g2c:11,g2m:701,g4c:8,g4m:722},
+  {sec:'225',stand:'Main',side:'Left',g2c:13,g2m:783,g4c:5,g4m:716},
+  {sec:'219',stand:'Main',side:'Center',g2c:10,g2m:874,g4c:8,g4m:857},
+  {sec:'236',stand:'Opposite',side:'Opposite',g2c:12,g2m:825,g4c:5,g4m:972},
+  {sec:'253',stand:'Main',side:'Right',g2c:5,g2m:693,g4c:11,g4m:776},
+  {sec:'222',stand:'Main',side:'Left',g2c:9,g2m:833,g4c:7,g4m:887},
+  {sec:'245',stand:'Opposite',side:'Opposite',g2c:10,g2m:701,g4c:5,g4m:1031},
+  {sec:'218',stand:'Main',side:'Center',g2c:13,g2m:866,g4c:2,g4m:742},
+  {sec:'204',stand:'Main',side:'Right',g2c:9,g2m:891,g4c:6,g4m:1495},
+  {sec:'224',stand:'Main',side:'Left',g2c:8,g2m:948,g4c:6,g4m:862},
+  {sec:'209',stand:'Main',side:'Center',g2c:9,g2m:1072,g4c:5,g4m:963},
+  {sec:'254',stand:'Main',side:'Right',g2c:7,g2m:776,g4c:5,g4m:903},
+  {sec:'248',stand:'Main',side:'Right',g2c:8,g2m:825,g4c:4,g4m:990},
+  {sec:'207',stand:'Main',side:'Right',g2c:8,g2m:907,g4c:3,g4m:952},
+  {sec:'244',stand:'Opposite',side:'Opposite',g2c:6,g2m:990,g4c:5,g4m:1237},
+  {sec:'206',stand:'Main',side:'Right',g2c:5,g2m:742,g4c:5,g4m:742},
+  {sec:'226',stand:'Main',side:'Left',g2c:7,g2m:799,g4c:3,g4m:866},
+  {sec:'211',stand:'Main',side:'Center',g2c:7,g2m:1035,g4c:3,g4m:1431},
+  {sec:'210',stand:'Main',side:'Center',g2c:7,g2m:873,g4c:2,g4m:1237},
+  {sec:'233',stand:'Main',side:'Left',g2c:5,g2m:1035,g4c:2,g4m:1443},
+  {sec:'217',stand:'Main',side:'Center',g2c:6,g2m:1237,g4c:1,g4m:2062},
+  {sec:'228',stand:'Main',side:'Left',g2c:4,g2m:763,g4c:1,g4m:990},
+  {sec:'227',stand:'Main',side:'Left',g2c:1,g2m:990,g4c:4,g4m:907},
+  {sec:'249',stand:'Main',side:'Right',g2c:4,g2m:742,g4c:0,g4m:null},
+  {sec:'242',stand:'Opposite',side:'Opposite',g2c:2,g2m:1409,g4c:1,g4m:3450},
+  {sec:'345',stand:'Opposite',side:'Opposite',g2c:2,g2m:1220,g4c:0,g4m:null},
+  {sec:'229',stand:'Main',side:'Left',g2c:1,g2m:2473,g4c:1,g4m:1237},
+  {sec:'230',stand:'Main',side:'Left',g2c:0,g2m:null,g4c:2,g4m:920},
+  {sec:'243',stand:'Opposite',side:'Opposite',g2c:1,g2m:3711,g4c:0,g4m:null},
+  {sec:'252',stand:'Main',side:'Right',g2c:0,g2m:null,g4c:1,g4m:1122},
+];
+renderDeals(cat1top3, cat1g2, cat1g4, 'cat1-top3','cat1-list2','cat1-list4');
+renderInv(cat1inv,'cat1-inv');
+makeChart('cat1-chart',[2, 4, 5, 6, 5, 63],[0, 0, 1, 4, 3, 18],
+  ["<$4.5k", "$4.5\u20135k", "$5\u20135.5k", "$5.5\u20136k", "$6\u20136.5k", "$6.5k+"],75,15);
+
+// ── CAT 2 ─────────────────────────────────────────────────────────────────
+const cat2g2 = [
+  {sec:'439',row:'YY',seats:'102–103',stand:'Opposite',side:'Opposite',total:1089,avg:544,gs:2,front:false,mixed:false,derived:false},
+  {sec:'447',row:'VV',seats:'1–2',stand:'Opposite',side:'Opposite',total:1104,avg:552,gs:2,front:false,mixed:false,derived:false},
+  {sec:'421',row:'MM',seats:'8–9',stand:'Main',side:'Left',total:1105,avg:553,gs:2,front:false,mixed:false,derived:false},
+  {sec:'407',row:'KK',seats:'107–108',stand:'Main',side:'Right',total:1150,avg:575,gs:2,front:false,mixed:false,derived:false},
+  {sec:'421',row:'DD',seats:'101–102',stand:'Main',side:'Left',total:1150,avg:575,gs:2,front:false,mixed:false,derived:false},
+  {sec:'407',row:'B',seats:'103–104',stand:'Main',side:'Right',total:1150,avg:575,gs:2,front:false,mixed:false,derived:false},
+  {sec:'435',row:'ZZ',seats:'102–103',stand:'Opposite',side:'Opposite',total:1150,avg:575,gs:2,front:false,mixed:false,derived:false},
+  {sec:'444',row:'TT',seats:'101–102',stand:'Opposite',side:'Opposite',total:1155,avg:577,gs:2,front:false,mixed:false,derived:false},
+  {sec:'421',row:'NN',seats:'1–2',stand:'Main',side:'Left',total:1155,avg:577,gs:2,front:false,mixed:false,derived:false},
+  {sec:'435',row:'YY',seats:'104–105',stand:'Opposite',side:'Opposite',total:1171,avg:586,gs:2,front:false,mixed:false,derived:false},
+];
+const cat2g4 = [
+  {sec:'436',row:'SS',seats:'103–106',stand:'Opposite',side:'Opposite',total:2227,avg:557,gs:4,front:false,mixed:false,derived:false},
+  {sec:'437',row:'TT',seats:'3–6',stand:'Opposite',side:'Opposite',total:2276,avg:569,gs:4,front:false,mixed:false,derived:false},
+  {sec:'437',row:'BB',seats:'4–7',stand:'Opposite',side:'Opposite',total:2309,avg:577,gs:4,front:false,mixed:false,derived:false},
+  {sec:'420',row:'MM',seats:'107–110',stand:'Main',side:'Center',total:2309,avg:577,gs:4,front:false,mixed:false,derived:false},
+  {sec:'447',row:'VV',seats:'5–8',stand:'Opposite',side:'Opposite',total:2329,avg:582,gs:4,front:false,mixed:false,derived:false},
+  {sec:'434',row:'KK',seats:'103–106',stand:'Main',side:'Left',total:2359,avg:590,gs:4,front:false,mixed:false,derived:false},
+  {sec:'442',row:'JJ',seats:'108–111',stand:'Opposite',side:'Opposite',total:2474,avg:618,gs:4,front:false,mixed:false,derived:false},
+  {sec:'440',row:'TT',seats:'8–11',stand:'Opposite',side:'Opposite',total:2606,avg:651,gs:4,front:false,mixed:false,derived:false},
+  {sec:'420',row:'YY',seats:'106–109',stand:'Main',side:'Center',total:2622,avg:656,gs:4,front:false,mixed:false,derived:false},
+  {sec:'434',row:'D',seats:'5–8',stand:'Main',side:'Left',total:2639,avg:660,gs:4,front:false,mixed:false,derived:false},
+];
+const cat2top3 = [{sec:'439',row:'YY',seats:'102–103',stand:'Opposite',side:'Opposite',total:1089,avg:544,gs:2,front:false,mixed:false,derived:false}, {sec:'447',row:'VV',seats:'1–2',stand:'Opposite',side:'Opposite',total:1104,avg:552,gs:2,front:false,mixed:false,derived:false}, {sec:'421',row:'MM',seats:'8–9',stand:'Main',side:'Left',total:1105,avg:553,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat2inv = [
+  {sec:'437',stand:'Opposite',side:'Opposite',g2c:16,g2m:618,g4c:8,g4m:569},
+  {sec:'421',stand:'Main',side:'Left',g2c:13,g2m:553,g4c:4,g4m:920},
+  {sec:'420',stand:'Main',side:'Center',g2c:11,g2m:711,g4c:6,g4m:577},
+  {sec:'438',stand:'Opposite',side:'Opposite',g2c:7,g2m:631,g4c:9,g4m:660},
+  {sec:'435',stand:'Opposite',side:'Opposite',g2c:10,g2m:575,g4c:5,g4m:734},
+  {sec:'442',stand:'Opposite',side:'Opposite',g2c:8,g2m:618,g4c:7,g4m:618},
+  {sec:'434',stand:'Main',side:'Left',g2c:10,g2m:643,g4c:5,g4m:590},
+  {sec:'439',stand:'Opposite',side:'Opposite',g2c:8,g2m:544,g4c:6,g4m:660},
+  {sec:'407',stand:'Main',side:'Right',g2c:11,g2m:575,g4c:3,g4m:1237},
+  {sec:'440',stand:'Opposite',side:'Opposite',g2c:5,g2m:632,g4c:9,g4m:651},
+  {sec:'446',stand:'Opposite',side:'Opposite',g2c:8,g2m:699,g4c:6,g4m:660},
+  {sec:'447',stand:'Opposite',side:'Opposite',g2c:8,g2m:552,g4c:5,g4m:582},
+  {sec:'436',stand:'Opposite',side:'Opposite',g2c:7,g2m:614,g4c:6,g4m:557},
+  {sec:'443',stand:'Opposite',side:'Opposite',g2c:7,g2m:618,g4c:4,g4m:825},
+  {sec:'419',stand:'Main',side:'Center',g2c:7,g2m:707,g4c:4,g4m:682},
+  {sec:'448',stand:'Main',side:'Right',g2c:7,g2m:783,g4c:3,g4m:748},
+  {sec:'441',stand:'Opposite',side:'Opposite',g2c:5,g2m:618,g4c:4,g4m:770},
+  {sec:'418',stand:'Main',side:'Center',g2c:7,g2m:782,g4c:2,g4m:966},
+  {sec:'408',stand:'Main',side:'Center',g2c:4,g2m:660,g4c:2,g4m:779},
+  {sec:'444',stand:'Opposite',side:'Opposite',g2c:5,g2m:577,g4c:0,g4m:null},
+  {sec:'417',stand:'Main',side:'Center',g2c:4,g2m:632,g4c:1,g4m:862},
+  {sec:'409',stand:'Main',side:'Center',g2c:3,g2m:748,g4c:2,g4m:1035},
+  {sec:'410',stand:'Main',side:'Center',g2c:2,g2m:874,g4c:2,g4m:862},
+  {sec:'445',stand:'Opposite',side:'Opposite',g2c:2,g2m:825,g4c:1,g4m:660},
+  {sec:'416',stand:'Main',side:'Center',g2c:1,g2m:2804,g4c:0,g4m:null},
+];
+renderDeals(cat2top3, cat2g2, cat2g4, 'cat2-top3','cat2-list2','cat2-list4');
+renderInv(cat2inv,'cat2-inv');
+makeChart('cat2-chart',[3, 10, 14, 17, 18, 41],[1, 0, 6, 2, 7, 37],
+  ["<$3k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20134.5k", "$4.5\u20135k", "$5k+"],50,10);
+
+// ── CAT 3 ─────────────────────────────────────────────────────────────────
+const cat3g2 = [
+  {sec:'401',row:'RR',seats:'104–105',stand:'Main',side:'Right',total:1006,avg:503,gs:2,front:false,mixed:false,derived:true},
+  {sec:'401',row:'RR',seats:'105–106',stand:'Main',side:'Right',total:1006,avg:503,gs:2,front:false,mixed:false,derived:true},
+  {sec:'401',row:'RR',seats:'106–107',stand:'Main',side:'Right',total:1006,avg:503,gs:2,front:false,mixed:false,derived:true},
+  {sec:'425',row:'RR',seats:'101–102',stand:'Main',side:'Left',total:1072,avg:536,gs:2,front:false,mixed:false,derived:false},
+  {sec:'428',row:'PP',seats:'10–11',stand:'Main',side:'Left',total:1072,avg:536,gs:2,front:false,mixed:false,derived:false},
+  {sec:'427',row:'SS',seats:'104–105',stand:'Main',side:'Left',total:1155,avg:577,gs:2,front:false,mixed:false,derived:false},
+  {sec:'425',row:'D',seats:'7–8',stand:'Main',side:'Left',total:1196,avg:598,gs:2,front:false,mixed:false,derived:false},
+  {sec:'449',row:'MM',seats:'109–110',stand:'Main',side:'Right',total:1262,avg:631,gs:2,front:false,mixed:false,derived:false},
+  {sec:'454',row:'TT',seats:'104–105',stand:'Main',side:'Right',total:1270,avg:635,gs:2,front:false,mixed:false,derived:false},
+  {sec:'454',row:'LL',seats:'3–4',stand:'Main',side:'Right',total:1278,avg:639,gs:2,front:false,mixed:false,derived:false},
+];
+const cat3g4 = [
+  {sec:'401',row:'RR',seats:'104–107',stand:'Main',side:'Right',total:2010,avg:503,gs:4,front:false,mixed:false,derived:false},
+  {sec:'450',row:'B',seats:'4–7',stand:'Main',side:'Right',total:2309,avg:577,gs:4,front:false,mixed:false,derived:false},
+  {sec:'428',row:'UU',seats:'8–11',stand:'Main',side:'Left',total:2507,avg:627,gs:4,front:false,mixed:true,derived:false},
+  {sec:'433',row:'SS',seats:'3–6',stand:'Main',side:'Left',total:2639,avg:660,gs:4,front:false,mixed:false,derived:false},
+  {sec:'453',row:'SS',seats:'108–111',stand:'Main',side:'Right',total:2639,avg:660,gs:4,front:false,mixed:false,derived:false},
+  {sec:'432',row:'LL',seats:'102–105',stand:'Main',side:'Left',total:2737,avg:684,gs:4,front:false,mixed:false,derived:false},
+  {sec:'454',row:'LL',seats:'108–111',stand:'Main',side:'Right',total:2760,avg:690,gs:4,front:false,mixed:false,derived:false},
+  {sec:'403',row:'GG',seats:'6–9',stand:'Main',side:'Right',total:2804,avg:701,gs:4,front:false,mixed:false,derived:false},
+  {sec:'453',row:'JJ',seats:'107–110',stand:'Main',side:'Right',total:2853,avg:713,gs:4,front:false,mixed:false,derived:false},
+  {sec:'402',row:'D',seats:'7–10',stand:'Main',side:'Right',total:2965,avg:741,gs:4,front:false,mixed:false,derived:false},
+];
+const cat3top3 = [{sec:'401',row:'RR',seats:'104–105',stand:'Main',side:'Right',total:1006,avg:503,gs:2,front:false,mixed:false,derived:true}, {sec:'401',row:'RR',seats:'104–107',stand:'Main',side:'Right',total:2010,avg:503,gs:4,front:false,mixed:false,derived:false}, {sec:'425',row:'RR',seats:'101–102',stand:'Main',side:'Left',total:1072,avg:536,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat3inv = [
+  {sec:'427',stand:'Main',side:'Left',g2c:10,g2m:577,g4c:3,g4m:814},
+  {sec:'454',stand:'Main',side:'Right',g2c:7,g2m:635,g4c:5,g4m:690},
+  {sec:'428',stand:'Main',side:'Left',g2c:5,g2m:536,g4c:6,g4m:627},
+  {sec:'402',stand:'Main',side:'Right',g2c:6,g2m:660,g4c:5,g4m:741},
+  {sec:'449',stand:'Main',side:'Right',g2c:6,g2m:631,g4c:3,g4m:990},
+  {sec:'401',stand:'Main',side:'Right',g2c:6,g2m:503,g4c:2,g4m:503},
+  {sec:'433',stand:'Main',side:'Left',g2c:6,g2m:697,g4c:2,g4m:660},
+  {sec:'425',stand:'Main',side:'Left',g2c:5,g2m:536,g4c:0,g4m:null},
+  {sec:'426',stand:'Main',side:'Left',g2c:1,g2m:825,g4c:4,g4m:811},
+  {sec:'403',stand:'Main',side:'Right',g2c:2,g2m:744,g4c:2,g4m:701},
+  {sec:'432',stand:'Main',side:'Left',g2c:2,g2m:825,g4c:2,g4m:684},
+  {sec:'450',stand:'Main',side:'Right',g2c:0,g2m:null,g4c:4,g4m:577},
+  {sec:'424',stand:'Main',side:'Left',g2c:2,g2m:642,g4c:1,g4m:1649},
+  {sec:'404',stand:'Main',side:'Right',g2c:2,g2m:805,g4c:1,g4m:990},
+  {sec:'429',stand:'Main',side:'Left',g2c:1,g2m:4123,g4c:1,g4m:1237},
+  {sec:'453',stand:'Main',side:'Right',g2c:0,g2m:null,g4c:2,g4m:660},
+];
+renderDeals(cat3top3, cat3g2, cat3g4, 'cat3-top3','cat3-list2','cat3-list4');
+renderInv(cat3inv,'cat3-inv');
+makeChart('cat3-chart',[1, 11, 15, 13, 30, 30],[2, 8, 9, 4, 14, 31],
+  ["<$2.5k", "$2.5\u20133k", "$3\u20133.5k", "$3.5\u20134k", "$4\u20135k", "$5k+"],40,8);
+const cat4g2 = [
+  {sec:'402',row:'ZZ',seats:'105–106',stand:'Main',side:'Right',total:1380,avg:690,gs:2,front:false,mixed:false,derived:true},
+  {sec:'402',row:'ZZ',seats:'106–107',stand:'Main',side:'Right',total:1380,avg:690,gs:2,front:false,mixed:false,derived:true},
+  {sec:'402',row:'ZZ',seats:'107–108',stand:'Main',side:'Right',total:1380,avg:690,gs:2,front:false,mixed:false,derived:true},
+  {sec:'429',row:'XX',seats:'104–105',stand:'Main',side:'Left',total:1443,avg:722,gs:2,front:false,mixed:false,derived:false},
+  {sec:'403',row:'XX',seats:'1–2',stand:'Main',side:'Right',total:2185,avg:1092,gs:2,front:false,mixed:false,derived:false},
+  {sec:'454',row:'ZZ',seats:'6–7',stand:'Main',side:'Right',total:2309,avg:1155,gs:2,front:false,mixed:false,derived:false},
+  {sec:'430',row:'XX',seats:'7–8',stand:'Main',side:'Left',total:2645,avg:1322,gs:2,front:false,mixed:false,derived:false},
+  {sec:'401',row:'WW',seats:'108–109',stand:'Main',side:'Right',total:2754,avg:1377,gs:2,front:false,mixed:false,derived:false},
+  {sec:'401',row:'XX',seats:'108–109',stand:'Main',side:'Right',total:2754,avg:1377,gs:2,front:false,mixed:false,derived:false},
+  {sec:'426',row:'VV',seats:'108–109',stand:'Main',side:'Left',total:4123,avg:2062,gs:2,front:false,mixed:false,derived:false},
+];
+const cat4g4 = [
+  {sec:'402',row:'ZZ',seats:'105–108',stand:'Main',side:'Right',total:2760,avg:690,gs:4,front:false,mixed:false,derived:false},
+  {sec:'429',row:'WW',seats:'102–105',stand:'Main',side:'Left',total:3546,avg:887,gs:4,front:false,mixed:false,derived:false},
+  {sec:'401',row:'WW',seats:'2–5',stand:'Main',side:'Right',total:3629,avg:907,gs:4,front:false,mixed:false,derived:false},
+  {sec:'402',row:'YY',seats:'3–6',stand:'Main',side:'Right',total:3910,avg:978,gs:4,front:false,mixed:false,derived:false},
+  {sec:'427',row:'YY',seats:'2–5',stand:'Main',side:'Left',total:6900,avg:1725,gs:4,front:false,mixed:false,derived:false},
+  {sec:'452',row:'XX',seats:'101–104',stand:'Main',side:'Right',total:8577,avg:2144,gs:4,front:false,mixed:false,derived:false},
+];
+const cat4top3 = [{sec:'402',row:'ZZ',seats:'105–106',stand:'Main',side:'Right',total:1380,avg:690,gs:2,front:false,mixed:false,derived:true}, {sec:'402',row:'ZZ',seats:'105–108',stand:'Main',side:'Right',total:2760,avg:690,gs:4,front:false,mixed:false,derived:false}, {sec:'429',row:'XX',seats:'104–105',stand:'Main',side:'Left',total:1443,avg:722,gs:2,front:false,mixed:false,derived:false}].sort((a,b)=>a.avg-b.avg).slice(0,3);
+const cat4inv = [
+  {sec:'402',stand:'Main',side:'Right',g2c:3,g2m:690,g4c:2,g4m:690},
+  {sec:'401',stand:'Main',side:'Right',g2c:2,g2m:1377,g4c:1,g4m:907},
+  {sec:'429',stand:'Main',side:'Left',g2c:1,g2m:722,g4c:1,g4m:887},
+  {sec:'454',stand:'Main',side:'Right',g2c:2,g2m:1155,g4c:0,g4m:null},
+  {sec:'403',stand:'Main',side:'Right',g2c:1,g2m:1092,g4c:0,g4m:null},
+  {sec:'430',stand:'Main',side:'Left',g2c:1,g2m:1322,g4c:0,g4m:null},
+  {sec:'426',stand:'Main',side:'Left',g2c:1,g2m:2062,g4c:0,g4m:null},
+  {sec:'427',stand:'Main',side:'Left',g2c:0,g2m:null,g4c:1,g4m:1725},
+  {sec:'452',stand:'Main',side:'Right',g2c:0,g2m:null,g4c:1,g4m:2144},
+];
+renderDeals(cat4top3, cat4g2, cat4g4, 'cat4-top3','cat4-list2','cat4-list4');
+renderInv(cat4inv,'cat4-inv');
+makeChart('cat4-chart',[0,0,0,0,0,0],[0,0,0,0,0,0],
+  ["<$150", "$150\u2013250", "$250\u2013400", "$400\u2013600", "$600\u2013900", "$900+"],5,1);
+</script>
+<script src="../../../refresh.js"></script>
+</body>
+</html>

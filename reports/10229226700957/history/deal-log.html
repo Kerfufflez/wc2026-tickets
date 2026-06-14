@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="tz-label" content="ET">
+<title>Deal Movement Log · WC2026 Semi-Final</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F6F3; --card: #FFFFFF; --border: #E5E3DC;
+  --text: #1A1A18; --muted: #6B6A65; --hint: #A5A49F;
+  --blue-bg: #E6F1FB; --blue-txt: #0C447C;
+  --green-bg: #EAF3DE; --green-txt: #27500A;
+  --purple-bg: #EEEDFE; --purple-txt: #3C3489;
+  --amber-bg: #FAEEDA; --amber-txt: #633806;
+  --red-bg: #FCE8E8; --red-txt: #8B1A1A;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.page { max-width: 800px; margin: 0 auto; padding: 40px 24px 60px; }
+.back-link { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 20px; }
+.back-link:hover { color: var(--text); }
+h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.generated { font-size: 11px; color: var(--hint); margin-bottom: 28px; }
+
+.changelog { display: flex; flex-direction: column; gap: 12px; }
+.changelog-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; transition: border-color 0.15s;
+}
+.changelog-card.expanded { border-color: #ccc; }
+.changelog-card-header {
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 16px 18px; font-family: inherit; color: inherit;
+}
+.changelog-card-top {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;
+}
+.changelog-time { font-size: 13px; font-weight: 600; color: var(--text); }
+.changelog-badge {
+  font-size: 10px; font-weight: 600; color: var(--purple-txt);
+  background: var(--purple-bg); padding: 2px 8px; border-radius: 4px;
+}
+.changelog-toggle {
+  margin-left: auto; font-size: 18px; font-weight: 400; color: var(--hint);
+  line-height: 1; flex-shrink: 0;
+}
+.changelog-compare { font-size: 11px; color: var(--hint); margin-bottom: 10px; }
+
+.changelog-preview { display: flex; flex-direction: column; gap: 8px; }
+.changelog-card.expanded .changelog-preview { display: none; }
+
+.cat-preview-row {
+  display: grid; grid-template-columns: 88px 1fr auto; gap: 10px; align-items: center;
+  padding: 8px 10px; background: var(--bg); border-radius: 8px;
+}
+.cat-preview-label { font-size: 11px; font-weight: 600; color: var(--text); }
+.cat-preview-deltas { display: flex; gap: 6px; flex-wrap: wrap; }
+.cat-preview-signals { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+.delta, .inv-count {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  white-space: nowrap;
+}
+.inv-count { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+.delta.up { color: var(--green-txt); background: var(--green-bg); }
+.delta.down { color: var(--red-txt); background: var(--red-bg); }
+.delta.flat { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+
+.signal {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  white-space: nowrap;
+}
+.signal-green { color: var(--green-txt); background: var(--green-bg); }
+.signal-blue { color: var(--blue-txt); background: var(--blue-bg); }
+.signal-muted { color: var(--muted); background: var(--card); border: 1px solid var(--border); }
+
+.changelog-body {
+  border-top: 1px solid var(--border);
+  max-height: 70vh; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.changelog-body-inner { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 16px; }
+
+.cat-panel {
+  border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 12px;
+  background: var(--bg);
+}
+.cat-panel-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  margin-bottom: 10px; color: var(--text);
+}
+.cat-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.cat-stat {
+  background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px;
+}
+.cat-stat-label {
+  display: block; font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;
+}
+.cat-stat-value { font-size: 14px; font-weight: 600; }
+.cat-block { margin-top: 10px; }
+.cat-block-title {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+}
+.cat-quiet { font-size: 12px; color: var(--hint); }
+
+.deal-list { list-style: none; }
+.deal-row {
+  display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+  padding: 9px 10px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 6px; margin-bottom: 6px;
+}
+.deal-row:last-child { margin-bottom: 0; }
+.deal-row.accent-drop { border-left: 3px solid var(--green-txt); }
+.deal-row.accent-new { border-left: 3px solid var(--blue-txt); }
+.deal-loc { display: block; font-size: 13px; font-weight: 600; }
+.deal-meta { font-size: 11px; color: var(--muted); }
+.deal-avg { font-size: 14px; font-weight: 600; text-align: right; }
+.deal-per { font-size: 11px; font-weight: 500; color: var(--muted); }
+.deal-change {
+  display: block; font-size: 10px; font-weight: 600; color: var(--green-txt);
+  text-align: right; margin-top: 2px;
+}
+.deal-tag {
+  font-size: 10px; font-weight: 600; color: var(--purple-txt);
+  background: var(--purple-bg); padding: 1px 5px; border-radius: 3px;
+}
+.deal-tag-front { color: var(--amber-txt); background: var(--amber-bg); }
+
+.changelog-empty { font-size: 13px; color: var(--hint); padding: 24px; text-align: center; }
+.changelog-empty code {
+  font-size: 12px; background: var(--card); padding: 2px 6px;
+  border-radius: 4px; border: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .page { padding: 24px 16px 40px; }
+  h1 { font-size: 20px; }
+  .cat-preview-row {
+    grid-template-columns: 1fr; gap: 6px;
+  }
+  .cat-preview-signals { justify-content: flex-start; }
+  .cat-stat-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back-link" href="../dashboard.html">&larr; Back to dashboard</a>
+  <h1>Deal movement log</h1>
+  <p class="subtitle">Per refresh: listing deltas, cheaper tickets, and new top-10 entries by category.</p>
+  <p class="generated">Generated Jun 14, 2026 at 2:17 AM ET</p>
+  <div class="changelog" id="changelog">
+<article class="changelog-card" data-id="2026-06-14T021727">
+  <button type="button" class="changelog-card-header" aria-expanded="false">
+    <div class="changelog-card-top">
+      <time class="changelog-time" datetime="2026-06-14T02:17:27-04:00">Jun 14, 2026 at 2:17 AM ET</time>
+      <span class="changelog-badge">Baseline</span>
+      <span class="changelog-toggle" aria-hidden="true">+</span>
+    </div>
+    
+    <div class="changelog-preview"><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 1</span>
+  <div class="cat-preview-deltas"><span class="inv-count">99 G2</span><span class="inv-count">67 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 2</span>
+  <div class="cat-preview-deltas"><span class="inv-count">55 G2</span><span class="inv-count">31 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 3</span>
+  <div class="cat-preview-deltas"><span class="inv-count">11 G2</span><span class="inv-count">3 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div><div class="cat-preview-row">
+  <span class="cat-preview-label">Category 4</span>
+  <div class="cat-preview-deltas"><span class="inv-count">1 G2</span><span class="inv-count">0 G4</span></div>
+  <div class="cat-preview-signals"></div>
+</div></div>
+  </button>
+  <div class="changelog-body" hidden>
+    <div class="changelog-body-inner"><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 1</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">99 G2 · 67 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 2</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">55 G2 · 31 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 3</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">11 G2 · 3 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section><section class="cat-panel">
+  <h3 class="cat-panel-title">Category 4</h3>
+  <div class="cat-stat"><span class="cat-stat-label">Inventory</span><span class="cat-stat-value">1 G2 · 0 G4</span></div><p class="cat-quiet">Baseline scan — nothing to compare yet.</p>
+</section></div>
+  </div>
+</article>
+  </div>
+</div>
+<script src="deal_log.js"></script>
+</body>
+</html>
