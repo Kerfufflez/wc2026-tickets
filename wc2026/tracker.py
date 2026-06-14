@@ -87,7 +87,7 @@ def is_legacy_daily_stem(stem: str) -> bool:
 
 
 def build_snapshot(pid: str) -> dict[str, Any]:
-    from wc2026.build import build_category, merge_derived_pairs
+    from wc2026.build import build_gs_category, merge_derived_pairs
     from wc2026.config import game_raw_path
     from wc2026.games import game_categories, get_game
     from wc2026.utils import load_json, market_deal, row_to_deal
@@ -103,28 +103,36 @@ def build_snapshot(pid: str) -> dict[str, Any]:
     market_range = _STAGE_MARKET_RANGE.get(stage, _DEFAULT_MARKET_RANGE)
     bucket_preset = _STAGE_BUCKETS.get(stage, _DEFAULT_BUCKETS)
     bucket_ranges = {cat_num: bucket_preset.get(cat_num, [500, 1000, 2000, 4000, 8000])
-                    for cat_num, _, _ in categories}
+                    for cat_num, gs_files in categories}
 
     now = now_est()
     sid = snapshot_id(now)
     cats: dict[str, Any] = {}
-    for cat_num, g2_file, g4_file in categories:
-        g2_raw = load_json(game_raw_path(pid, g2_file))
-        g4_raw = load_json(game_raw_path(pid, g4_file))
+    for cat_num, gs_files in categories:
+        g2_file = gs_files[2]
+        g4_file = gs_files[4]
+        g4_path = game_raw_path(pid, g4_file)
+        g4_raw = load_json(g4_path) if g4_path.exists() else []
+
+        g2_built = build_gs_category(cat_num, pid, g2_file, 2, g4_raw, market_range, bucket_ranges)
+        g4_built = build_gs_category(cat_num, pid, g4_file, 4, [], market_range, bucket_ranges)
+
+        # Build full merged G2 listing set for snapshot
+        g2_path = game_raw_path(pid, g2_file)
+        g2_raw = load_json(g2_path) if g2_path.exists() else []
         g2_merged = merge_derived_pairs(g2_raw, g4_raw)
-        built = build_category(cat_num, pid, g2_file, g4_file, market_range, bucket_ranges)
 
         listings: dict[str, dict] = {}
         for row in g2_merged + g4_raw:
             listings[deal_id(row)] = listing_record(row, cat_num)
 
         cats[f"cat{cat_num}"] = {
-            "counts": {"g2": built["g2_count"], "g4": built["g4_count"]},
-            "cheapest_g2": built["g2_top"][0] if built["g2_top"] else None,
-            "cheapest_g4": built["g4_top"][0] if built["g4_top"] else None,
-            "top3": built["top3"],
-            "top10_g2": built["g2_top"],
-            "top10_g4": built["g4_top"],
+            "counts": {"g2": g2_built["count"], "g4": g4_built["count"]},
+            "cheapest_g2": g2_built["deals"][0] if g2_built["deals"] else None,
+            "cheapest_g4": g4_built["deals"][0] if g4_built["deals"] else None,
+            "top3": g2_built["deals"][:3],
+            "top10_g2": g2_built["deals"],
+            "top10_g4": g4_built["deals"],
             "listings": listings,
         }
 

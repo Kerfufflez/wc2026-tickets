@@ -7,28 +7,27 @@ import re
 
 from wc2026.config import (
     ROOT,
+    REFRESH_JS,
     TEMPLATE,
-    game_fetch_meta,
     game_raw_path,
     game_report_html,
 )
 from wc2026.dates import format_est, format_est_date, now_est
 from wc2026.derive import derive_pairs
 from wc2026.games import (
+    _DEFAULT_BUCKETS,
     _DEFAULT_MARKET_RANGE,
+    _STAGE_BUCKETS,
     _STAGE_MARKET_RANGE,
     game_categories,
     game_config_js,
     format_game_date,
 )
 from wc2026.utils import (
-    chart_buckets,
-    deal_to_js,
-    inv_to_js,
+    chart_buckets_single,
     load_json,
     market_avg,
     market_deal,
-    metrics_for,
     row_to_deal,
     validate_all,
 )
@@ -93,101 +92,44 @@ def merge_derived_pairs(g2: list, g4: list) -> list:
     return merged
 
 
-def cap_comment(pid: str, filename: str) -> str:
-    meta_path = game_fetch_meta(pid)
-    if not meta_path.exists():
-        return ""
-    meta = json.loads(meta_path.read_text(encoding="utf-8"))
-    info = meta.get(filename, {})
-    if info.get("truncated"):
-        total = info.get("total", "?")
-        return (
-            f"// Partial fetch for {filename} ({info.get('count')}/{total} groups); "
-            "more inventory may exist\n"
-        )
-    return ""
-
-
-def format_array(name: str, deals: list[dict], prefix_comment: str = "") -> str:
-    lines = [prefix_comment + f"const {name} = ["]
-    for d in deals:
-        lines.append(f"  {deal_to_js(d)},")
-    lines.append("];")
-    return "\n".join(lines)
-
-
-def build_category(
+def build_gs_category(
     cat_num: int,
     pid: str,
-    g2_file: str,
-    g4_file: str,
+    fname: str,
+    gs: int,
+    g4_raw: list,
     market_range: dict[int, tuple[int, int]],
     bucket_ranges: dict[int, list[int]] | None = None,
 ) -> dict:
-    g2_raw = load_json(game_raw_path(pid, g2_file))
-    g4_raw = load_json(game_raw_path(pid, g4_file))
-    g2_raw_count = len(g2_raw)
-    g4_raw_count = len(g4_raw)
-    g2_native = [r for r in g2_raw if market_avg(round(r["avg_price"]), cat_num, market_range)]
-    g4_native = [r for r in g4_raw if market_avg(round(r["avg_price"]), cat_num, market_range)]
-    g2_merged = merge_derived_pairs(g2_native, g4_native)
+    """Build deals + chart for one (category, group_size) combination."""
+    path = game_raw_path(pid, fname)
+    raw = load_json(path) if path.exists() else []
 
-    g2_deals = [
-        d for d in (row_to_deal(r, cat_num) for r in g2_merged)
+    filtered = [r for r in raw if market_avg(round(r["avg_price"]), cat_num, market_range)]
+
+    if gs == 2:
+        g4_filtered = [r for r in g4_raw if market_avg(round(r["avg_price"]), cat_num, market_range)]
+        filtered = merge_derived_pairs(filtered, g4_filtered)
+
+    deals = [
+        d for d in (row_to_deal(r, cat_num) for r in filtered)
         if market_deal(d, cat_num, market_range)
     ]
-    g4_deals = [
-        d for d in (row_to_deal(r, cat_num) for r in g4_native)
-        if market_deal(d, cat_num, market_range)
-    ]
-    g2_top = sorted(g2_deals, key=lambda d: d["avg"])[:10]
-    g4_top = sorted(g4_deals, key=lambda d: d["avg"])[:10]
-    top3 = _top_deals(g2_deals + g4_deals, 3)
-    inv = sorted(
-        build_inventory_from_deals(g2_deals, g4_deals),
-        key=lambda b: -(b["g2c"] + b["g4c"]),
-    )
+    deals_sorted = sorted(deals, key=lambda d: d["avg"])[:10]
 
     br = bucket_ranges or {}
-    c2, c4, ymax, ystep = chart_buckets(cat_num, g2_merged, g4_native, br)
+    if cat_num in br:
+        c, ymax, ystep = chart_buckets_single(cat_num, filtered, br)
+    else:
+        c, ymax, ystep = [0] * 6, 5, 1
+
     return {
         "cat": cat_num,
-        "g2_file": g2_file,
-        "g4_file": g4_file,
-        "g2_count": len(g2_merged),
-        "g4_count": len(g4_native),
-        "g2_api_count": g2_raw_count,
-        "g4_api_count": g4_raw_count,
-        "g2_top": g2_top,
-        "g4_top": g4_top,
-        "top3": top3,
-        "inv": inv,
-        "chart": (c2, c4, ymax, ystep),
-        "metrics_g2": metrics_for(g2_merged, "Groups of 2 tickets", cat_num, market_range),
-        "metrics_g4": metrics_for(g4_native, "Groups of 4 tickets", cat_num, market_range),
+        "gs": gs,
+        "count": len(deals),
+        "deals": deals_sorted,
+        "chart": {"c": c, "ymax": ymax, "ystep": ystep},
     }
-
-
-def build_inventory_from_deals(g2: list, g4: list) -> list:
-    blocks: dict = {}
-    for deals, cnt_key, min_key in ((g2, "g2c", "g2m"), (g4, "g4c", "g4m")):
-        for d in deals:
-            sec = d["sec"]
-            if sec not in blocks:
-                blocks[sec] = {
-                    "sec": sec,
-                    "stand": d["stand"],
-                    "side": d["side"],
-                    "g2c": 0,
-                    "g2m": None,
-                    "g4c": 0,
-                    "g4m": None,
-                }
-            b = blocks[sec]
-            b[cnt_key] += 1
-            if b[min_key] is None or d["avg"] < b[min_key]:
-                b[min_key] = d["avg"]
-    return list(blocks.values())
 
 
 def _collect_built_games(current_pid: str, current_match: dict) -> list[dict]:
@@ -216,10 +158,7 @@ def _collect_built_games(current_pid: str, current_match: dict) -> list[dict]:
 def patch_html(
     pid: str,
     match: dict,
-    categories: list[tuple[int, str, str]],
-    category_data: list[dict],
-    bucket_ranges: dict[int, list[int]],
-    bucket_labels: dict[int, list[str]],
+    data_obj: dict,
     built_games: list[dict] | None = None,
 ) -> None:
     source = TEMPLATE if TEMPLATE.exists() else game_report_html(pid)
@@ -228,7 +167,6 @@ def patch_html(
     today = format_est_date(now)
     last_updated = format_est(now)
 
-    # Inject game identity
     matchup = match.get("matchup", "")
     venue_date = f"{match.get('venue', '')} · {format_game_date(match)}"
     html = re.sub(r"\{\{game_title\}\}", matchup, html)
@@ -247,129 +185,29 @@ def patch_html(
         count=1,
     )
 
-    # Inject game config script (replaces placeholder or appends before </head>)
     config_script = game_config_js(match, built_games)
     if "<!-- __GAME_CONFIG__ -->" in html:
         html = html.replace("<!-- __GAME_CONFIG__ -->", config_script)
     else:
         html = html.replace("</head>", f"  {config_script}\n</head>", 1)
 
-    # Patch each category section
-    cat_nums = {cat_num for cat_num, _, _ in categories}
-    for data in category_data:
-        c = data["cat"]
-        prefix = f"cat{c}"
-
-        # Show/hide the section based on whether this game has the category
-        # (cat4 is hidden in template by default; remove 'hidden' if present)
-        if c in cat_nums:
-            html = re.sub(
-                rf'(<div id="{prefix}"[^>]*) hidden([^>]*>)',
-                rf'\1\2',
-                html,
-                count=1,
-            )
-
-        # Find section bounds
-        section_start = html.find(f'<div id="{prefix}"')
-        if section_start == -1:
-            continue
-        if c == max(cat_nums):
-            section_end = html.find('<div class="footer"', section_start)
-        else:
-            next_cat = c + 1
-            section_end = html.find(f'<div id="cat{next_cat}"', section_start + 10)
-        section = html[section_start:section_end]
-
-        def replace_metric_block(section_html: str, label: str, m: dict, ticket_n: int) -> str:
-            if label == "Groups of 2":
-                end_pat = r"(?=<div class=\"metrics-row-label\">Groups of 4</div>)"
-            else:
-                end_pat = r"(?=<div class=\"two-col\">)"
-            pattern = (
-                rf'<div class="metrics-row-label">{re.escape(label)}</div>\s*'
-                rf'<div class="metrics">[\s\S]*?</div>\s*'
-                rf"{end_pat}"
-            )
-            close_grid = (
-                "\n    </div>\n    " if label == "Groups of 4" else "\n      "
-            )
-            block = (
-                f'<div class="metrics-row-label">{label}</div>\n'
-                f'      <div class="metrics">\n'
-                f'        <div class="metric"><div class="metric-label">Listings</div>'
-                f'<div class="metric-value">{m["listings"]}</div>'
-                f'<div class="metric-sub">{m["ticket_label"]}</div></div>\n'
-                f'        <div class="metric"><div class="metric-label">Cheapest avg/ticket</div>'
-                f'<div class="metric-value">{m["cheapest_value"]}</div>'
-                f'<div class="metric-sub">{m["cheapest_sub"]}</div></div>\n'
-                f'        <div class="metric"><div class="metric-label">Median avg/ticket</div>'
-                f'<div class="metric-value">{m["median_value"]}</div>'
-                f'<div class="metric-sub">{m["median_sub"]}</div></div>\n'
-                f'        <div class="metric"><div class="metric-label">Min total ({ticket_n} tickets)</div>'
-                f'<div class="metric-value">{m["min_total_value"]}</div>'
-                f'<div class="metric-sub">{m["min_total_sub"]}</div></div>\n'
-                f'      </div>{close_grid}'
-            )
-            return re.sub(pattern, block, section_html, count=1)
-
-        section = replace_metric_block(section, "Groups of 2", data["metrics_g2"], 2)
-        section = replace_metric_block(section, "Groups of 4", data["metrics_g4"], 4)
-        html = html[:section_start] + section + html[section_end:]
-
-        g2_comment = cap_comment(pid, data["g2_file"])
-        g4_comment = cap_comment(pid, data["g4_file"])
-
-        labels = bucket_labels.get(c, [])
-        labels_str = "[" + ", ".join(f"'{lb}'" for lb in labels) + "]"
-
-        g2_pat = (
-            rf"(?:// (?:API returned 100 results \(limit\)|Partial fetch) for [^\n]+\n)*"
-            rf"const {prefix}g2 = \[[\s\S]*?\];"
-        )
-        g4_pat = rf"const {prefix}g4 = \[[\s\S]*?\];"
-        top3_pat = rf"const {prefix}top3 = [^;]+;"
-        inv_pat = rf"const {prefix}inv = \[[\s\S]*?\];"
-        chart_pat = (
-            rf"makeChart\('{prefix}-chart',[^\n]+,\n[^\n]+,\n[^\n]+,\d+,\d+\);"
-        )
-
-        g2_new = format_array(f"{prefix}g2", data["g2_top"], g2_comment)
-        g4_new = format_array(f"{prefix}g4", data["g4_top"], g4_comment)
-        top3_new = (
-            f"const {prefix}top3 = [{', '.join(deal_to_js(d) for d in data['top3'])}]"
-            f".sort((a,b)=>a.avg-b.avg).slice(0,3);"
-        )
-        inv_new = (
-            f"const {prefix}inv = [\n  "
-            + ",\n  ".join(inv_to_js(b) for b in data["inv"])
-            + ",\n];"
-        )
-        c2, c4_data, ymax, ystep = data["chart"]
-        chart_new = (
-            f"makeChart('{prefix}-chart',{c2},{c4_data},\n  "
-            f"{labels_str},{ymax},{ystep});"
-        )
-        html = re.sub(g2_pat, lambda _m: g2_new, html, count=1)
-        html = re.sub(g4_pat, lambda _m: g4_new, html, count=1)
-        html = re.sub(top3_pat, lambda _m: top3_new, html, count=1)
-        html = re.sub(inv_pat, lambda _m: inv_new, html, count=1)
-        html = re.sub(chart_pat, lambda _m: chart_new, html, count=1)
+    data_json = json.dumps(data_obj, separators=(',', ':'))
+    data_script = f"<script>window.__wc2026Data={data_json};</script>"
+    if "<!-- __GAME_DATA__ -->" in html:
+        html = html.replace("<!-- __GAME_DATA__ -->", data_script)
+    else:
+        html = html.replace("</body>", f"  {data_script}\n</body>", 1)
 
     out = game_report_html(pid)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+    if REFRESH_JS.exists():
+        import shutil
+        shutil.copy2(REFRESH_JS, out.parent / "refresh.js")
     print(f"Updated {out}")
 
 
 def main(match: dict) -> int:
-    from wc2026.games import (
-        _STAGE_BUCKETS,
-        _DEFAULT_BUCKETS,
-        _STAGE_MARKET_RANGE,
-        _DEFAULT_MARKET_RANGE,
-        _bucket_labels,
-    )
     from wc2026.render_deal_log import render_deal_log
     from wc2026.tracker import log_deals
     from wc2026.publish import publish_docs
@@ -382,11 +220,8 @@ def main(match: dict) -> int:
     bucket_preset = _STAGE_BUCKETS.get(stage, _DEFAULT_BUCKETS)
 
     bucket_ranges: dict[int, list[int]] = {}
-    bucket_labels: dict[int, list[str]] = {}
-    for cat_num, _, _ in cats:
-        bp = bucket_preset.get(cat_num, [500, 1000, 2000, 4000, 8000])
-        bucket_ranges[cat_num] = bp
-        bucket_labels[cat_num] = _bucket_labels(bp)
+    for cat_num, _ in cats:
+        bucket_ranges[cat_num] = bucket_preset.get(cat_num, [500, 1000, 2000, 4000, 8000])
 
     errors = validate_all(pid, cats)
     if errors:
@@ -394,20 +229,55 @@ def main(match: dict) -> int:
             print(e)
         return 1
 
-    category_data = []
-    for cat_num, g2_file, g4_file in cats:
-        category_data.append(
-            build_category(cat_num, pid, g2_file, g4_file, market_range, bucket_ranges)
-        )
+    # Cache G4 raw rows (needed for G2 derive/merge)
+    g4_raw_cache: dict[int, list] = {}
+    for cat_num, gs_files in cats:
+        g4_path = game_raw_path(pid, gs_files[4])
+        g4_raw_cache[cat_num] = load_json(g4_path) if g4_path.exists() else []
+
+    # Build per-gs, per-cat data
+    gs_cats: dict[int, dict[int, dict]] = {gs: {} for gs in (1, 2, 3, 4)}
+    for gs in (1, 2, 3, 4):
+        for cat_num, gs_files in cats:
+            gs_cats[gs][cat_num] = build_gs_category(
+                cat_num, pid, gs_files[gs], gs,
+                g4_raw_cache[cat_num],
+                market_range, bucket_ranges,
+            )
+
+    # Require at least some data to build
+    has_any = any(
+        gs_cats[gs][cat_num]["count"] > 0
+        for gs in (1, 2, 3, 4)
+        for cat_num, _ in cats
+    )
+    if not has_any:
+        print("No usable listings across any category/group size — skipping build")
+        return 1
+
+    # Assemble window.__wc2026Data
+    data_obj: dict = {"top3": {}, "cats": {}}
+    for cat_num, _ in cats:
+        data_obj["cats"][str(cat_num)] = {}
+        for gs in (1, 2, 3, 4):
+            gd = gs_cats[gs][cat_num]
+            data_obj["cats"][str(cat_num)][str(gs)] = {
+                "deals": gd["deals"],
+                "chart": gd["chart"],
+            }
+
+    for gs in (1, 2, 3, 4):
+        all_deals: list[dict] = []
+        for cat_num, _ in cats:
+            all_deals.extend(gs_cats[gs][cat_num]["deals"])
+        data_obj["top3"][str(gs)] = _top_deals(all_deals, 3)
 
     built_games = _collect_built_games(pid, match)
-    patch_html(pid, match, cats, category_data, bucket_ranges, bucket_labels, built_games)
+    patch_html(pid, match, data_obj, built_games)
 
-    for d in category_data:
-        print(
-            f"Cat {d['cat']}: G2={d['g2_count']} G4={d['g4_count']} "
-            f"chart peak G2={max(d['chart'][0])} G4={max(d['chart'][1])}"
-        )
+    for cat_num, _ in cats:
+        counts = " ".join(f"G{gs}={gs_cats[gs][cat_num]['count']}" for gs in (1, 2, 3, 4))
+        print(f"  Cat {cat_num}: {counts}")
 
     log_deals(pid)
     render_deal_log(pid)

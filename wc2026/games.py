@@ -118,15 +118,20 @@ def get_game(pid: str | int) -> dict:
     raise ValueError(f"Game not found: {pid!r}. Check data/matches.json.")
 
 
-def game_categories(match: dict) -> list[tuple[int, str, str]]:
-    """Return [(cat_num, g2_filename, g4_filename), ...] sorted by category number."""
+def game_categories(match: dict) -> list[tuple[int, dict[int, str]]]:
+    """Return [(cat_num, {1: g1_file, 2: g2_file, 3: g3_file, 4: g4_file}), ...] sorted by category number."""
     cats = match.get("cats", {})
     result = []
     for key in sorted(cats.keys()):
         n_str = key.replace("Category ", "").strip()
         if n_str.isdigit():
             n = int(n_str)
-            result.append((n, f"cat{n}_g2.json", f"cat{n}_g4.json"))
+            result.append((n, {
+                1: f"cat{n}_g1.json",
+                2: f"cat{n}_g2.json",
+                3: f"cat{n}_g3.json",
+                4: f"cat{n}_g4.json",
+            }))
     return result
 
 
@@ -144,9 +149,9 @@ def game_config_js(match: dict, built_games: list[dict] | None = None) -> str:
     bucket_labels: dict[int, list[str]] = {}
     cat_market_range: dict[int, list[int]] = {}
 
-    for cat_num, _, _ in cats:
-        queries.append({"cat": cat_num, "gs": 2, "category": f"Category {cat_num}"})
-        queries.append({"cat": cat_num, "gs": 4, "category": f"Category {cat_num}"})
+    for cat_num, _gs_files in cats:
+        for gs in (1, 2, 3, 4):
+            queries.append({"cat": cat_num, "gs": gs, "category": f"Category {cat_num}"})
         bp = bucket_preset.get(cat_num, _DEFAULT_BUCKETS.get(cat_num, [500, 1000, 2000, 4000, 8000]))
         mr = market_preset.get(cat_num, (100, 50000))
         bucket_ranges[cat_num] = bp

@@ -6,7 +6,7 @@ from datetime import date
 
 from wc2026.config import game_overlap, game_raw_path
 from wc2026.derive import derive_pairs
-from wc2026.utils import g2_key, load_json, validate_all
+from wc2026.utils import g2_key, load_json
 
 
 def classify_pair(pair: dict, g2_lookup: set, g2_min: float, g2_max: float) -> str:
@@ -144,19 +144,22 @@ def overall_recommendation(results: list[dict]) -> str:
     return "SKIP"
 
 
-def main(pid: str, categories: list[tuple[int, str, str]]) -> int:
-    errors = validate_all(pid, categories)
-    if errors:
-        print("Validation FAILED:")
-        for e in errors:
-            print(f"  - {e}")
-        return 1
-
+def main(pid: str, categories: list[tuple[int, dict[int, str]]]) -> int:
     results = []
-    for cat_num, g2_file, g4_file in categories:
-        g2 = load_json(game_raw_path(pid, g2_file))
-        g4 = load_json(game_raw_path(pid, g4_file))
+    for cat_num, gs_files in categories:
+        g2_path = game_raw_path(pid, gs_files[2])
+        g4_path = game_raw_path(pid, gs_files[4])
+        if not g2_path.exists() or not g4_path.exists():
+            continue
+        g2 = load_json(g2_path)
+        g4 = load_json(g4_path)
+        if not g2 or not g4:
+            continue
         results.append(analyze_category(cat_num, g2, g4))
+
+    if not results:
+        print("No G2+G4 data available for overlap analysis — skipping")
+        return 0
 
     sections = [format_section(r) for r in results]
     summary_rows = [

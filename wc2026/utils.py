@@ -49,7 +49,7 @@ def row_to_deal(row: dict[str, Any], cat_num: int | None = None) -> dict[str, An
     raw_row = row["row"]
     try:
         row_val: int | str = int(raw_row)
-        is_front = row_val < 20
+        is_front = row_val < 10
     except (TypeError, ValueError):
         row_val = str(raw_row)
         is_front = False
@@ -62,6 +62,7 @@ def row_to_deal(row: dict[str, Any], cat_num: int | None = None) -> dict[str, An
         "total": round(row["total_price"]),
         "avg": round(row["avg_price"]),
         "gs": row["group_size"],
+        "cat": cat_num,
         "front": is_front,
         "mixed": row["min_price"] != row["max_price"],
         "derived": bool(row.get("_derived")),
@@ -73,22 +74,22 @@ def g2_key(row: dict[str, Any]) -> tuple:
 
 
 def validate_all(
-    pid: str, categories: list[tuple[int, str, str]]
+    pid: str, categories: list[tuple[int, dict[int, str]]]
 ) -> list[str]:
+    """Validate raw JSON files. Missing/empty files are OK; only fail on corrupt data."""
     errors: list[str] = []
-    for cat_num, g2_file, g4_file in categories:
-        for fname in (g2_file, g4_file):
+    for cat_num, gs_files in categories:
+        for gs, fname in gs_files.items():
             path = game_raw_path(pid, fname)
             if not path.exists():
-                errors.append(f"Missing file: {fname}")
-                continue
+                continue  # Missing = 0 listings for this group size, not an error
             try:
                 data = load_json(path)
             except json.JSONDecodeError as e:
                 errors.append(f"{fname}: invalid JSON — {e}")
                 continue
-            if not isinstance(data, list) or len(data) == 0:
-                errors.append(f"{fname}: empty or not an array")
+            if not isinstance(data, list):
+                errors.append(f"{fname}: not an array")
                 continue
             for row in data:
                 if row.get("avg_price") in (None, 0):
@@ -103,21 +104,6 @@ def validate_all(
                     errors.append(
                         f"{fname}: missing block on {row.get('group_id', '?')}"
                     )
-
-        g2_path = game_raw_path(pid, g2_file)
-        g4_path = game_raw_path(pid, g4_file)
-        if g2_path.exists() and g4_path.exists():
-            g2 = load_json(g2_path)
-            g4 = load_json(g4_path)
-            if len(g2) < 1:
-                errors.append(f"cat{cat_num}: no G2 results")
-            if len(g4) < 1:
-                errors.append(f"cat{cat_num}: no G4 results")
-            deals = [row_to_deal(r) for r in g2 + g4]
-            if len(deals) < 1:
-                errors.append(
-                    f"cat{cat_num}: combined pool is empty"
-                )
     return errors
 
 
@@ -147,6 +133,20 @@ def chart_buckets(
     ymax = max(5, math.ceil((peak * 1.15) / 5) * 5) if peak else 5
     ystep = max(1, round(ymax / 5))
     return c2, c4, ymax, ystep
+
+
+def chart_buckets_single(
+    cat_num: int,
+    rows: list[dict],
+    bucket_ranges: dict[int, list[int]],
+) -> tuple[list[int], int, int]:
+    c = [0] * 6
+    for row in rows:
+        c[bucket_index(cat_num, round(row["avg_price"]), bucket_ranges)] += 1
+    peak = max(c) if any(c) else 0
+    ymax = max(5, math.ceil((peak * 1.15) / 5) * 5) if peak else 5
+    ystep = max(1, round(ymax / 5))
+    return c, ymax, ystep
 
 
 def median_rounded(values: list[float]) -> int:
@@ -203,6 +203,7 @@ def deal_to_js(d: dict) -> str:
         f"total:{d['total']}",
         f"avg:{d['avg']}",
         f"gs:{d['gs']}",
+        f"cat:{d.get('cat') or 0}",
         f"front:{str(d['front']).lower()}",
         f"mixed:{str(d['mixed']).lower()}",
         f"derived:{str(d.get('derived', False)).lower()}",

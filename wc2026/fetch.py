@@ -126,18 +126,18 @@ def fetch_all(pid: str, category: str, group_size: int) -> tuple[list | None, in
     return all_rows, total if total is not None else len(all_rows)
 
 
-def main(pid: str, categories: list[tuple[int, str, str]]) -> int:
+def main(pid: str, categories: list[tuple[int, dict[int, str]]]) -> int:
     """Fetch all category/group-size combinations for a game.
 
-    categories: [(cat_num, g2_filename, g4_filename), ...]
+    categories: [(cat_num, {1: g1_file, 2: g2_file, 3: g3_file, 4: g4_file}), ...]
     """
     raw_dir = game_raw_dir(pid)
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     fetch_queries = []
-    for cat_num, g2_file, g4_file in categories:
-        fetch_queries.append((g2_file, f"Category {cat_num}", 2))
-        fetch_queries.append((g4_file, f"Category {cat_num}", 4))
+    for cat_num, gs_files in categories:
+        for gs, filename in gs_files.items():
+            fetch_queries.append((filename, f"Category {cat_num}", gs))
 
     errors = []
     meta: dict[str, dict] = {}
