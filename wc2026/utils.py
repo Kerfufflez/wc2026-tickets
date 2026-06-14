@@ -46,17 +46,23 @@ def market_deal(deal: dict[str, Any], cat_num: int, cat_market_range: dict[int, 
 
 
 def row_to_deal(row: dict[str, Any], cat_num: int | None = None) -> dict[str, Any]:
-    row_num = int(row["row"])
+    raw_row = row["row"]
+    try:
+        row_val: int | str = int(raw_row)
+        is_front = row_val < 20
+    except (TypeError, ValueError):
+        row_val = str(raw_row)
+        is_front = False
     return {
         "sec": str(row["block"]),
-        "row": row_num,
+        "row": row_val,
         "seats": format_seats(row["seat_numbers"]),
         "stand": parse_stand(row["area"]),
         "side": parse_side(row["area"]),
         "total": round(row["total_price"]),
         "avg": round(row["avg_price"]),
         "gs": row["group_size"],
-        "front": row_num < 20,
+        "front": is_front,
         "mixed": row["min_price"] != row["max_price"],
         "derived": bool(row.get("_derived")),
     }
@@ -89,11 +95,9 @@ def validate_all(
                     errors.append(
                         f"{fname}: invalid avg_price on {row.get('group_id', '?')}"
                     )
-                try:
-                    int(row["row"])
-                except (KeyError, TypeError, ValueError):
+                if row.get("row") is None:
                     errors.append(
-                        f"{fname}: invalid row on {row.get('group_id', '?')}"
+                        f"{fname}: missing row on {row.get('group_id', '?')}"
                     )
                 if row.get("block") is None:
                     errors.append(
@@ -188,9 +192,11 @@ def metrics_for(
 
 
 def deal_to_js(d: dict) -> str:
+    row = d['row']
+    row_js = str(row) if isinstance(row, int) else f"'{row}'"
     parts = [
         f"sec:'{d['sec']}'",
-        f"row:{d['row']}",
+        f"row:{row_js}",
         f"seats:'{d['seats']}'",
         f"stand:'{d['stand']}'",
         f"side:'{d['side']}'",

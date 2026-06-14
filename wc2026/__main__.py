@@ -97,13 +97,17 @@ def main(argv: list[str] | None = None) -> int:
             pid = str(match["pid"])
             cats = game_categories(match)
             print(f"\n=== {match.get('matchup', pid)} (pid={pid}) ===")
-            if fetch_run(pid, cats) != 0:
+            try:
+                if fetch_run(pid, cats) != 0:
+                    errors.append(pid)
+                    print(f"  FETCH FAILED — skipping build")
+                    continue
+                overlap_run(pid, cats)
+                if build_run(match) != 0:
+                    errors.append(pid)
+            except Exception as exc:
                 errors.append(pid)
-                print(f"  FETCH FAILED — skipping build")
-                continue
-            overlap_run(pid, cats)
-            if build_run(match) != 0:
-                errors.append(pid)
+                print(f"  ERROR: {exc}")
         built = len(matches) - len(errors)
         if errors:
             print(f"\nSkipped {len(errors)} games (no data or build error): {', '.join(errors)}")
