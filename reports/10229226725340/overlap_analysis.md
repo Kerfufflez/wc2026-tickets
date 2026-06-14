@@ -1,58 +1,58 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 269 groups, price range $1,385 – $153,332 total
-G4 fetched: 150 groups → 450 derived adjacent pairs
+G2 fetched: 263 groups, price range $1,380 – $153,332 total
+G4 fetched: 139 groups → 417 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   450 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   417 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 225 Row CC Seats 2–3  avg $716/ea  total $1,432
+Cheapest In Range: Sec 246 Row DD Seats 108–109  avg $742/ea  total $1,484
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 176 groups, price range $1,089 – $11,875 total
-G4 fetched: 105 groups → 315 derived adjacent pairs
+G2 fetched: 164 groups, price range $1,105 – $11,875 total
+G4 fetched: 101 groups → 303 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   312 |       99.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   300 |       99.0% | May exist in G2, not top-100   |
 | NEW        |     3 |        1.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 436 Row SS Seats 103–104  avg $557/ea  total $1,114
+Cheapest In Range: Sec 420 Row MM Seats 107–108  avg $577/ea  total $1,154
 Cheapest New: Sec 420 Row WW Seats 1–2  avg $59,376/ea  total $118,752
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 58 groups, price range $1,072 – $8,247 total
-G4 fetched: 44 groups → 132 derived adjacent pairs
+G2 fetched: 54 groups, price range $1,072 – $8,247 total
+G4 fetched: 40 groups → 120 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   126 |       95.5% | May exist in G2, not top-100   |
-| NEW        |     6 |        4.5% | Genuinely new options          |
+| IN_RANGE   |   114 |       95.0% | May exist in G2, not top-100   |
+| NEW        |     6 |        5.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 450 Row B Seats 4–5  avg $577/ea  total $1,154
+Cheapest In Range: Sec 433 Row SS Seats 3–4  avg $660/ea  total $1,320
 Cheapest New: Sec 401 Row RR Seats 104–105  avg $503/ea  total $1,006
 
 Pairs eligible for merge (NEW below G2 min $1,072): 3
@@ -82,9 +82,9 @@ Pairs eligible for merge (NEW below G2 min $1,443): 3
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            450 | INVESTIGATE     |
-| Cat 2    |       0.0% |         3 |            312 | INVESTIGATE     |
-| Cat 3    |       0.0% |         6 |            126 | DERIVE          |
+| Cat 1    |       0.0% |         0 |            417 | INVESTIGATE     |
+| Cat 2    |       0.0% |         3 |            300 | INVESTIGATE     |
+| Cat 3    |       0.0% |         6 |            114 | DERIVE          |
 | Cat 4    |       0.0% |         6 |             12 | DERIVE          |
 
 Overall recommendation: **DERIVE**

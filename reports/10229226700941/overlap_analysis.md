@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 205 groups, price range $1,433 – $37,935 total
-G4 fetched: 91 groups → 273 derived adjacent pairs
+G2 fetched: 201 groups, price range $1,465 – $37,935 total
+G4 fetched: 87 groups → 261 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   273 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   261 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,41 +20,41 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 122 groups, price range $1,254 – $7,422 total
-G4 fetched: 53 groups → 159 derived adjacent pairs
+G2 fetched: 121 groups, price range $1,254 – $7,422 total
+G4 fetched: 49 groups → 147 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   153 |       96.2% | May exist in G2, not top-100   |
-| NEW        |     6 |        3.8% | Genuinely new options          |
+| IN_RANGE   |   141 |       95.9% | May exist in G2, not top-100   |
+| NEW        |     6 |        4.1% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 447 Row NN Seats 103–104  avg $633/ea  total $1,266
-Cheapest New: Sec 447 Row UU Seats 106–107  avg $4,948/ea  total $9,896
+Cheapest In Range: Sec 448 Row AA Seats 103–104  avg $660/ea  total $1,320
+Cheapest New: Sec 436 Row D Seats 1–2  avg $4,948/ea  total $9,896
 
 Pairs eligible for merge (NEW below G2 min $1,254): 0
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 54 groups, price range $1,150 – $6,103 total
-G4 fetched: 16 groups → 48 derived adjacent pairs
+G2 fetched: 51 groups, price range $1,237 – $6,103 total
+G4 fetched: 13 groups → 39 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    45 |       93.8% | May exist in G2, not top-100   |
-| NEW        |     3 |        6.2% | Genuinely new options          |
+| IN_RANGE   |    36 |       92.3% | May exist in G2, not top-100   |
+| NEW        |     3 |        7.7% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 402 Row HH Seats 107–108  avg $680/ea  total $1,360
+Cheapest In Range: Sec 402 Row KK Seats 7–8  avg $738/ea  total $1,476
 Cheapest New: Sec 425 Row CC Seats 101–102  avg $4,123/ea  total $8,246
 
 ## Category 4 — Pair Derivation Analysis
@@ -80,9 +80,9 @@ Cheapest New: Sec 428 Row YY Seats 104–105  avg $657/ea  total $1,314
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            273 | INVESTIGATE     |
-| Cat 2    |       0.0% |         6 |            153 | DERIVE          |
-| Cat 3    |       0.0% |         3 |             45 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            261 | INVESTIGATE     |
+| Cat 2    |       0.0% |         6 |            141 | DERIVE          |
+| Cat 3    |       0.0% |         3 |             36 | INVESTIGATE     |
 | Cat 4    |       0.0% |         3 |             12 | INVESTIGATE     |
 
 Overall recommendation: **DERIVE**

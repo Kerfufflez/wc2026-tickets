@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 170 groups, price range $1,817 – $57,500 total
-G4 fetched: 106 groups → 318 derived adjacent pairs
+G2 fetched: 165 groups, price range $1,921 – $57,500 total
+G4 fetched: 107 groups → 321 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   318 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   321 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,21 +20,21 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 196 groups, price range $1,380 – $23,000 total
-G4 fetched: 126 groups → 378 derived adjacent pairs
+G2 fetched: 191 groups, price range $1,402 – $23,000 total
+G4 fetched: 124 groups → 372 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   378 |      100.0% | May exist in G2, not top-100   |
-| NEW        |     0 |        0.0% | Genuinely new options          |
+| IN_RANGE   |   369 |       99.2% | May exist in G2, not top-100   |
+| NEW        |     3 |        0.8% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 314 Row 16 Seats 5–6  avg $690/ea  total $1,380
-Cheapest New: —
+Cheapest In Range: Sec 316 Row 6 Seats 8–9  avg $748/ea  total $1,496
+Cheapest New: Sec 314 Row 16 Seats 5–6  avg $690/ea  total $1,380
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 14, 2026
@@ -80,8 +80,8 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            318 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |            378 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            321 | INVESTIGATE     |
+| Cat 2    |       0.0% |         3 |            369 | INVESTIGATE     |
 | Cat 3    |       0.0% |         6 |             24 | DERIVE          |
 | Cat 4    |       0.0% |         0 |              3 | SKIP            |
 

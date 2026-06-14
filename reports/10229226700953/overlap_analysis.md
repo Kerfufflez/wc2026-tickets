@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 187 groups, price range $437 – $34,500 total
-G4 fetched: 279 groups → 837 derived adjacent pairs
+G2 fetched: 181 groups, price range $437 – $34,500 total
+G4 fetched: 276 groups → 828 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   834 |       99.6% | May exist in G2, not top-100   |
+| IN_RANGE   |   825 |       99.6% | May exist in G2, not top-100   |
 | NEW        |     3 |        0.4% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,7 +20,7 @@ Cheapest New: Sec 126 Row Q Seats 19–20  avg $57,787/ea  total $115,574
 ## Category 2 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 158 groups, price range $380 – $6,900 total
+G2 fetched: 162 groups, price range $380 – $6,900 total
 G4 fetched: 120 groups → 360 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -39,13 +39,13 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 14, 2026
 
-G2 fetched: 125 groups, price range $322 – $4,922 total
-G4 fetched: 36 groups → 108 derived adjacent pairs
+G2 fetched: 118 groups, price range $322 – $4,922 total
+G4 fetched: 35 groups → 105 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   108 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   105 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -80,9 +80,9 @@ Pairs eligible for merge (NEW below G2 min $499): 12
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         3 |            834 | INVESTIGATE     |
+| Cat 1    |       0.0% |         3 |            825 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |            360 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |            108 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |            105 | INVESTIGATE     |
 | Cat 4    |       0.0% |        15 |              3 | DERIVE          |
 
 Overall recommendation: **DERIVE**
