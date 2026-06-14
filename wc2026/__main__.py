@@ -104,10 +104,10 @@ def main(argv: list[str] | None = None) -> int:
             overlap_run(pid, cats)
             if build_run(match) != 0:
                 errors.append(pid)
+        built = len(matches) - len(errors)
         if errors:
-            print(f"\nFailed games: {', '.join(errors)}")
-            return 1
-        print(f"\nAll {len(matches)} games refreshed.")
+            print(f"\nSkipped {len(errors)} games (no data or build error): {', '.join(errors)}")
+        print(f"\n{built}/{len(matches)} games refreshed successfully.")
         return 0
 
     parser.print_help()
