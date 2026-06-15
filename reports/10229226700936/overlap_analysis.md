@@ -1,7 +1,7 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 14, 2026
+Date: June 15, 2026
 
-G2 fetched: 25 groups, price range $2,070 – $10,350 total
+G2 fetched: 24 groups, price range $1,976 – $10,350 total
 G4 fetched: 4 groups → 12 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -18,15 +18,15 @@ Cheapest In Range: Sec T1-27 Row G Seats 17–18  avg $1,840/ea  total $3,680
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 14, 2026
+Date: June 15, 2026
 
-G2 fetched: 12 groups, price range $1,613 – $5,750 total
-G4 fetched: 5 groups → 15 derived adjacent pairs
+G2 fetched: 13 groups, price range $1,613 – $5,750 total
+G4 fetched: 4 groups → 12 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    15 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    12 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -37,7 +37,7 @@ Cheapest In Range: Sec T2-45 Row T Seats 9–10  avg $1,058/ea  total $2,116
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
-Date: June 14, 2026
+Date: June 15, 2026
 
 G2 fetched: 6 groups, price range $1,955 – $3,450 total
 G4 fetched: 4 groups → 12 derived adjacent pairs
@@ -62,7 +62,7 @@ Pairs eligible for merge (NEW below G2 min $1,955): 3
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
 | Cat 1    |       0.0% |         0 |             12 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             15 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             12 | INVESTIGATE     |
 | Cat 3    |       0.0% |         9 |              3 | DERIVE          |
 
 Overall recommendation: **DERIVE**
