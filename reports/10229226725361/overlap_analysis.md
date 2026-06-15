@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 473 groups, price range $2,588 – $92,000 total
-G4 fetched: 300 groups → 900 derived adjacent pairs
+G2 fetched: 474 groups, price range $2,588 – $92,000 total
+G4 fetched: 299 groups → 897 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   891 |       99.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   888 |       99.0% | May exist in G2, not top-100   |
 | NEW        |     9 |        1.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -22,7 +22,7 @@ Pairs eligible for merge (NEW below G2 min $2,588): 0
 ## Category 2 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 177 groups, price range $2,300 – $46,000 total
+G2 fetched: 176 groups, price range $2,300 – $46,000 total
 G4 fetched: 81 groups → 243 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -41,7 +41,7 @@ Cheapest New: Sec 320 Row 20 Seats 17–18  avg $25,300/ea  total $50,600
 ## Category 3 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 55 groups, price range $2,288 – $271,400 total
+G2 fetched: 54 groups, price range $2,288 – $271,400 total
 G4 fetched: 30 groups → 90 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -61,12 +61,12 @@ Cheapest New: —
 Date: June 15, 2026
 
 G2 fetched: 10 groups, price range $2,760 – $16,100 total
-G4 fetched: 6 groups → 18 derived adjacent pairs
+G4 fetched: 5 groups → 15 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    18 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    15 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -80,10 +80,10 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         9 |            891 | DERIVE          |
+| Cat 1    |       0.0% |         9 |            888 | DERIVE          |
 | Cat 2    |       0.0% |         3 |            240 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             90 | INVESTIGATE     |
-| Cat 4    |       0.0% |         0 |             18 | INVESTIGATE     |
+| Cat 4    |       0.0% |         0 |             15 | INVESTIGATE     |
 
 Overall recommendation: **DERIVE**
 

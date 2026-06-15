@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 66 groups, price range $4,600 – $16,100 total
-G4 fetched: 55 groups → 165 derived adjacent pairs
+G2 fetched: 65 groups, price range $4,600 – $16,100 total
+G4 fetched: 56 groups → 168 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   162 |       98.2% | May exist in G2, not top-100   |
+| IN_RANGE   |   165 |       98.2% | May exist in G2, not top-100   |
 | NEW        |     3 |        1.8% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -39,31 +39,29 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 7 groups, price range $4,393 – $5,290 total
-G4 fetched: 6 groups → 18 derived adjacent pairs
+G2 fetched: 10 groups, price range $3,680 – $6,900 total
+G4 fetched: 7 groups → 21 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    12 |       66.7% | May exist in G2, not top-100   |
-| NEW        |     6 |       33.3% | Genuinely new options          |
+| IN_RANGE   |    18 |       85.7% | May exist in G2, not top-100   |
+| NEW        |     3 |       14.3% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
-Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
+Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
 Cheapest In Range: Sec 328 Row 14 Seats 13–14  avg $2,299/ea  total $4,598
-Cheapest New: Sec 334 Row 25 Seats 21–22  avg $2,747/ea  total $5,494
-
-Pairs eligible for merge (NEW below G2 min $4,393): 0
+Cheapest New: Sec 302 Row 25 Seats 9–10  avg $4,715/ea  total $9,430
 
 ## Summary Recommendation
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         3 |            162 | INVESTIGATE     |
+| Cat 1    |       0.0% |         3 |            165 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |             51 | INVESTIGATE     |
-| Cat 3    |       0.0% |         6 |             12 | DERIVE          |
+| Cat 3    |       0.0% |         3 |             18 | INVESTIGATE     |
 
-Overall recommendation: **DERIVE**
+Overall recommendation: **PARTIAL**
 

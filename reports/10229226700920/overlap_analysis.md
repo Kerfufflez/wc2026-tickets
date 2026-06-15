@@ -1,47 +1,45 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 19 groups, price range $4,600 – $10,350 total
-G4 fetched: 6 groups → 18 derived adjacent pairs
+G2 fetched: 18 groups, price range $5,750 – $14,088 total
+G4 fetched: 4 groups → 12 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    18 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    12 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 118 Row II Seats 17–18  avg $2,530/ea  total $5,060
+Cheapest In Range: Sec 124 Row X Seats 2–3  avg $2,875/ea  total $5,750
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 13 groups, price range $4,140 – $7,590 total
-G4 fetched: 4 groups → 12 derived adjacent pairs
+G2 fetched: 16 groups, price range $4,140 – $10,350 total
+G4 fetched: 5 groups → 15 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |     6 |       50.0% | May exist in G2, not top-100   |
-| NEW        |     6 |       50.0% | Genuinely new options          |
+| IN_RANGE   |    15 |      100.0% | May exist in G2, not top-100   |
+| NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
-Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
+Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 306 Row Q Seats 8–9  avg $2,875/ea  total $5,750
-Cheapest New: Sec 306 Row II Seats 21–22  avg $5,175/ea  total $10,350
-
-Pairs eligible for merge (NEW below G2 min $4,140): 0
+Cheapest In Range: Sec 308 Row SS Seats 17–18  avg $2,300/ea  total $4,600
+Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 17 groups, price range $1,725 – $18,400 total
+G2 fetched: 17 groups, price range $3,798 – $18,400 total
 G4 fetched: 3 groups → 9 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -61,9 +59,9 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |             18 | INVESTIGATE     |
-| Cat 2    |       0.0% |         6 |              6 | DERIVE          |
+| Cat 1    |       0.0% |         0 |             12 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             15 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |              9 | SKIP            |
 
-Overall recommendation: **DERIVE**
+Overall recommendation: **PARTIAL**
 

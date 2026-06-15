@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 153 groups, price range $2,298 – $57,500 total
-G4 fetched: 171 groups → 513 derived adjacent pairs
+G2 fetched: 152 groups, price range $2,298 – $57,500 total
+G4 fetched: 170 groups → 510 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   513 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   510 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,13 +20,13 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 224 groups, price range $1,840 – $34,500 total
-G4 fetched: 118 groups → 354 derived adjacent pairs
+G2 fetched: 222 groups, price range $1,840 – $34,500 total
+G4 fetched: 119 groups → 357 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   354 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   357 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 15, 2026
 
-G2 fetched: 66 groups, price range $1,723 – $23,000 total
+G2 fetched: 65 groups, price range $1,723 – $23,000 total
 G4 fetched: 34 groups → 102 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -80,8 +80,8 @@ Pairs eligible for merge (NEW below G2 min $2,185): 6
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            513 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |            354 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            510 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |            357 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |            102 | INVESTIGATE     |
 | Cat 4    |       0.0% |         6 |              9 | DERIVE          |
 
