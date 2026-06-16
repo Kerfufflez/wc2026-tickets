@@ -1,6 +1,97 @@
 {
   "entries": [
     {
+      "id": "2026-06-16T004621",
+      "captured_at": "2026-06-16T00:46:21-04:00",
+      "captured_label": "Jun 16, 2026 at 12:46 AM ET",
+      "prev_id": "2026-06-15T131939",
+      "prev_label": "Jun 15, 2026 at 1:19 PM ET",
+      "categories": {
+        "cat1": {
+          "label": "Category 1",
+          "g2_count": 0,
+          "g4_count": 0,
+          "g2_delta": -1,
+          "g4_delta": -1,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat2": {
+          "label": "Category 2",
+          "g2_count": 4,
+          "g4_count": 0,
+          "g2_delta": -2,
+          "g4_delta": 0,
+          "cheaper": [
+            {
+              "cat": "cat2",
+              "sec": "T2-07",
+              "row": "V",
+              "seats": "4\u20135",
+              "gs": 2,
+              "avg": 3565,
+              "total": 7130,
+              "front": false,
+              "derived": false,
+              "text": "Sec T2-07 Row V Seats 4\u20135 (2t) \u2014 $3,565/ea ($7,130 total)",
+              "change": "\u2212$575/ea",
+              "was_avg": 4140
+            }
+          ],
+          "top10_new_g2": [
+            {
+              "cat": "cat2",
+              "sec": "T2-08",
+              "row": "U",
+              "seats": "3\u20134",
+              "gs": 2,
+              "avg": 5290,
+              "total": 10580,
+              "front": false,
+              "derived": false,
+              "text": "Sec T2-08 Row U Seats 3\u20134 (2t) \u2014 $5,290/ea ($10,580 total)"
+            }
+          ],
+          "top10_new_g4": []
+        },
+        "cat3": {
+          "label": "Category 3",
+          "g2_count": 1,
+          "g4_count": 0,
+          "g2_delta": -3,
+          "g4_delta": -1,
+          "cheaper": [],
+          "top10_new_g2": [
+            {
+              "cat": "cat3",
+              "sec": "T2-33",
+              "row": "B",
+              "seats": "1\u20132",
+              "gs": 2,
+              "avg": 3680,
+              "total": 7360,
+              "front": false,
+              "derived": false,
+              "text": "Sec T2-33 Row B Seats 1\u20132 (2t) \u2014 $3,680/ea ($7,360 total)"
+            }
+          ],
+          "top10_new_g4": []
+        },
+        "cat4": {
+          "label": "Category 4",
+          "g2_count": 0,
+          "g4_count": 0,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        }
+      },
+      "is_baseline": false
+    },
+    {
       "id": "2026-06-15T131939",
       "captured_at": "2026-06-15T13:19:39-04:00",
       "captured_label": "Jun 15, 2026 at 1:19 PM ET",

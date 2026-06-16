@@ -1,5 +1,5 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 15, 2026
+Date: June 16, 2026
 
 G2 fetched: 119 groups, price range $4,830 – $39,100 total
 G4 fetched: 106 groups → 318 derived adjacent pairs
@@ -20,7 +20,7 @@ Cheapest New: Sec 149 Row 34 Seats 24–25  avg $34,477/ea  total $68,954
 Pairs eligible for merge (NEW below G2 min $4,830): 0
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 15, 2026
+Date: June 16, 2026
 
 G2 fetched: 170 groups, price range $3,105 – $64,400 total
 G4 fetched: 101 groups → 303 derived adjacent pairs
@@ -39,7 +39,7 @@ Cheapest In Range: Sec 342 Row 9 Seats 15–16  avg $1,725/ea  total $3,450
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
-Date: June 15, 2026
+Date: June 16, 2026
 
 G2 fetched: 60 groups, price range $2,990 – $23,000 total
 G4 fetched: 37 groups → 111 derived adjacent pairs
@@ -58,7 +58,7 @@ Cheapest In Range: Sec 303 Row 11 Seats 15–16  avg $1,725/ea  total $3,450
 Cheapest New: Sec 327 Row 23 Seats 14–15  avg $286,919/ea  total $573,838
 
 ## Category 4 — Pair Derivation Analysis
-Date: June 15, 2026
+Date: June 16, 2026
 
 G2 fetched: 3 groups, price range $4,600 – $5,773 total
 G4 fetched: 2 groups → 6 derived adjacent pairs
