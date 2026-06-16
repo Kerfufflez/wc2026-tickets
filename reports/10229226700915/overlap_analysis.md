@@ -1,67 +1,69 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 16, 2026
 
-G2 fetched: 181 groups, price range $1,319 – $11,545 total
-G4 fetched: 72 groups → 216 derived adjacent pairs
+G2 fetched: 121 groups, price range $1,380 – $7,422 total
+G4 fetched: 39 groups → 117 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   216 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   117 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 204 Row H Seats 1–2  avg $716/ea  total $1,432
+Cheapest In Range: Sec 222 Row UU Seats 1–2  avg $783/ea  total $1,566
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 16, 2026
 
-G2 fetched: 78 groups, price range $1,235 – $31,705 total
-G4 fetched: 34 groups → 102 derived adjacent pairs
+G2 fetched: 53 groups, price range $1,235 – $31,705 total
+G4 fetched: 23 groups → 69 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   102 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    69 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 421 Row CC Seats 101–102  avg $649/ea  total $1,298
+Cheapest In Range: Sec 435 Row ZZ Seats 3–4  avg $661/ea  total $1,322
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 16, 2026
 
-G2 fetched: 41 groups, price range $1,104 – $8,247 total
-G4 fetched: 6 groups → 18 derived adjacent pairs
+G2 fetched: 23 groups, price range $1,319 – $5,290 total
+G4 fetched: 4 groups → 12 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    18 |      100.0% | May exist in G2, not top-100   |
-| NEW        |     0 |        0.0% | Genuinely new options          |
+| IN_RANGE   |     6 |       50.0% | May exist in G2, not top-100   |
+| NEW        |     6 |       50.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
-Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
+Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 433 Row HH Seats 2–3  avg $660/ea  total $1,320
-Cheapest New: —
+Cheapest In Range: Sec 433 Row YY Seats 3–4  avg $684/ea  total $1,368
+Cheapest New: Sec 432 Row HH Seats 106–107  avg $627/ea  total $1,254
+
+Pairs eligible for merge (NEW below G2 min $1,319): 3
 
 ## Summary Recommendation
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            216 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |            102 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             18 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            117 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             69 | INVESTIGATE     |
+| Cat 3    |       0.0% |         6 |              6 | DERIVE          |
 
-Overall recommendation: **PARTIAL**
+Overall recommendation: **DERIVE**
 

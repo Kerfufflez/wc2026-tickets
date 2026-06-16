@@ -1,32 +1,32 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 16, 2026
 
-G2 fetched: 127 groups, price range $5,635 – $115,000 total
+G2 fetched: 126 groups, price range $7,820 – $115,000 total
 G4 fetched: 61 groups → 183 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   183 |      100.0% | May exist in G2, not top-100   |
-| NEW        |     0 |        0.0% | Genuinely new options          |
+| IN_RANGE   |   180 |       98.4% | May exist in G2, not top-100   |
+| NEW        |     3 |        1.6% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 131 Row 17 Seats 1–2  avg $3,852/ea  total $7,704
-Cheapest New: —
+Cheapest In Range: Sec 134 Row 23 Seats 13–14  avg $3,939/ea  total $7,878
+Cheapest New: Sec 131 Row 17 Seats 1–2  avg $3,852/ea  total $7,704
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 16, 2026
 
-G2 fetched: 55 groups, price range $6,210 – $46,000 total
-G4 fetched: 31 groups → 93 derived adjacent pairs
+G2 fetched: 57 groups, price range $6,210 – $46,000 total
+G4 fetched: 32 groups → 96 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    93 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    96 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -78,8 +78,8 @@ Cheapest New: Sec 308 Row 27 Seats 9–10  avg $34,500/ea  total $69,000
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            183 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             93 | INVESTIGATE     |
+| Cat 1    |       0.0% |         3 |            180 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             96 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             15 | INVESTIGATE     |
 | Cat 4    |       0.0% |         3 |              3 | SKIP            |
 
