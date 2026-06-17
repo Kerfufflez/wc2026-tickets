@@ -1,6 +1,56 @@
 {
   "entries": [
     {
+      "id": "2026-06-17T002707",
+      "captured_at": "2026-06-17T00:27:07-04:00",
+      "captured_label": "Jun 17, 2026 at 12:27 AM ET",
+      "prev_id": "2026-06-16T130355",
+      "prev_label": "Jun 16, 2026 at 1:03 PM ET",
+      "categories": {
+        "cat1": {
+          "label": "Category 1",
+          "g2_count": 123,
+          "g4_count": 132,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat2": {
+          "label": "Category 2",
+          "g2_count": 198,
+          "g4_count": 233,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat3": {
+          "label": "Category 3",
+          "g2_count": 154,
+          "g4_count": 79,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat4": {
+          "label": "Category 4",
+          "g2_count": 0,
+          "g4_count": 0,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        }
+      },
+      "is_baseline": false
+    },
+    {
       "id": "2026-06-16T130355",
       "captured_at": "2026-06-16T13:03:55-04:00",
       "captured_label": "Jun 16, 2026 at 1:03 PM ET",
@@ -268,20 +318,6 @@
           "cheaper": [
             {
               "cat": "cat3",
-              "sec": "306",
-              "row": "KK",
-              "seats": "9\u201312",
-              "gs": 4,
-              "avg": 690,
-              "total": 2760,
-              "front": false,
-              "derived": false,
-              "text": "Sec 306 Row KK Seats 9\u201312 (4t) \u2014 $690/ea ($2,760 total)",
-              "change": "\u2212$230/ea",
-              "was_avg": 920
-            },
-            {
-              "cat": "cat3",
               "sec": "300",
               "row": "X",
               "seats": "21\u201324",
@@ -293,6 +329,20 @@
               "text": "Sec 300 Row X Seats 21\u201324 (4t) \u2014 $460/ea ($1,840 total)",
               "change": "\u2212$230/ea",
               "was_avg": 690
+            },
+            {
+              "cat": "cat3",
+              "sec": "306",
+              "row": "KK",
+              "seats": "9\u201312",
+              "gs": 4,
+              "avg": 690,
+              "total": 2760,
+              "front": false,
+              "derived": false,
+              "text": "Sec 306 Row KK Seats 9\u201312 (4t) \u2014 $690/ea ($2,760 total)",
+              "change": "\u2212$230/ea",
+              "was_avg": 920
             }
           ],
           "top10_new_g2": [

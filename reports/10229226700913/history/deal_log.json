@@ -1,6 +1,56 @@
 {
   "entries": [
     {
+      "id": "2026-06-17T002604",
+      "captured_at": "2026-06-17T00:26:04-04:00",
+      "captured_label": "Jun 17, 2026 at 12:26 AM ET",
+      "prev_id": "2026-06-16T130148",
+      "prev_label": "Jun 16, 2026 at 1:01 PM ET",
+      "categories": {
+        "cat1": {
+          "label": "Category 1",
+          "g2_count": 82,
+          "g4_count": 77,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat2": {
+          "label": "Category 2",
+          "g2_count": 142,
+          "g4_count": 79,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat3": {
+          "label": "Category 3",
+          "g2_count": 87,
+          "g4_count": 31,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat4": {
+          "label": "Category 4",
+          "g2_count": 5,
+          "g4_count": 5,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        }
+      },
+      "is_baseline": false
+    },
+    {
       "id": "2026-06-16T130148",
       "captured_at": "2026-06-16T13:01:48-04:00",
       "captured_label": "Jun 16, 2026 at 1:01 PM ET",
@@ -16,20 +66,6 @@
           "cheaper": [
             {
               "cat": "cat1",
-              "sec": "121",
-              "row": 28,
-              "seats": "12\u201315",
-              "gs": 4,
-              "avg": 575,
-              "total": 2300,
-              "front": false,
-              "derived": false,
-              "text": "Sec 121 Row 28 Seats 12\u201315 (4t) \u2014 $575/ea ($2,300 total)",
-              "change": "\u2212$403/ea",
-              "was_avg": 978
-            },
-            {
-              "cat": "cat1",
               "sec": "126C",
               "row": 24,
               "seats": "5\u20136",
@@ -41,6 +77,20 @@
               "text": "Sec 126C Row 24 Seats 5\u20136 (2t) \u2014 $632/ea ($1,265 total)",
               "change": "\u2212$403/ea",
               "was_avg": 1035
+            },
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": 28,
+              "seats": "12\u201315",
+              "gs": 4,
+              "avg": 575,
+              "total": 2300,
+              "front": false,
+              "derived": false,
+              "text": "Sec 121 Row 28 Seats 12\u201315 (4t) \u2014 $575/ea ($2,300 total)",
+              "change": "\u2212$403/ea",
+              "was_avg": 978
             },
             {
               "cat": "cat1",
@@ -281,20 +331,6 @@
             },
             {
               "cat": "cat2",
-              "sec": "235",
-              "row": 10,
-              "seats": "5\u20136",
-              "gs": 2,
-              "avg": 299,
-              "total": 598,
-              "front": false,
-              "derived": false,
-              "text": "Sec 235 Row 10 Seats 5\u20136 (2t) \u2014 $299/ea ($598 total)",
-              "change": "\u2212$103/ea",
-              "was_avg": 402
-            },
-            {
-              "cat": "cat2",
               "sec": "233",
               "row": 10,
               "seats": "2\u20133",
@@ -306,6 +342,20 @@
               "text": "Sec 233 Row 10 Seats 2\u20133 (2t) \u2014 $575/ea ($1,150 total)",
               "change": "\u2212$103/ea",
               "was_avg": 678
+            },
+            {
+              "cat": "cat2",
+              "sec": "235",
+              "row": 10,
+              "seats": "5\u20136",
+              "gs": 2,
+              "avg": 299,
+              "total": 598,
+              "front": false,
+              "derived": false,
+              "text": "Sec 235 Row 10 Seats 5\u20136 (2t) \u2014 $299/ea ($598 total)",
+              "change": "\u2212$103/ea",
+              "was_avg": 402
             },
             {
               "cat": "cat2",
