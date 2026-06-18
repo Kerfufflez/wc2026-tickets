@@ -1,28 +1,28 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 17, 2026
+Date: June 18, 2026
 
-G2 fetched: 59 groups, price range $690 – $2,645 total
-G4 fetched: 69 groups → 207 derived adjacent pairs
+G2 fetched: 53 groups, price range $851 – $2,645 total
+G4 fetched: 59 groups → 177 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   198 |       95.7% | May exist in G2, not top-100   |
-| NEW        |     9 |        4.3% | Genuinely new options          |
+| IN_RANGE   |   165 |       93.2% | May exist in G2, not top-100   |
+| NEW        |    12 |        6.8% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 129 Row 7 Seats 5–6  avg $374/ea  total $748
-Cheapest New: Sec 123 Row 5 Seats 5–6  avg $1,380/ea  total $2,760
+Cheapest In Range: Sec 106 Row 15 Seats 17–18  avg $460/ea  total $920
+Cheapest New: Sec 107 Row 14 Seats 17–18  avg $408/ea  total $816
 
-Pairs eligible for merge (NEW below G2 min $690): 0
+Pairs eligible for merge (NEW below G2 min $851): 3
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 17, 2026
+Date: June 18, 2026
 
-G2 fetched: 137 groups, price range $678 – $7,130 total
+G2 fetched: 120 groups, price range $774 – $7,130 total
 G4 fetched: 78 groups → 234 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -35,19 +35,19 @@ Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 124 Row 37 Seats 21–22  avg $402/ea  total $804
+Cheapest In Range: Sec 125 Row 24 Seats 13–14  avg $431/ea  total $862
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
-Date: June 17, 2026
+Date: June 18, 2026
 
-G2 fetched: 48 groups, price range $506 – $6,900 total
-G4 fetched: 19 groups → 57 derived adjacent pairs
+G2 fetched: 40 groups, price range $748 – $6,900 total
+G4 fetched: 22 groups → 66 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    57 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    66 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -61,9 +61,9 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         9 |            198 | DERIVE          |
+| Cat 1    |       0.0% |        12 |            165 | DERIVE          |
 | Cat 2    |       0.0% |         0 |            234 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             57 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |             66 | INVESTIGATE     |
 
 Overall recommendation: **DERIVE**
 
