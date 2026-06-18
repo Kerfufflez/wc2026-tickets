@@ -21,12 +21,12 @@ Cheapest New: Sec 116 Row 22 Seats 7–8  avg $17,250/ea  total $34,500
 Date: June 18, 2026
 
 G2 fetched: 11 groups, price range $5,175 – $13,800 total
-G4 fetched: 2 groups → 6 derived adjacent pairs
+G4 fetched: 3 groups → 9 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |     6 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |     9 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -62,7 +62,7 @@ Pairs eligible for merge (NEW below G2 min $5,442): 3
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
 | Cat 1    |       0.0% |         3 |             18 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |              6 | SKIP            |
+| Cat 2    |       0.0% |         0 |              9 | SKIP            |
 | Cat 3    |       0.0% |         9 |              9 | DERIVE          |
 
 Overall recommendation: **DERIVE**
