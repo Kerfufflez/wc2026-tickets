@@ -1,7 +1,7 @@
 ## Category 3 — Pair Derivation Analysis
-Date: June 18, 2026
+Date: June 19, 2026
 
-G2 fetched: 6 groups, price range $2,012 – $598,000 total
+G2 fetched: 2 groups, price range $1,898 – $2,760 total
 G4 fetched: 1 groups → 3 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |

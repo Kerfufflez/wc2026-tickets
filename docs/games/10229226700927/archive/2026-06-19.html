@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="snapshot-context" content="archive">
+<meta name="tz-label" content="ET">
+<title>FIFA World Cup · Ticket Inventory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F6F3; --card: #FFFFFF; --border: #E5E3DC;
+  --text: #1A1A18; --muted: #6B6A65; --hint: #A5A49F;
+  --blue-bg: #E6F1FB; --blue-txt: #0C447C;
+  --green-bg: #EAF3DE; --green-txt: #27500A;
+  --purple-bg: #EEEDFE; --purple-txt: #3C3489;
+  --amber-bg: #FAEEDA; --amber-txt: #633806;
+  --amber: #BA7517;
+  --chart-bar: #378ADD;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1120px; margin: 0 auto; padding: 48px 40px 60px; }
+
+/* Header */
+.event-label  { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.report-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+.report-sub   { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.back-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+.back-link:hover { color: var(--text); }
+.last-updated {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+}
+.last-updated strong { color: var(--text); font-weight: 600; white-space: nowrap; }
+.controls-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.control-group { display: flex; flex-direction: column; gap: 4px; }
+.control-label { font-size: 11px; font-weight: 500; color: var(--muted); }
+.ctrl-select {
+  height: 32px; padding: 0 10px;
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; min-width: 140px; max-width: 300px;
+}
+#game-nav { max-width: 320px; }
+.refresh-btn {
+  height: 32px; padding: 0 14px;
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  color: var(--text); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; transition: border-color 0.15s, opacity 0.15s; white-space: nowrap;
+}
+.refresh-btn:hover:not(:disabled) { border-color: var(--text); }
+.refresh-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.refresh-btn.loading { opacity: 0.7; }
+.live-badge {
+  font-size: 10px; font-weight: 600; color: var(--green-txt);
+  background: var(--green-bg); padding: 2px 6px; border-radius: 4px;
+  margin-left: 4px; vertical-align: middle;
+}
+hr.divider { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+
+/* Ticket count tabs */
+.gs-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+.gs-tab {
+  padding: 7px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border); background: var(--card);
+  color: var(--muted); transition: all 0.15s; user-select: none;
+}
+.gs-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+/* Category wrap sections (stacked) */
+.cat-wrap { margin-bottom: 40px; }
+.cat-wrap-title {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;
+}
+
+/* Chart card (full width) */
+.chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 12px; }
+.chart-card-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.chart-card-sub   { font-size: 11px; color: var(--hint); margin-bottom: 16px; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; }
+.card-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.card-sub   { font-size: 11px; color: var(--hint); margin-bottom: 16px; }
+
+/* Deal rows */
+.deal {
+  display: grid; grid-template-columns: 26px 1fr auto;
+  align-items: center; gap: 12px;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.deal:last-child { border-bottom: none; }
+.top3-inner { display: flex; flex-direction: column; }
+.top3-inner .deal { flex: 1; }
+.deal-rank      { font-size: 18px; font-weight: 600; color: var(--hint); text-align: center; line-height: 1; }
+.deal-rank.gold { color: var(--amber); }
+.deal-loc       { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.deal-tags      { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+.card .deal-tags { flex-wrap: nowrap; overflow: hidden; }
+.card .deal-tags > * { flex-shrink: 0; }
+.deal-prices    { text-align: right; white-space: nowrap; }
+.deal-per       { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+.deal-per span  { font-size: 11px; font-weight: 400; color: var(--hint); }
+.deal-total     { font-size: 11px; color: var(--hint); margin-top: 2px; }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; line-height: 1.5; white-space: nowrap; }
+.badge-right    { background: var(--blue-bg);   color: var(--blue-txt); }
+.badge-left     { background: var(--green-bg);  color: var(--green-txt); }
+.badge-opposite { background: var(--amber-bg);  color: var(--amber-txt); }
+.badge-center   { background: #FBEAF0; color: #72243E; }
+.badge-front    { background: var(--purple-bg); color: var(--purple-txt); }
+.badge-derived  { background: var(--amber-bg); color: var(--amber-txt); }
+.badge-gs       { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.badge-cat1     { background: var(--amber-bg); color: var(--amber-txt); }
+.badge-cat2     { background: var(--blue-bg);  color: var(--blue-txt); }
+.badge-cat3     { background: var(--green-bg); color: var(--green-txt); }
+.badge-cat4     { background: var(--purple-bg);color: var(--purple-txt); }
+
+/* List card */
+.list-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0 20px; }
+.list-card .deal:first-child { padding-top: 16px; }
+.list-card .deal:last-child  { padding-bottom: 16px; }
+.note { font-size: 11px; color: var(--hint); margin-top: 8px; padding-left: 2px; }
+
+/* Footer */
+.footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--hint); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .page { padding: 24px 16px 40px; }
+  .report-title { font-size: 22px; letter-spacing: -0.3px; }
+  .report-sub { font-size: 13px; }
+  .top-bar { gap: 6px; }
+  .controls-row { gap: 8px; }
+  #game-nav-group { width: 100%; }
+  #game-nav-group .ctrl-select { max-width: 100%; width: 100%; }
+  .ctrl-select { min-width: 0; flex: 1 1 auto; }
+  .refresh-btn { flex: 0 0 auto; }
+  .gs-tabs {
+    overflow-x: auto; flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-bottom: 20px;
+  }
+  .gs-tabs::-webkit-scrollbar { display: none; }
+  .gs-tab { flex-shrink: 0; padding: 8px 16px; }
+  .two-col { grid-template-columns: 1fr; gap: 12px; }
+  .card { padding: 16px; }
+  .card .deal-tags { flex-wrap: wrap; overflow: visible; }
+  .deal {
+    grid-template-columns: 28px 1fr; gap: 8px 10px;
+    align-items: start; padding: 14px 0;
+  }
+  .deal-prices { grid-column: 2; text-align: left; white-space: normal; }
+  .list-card { padding: 0 14px; }
+  .footer { font-size: 10px; line-height: 1.6; }
+}
+
+@media (max-width: 400px) {
+  .page { padding: 20px 12px 32px; }
+  .report-title { font-size: 20px; }
+  .deal-loc { font-size: 13px; }
+  .deal-per { font-size: 14px; }
+}
+
+@media print {
+  body { background: white; }
+  .page { padding: 0; max-width: 100%; }
+  .gs-tabs, .refresh-btn { display: none; }
+  .cat-wrap { display: block !important; }
+  .two-col, .card, .list-card, .deal { break-inside: avoid; }
+  .cat-wrap-title { break-after: avoid; }
+  @page { margin: 0.5in; size: 11in 8.5in landscape; }
+}
+</style>
+<script>window.__wc2026Config = {"performanceId":"10229226700927","queries":[{"cat":1,"gs":1,"category":"Category 1"},{"cat":1,"gs":2,"category":"Category 1"},{"cat":1,"gs":3,"category":"Category 1"},{"cat":1,"gs":4,"category":"Category 1"},{"cat":2,"gs":1,"category":"Category 2"},{"cat":2,"gs":2,"category":"Category 2"},{"cat":2,"gs":3,"category":"Category 2"},{"cat":2,"gs":4,"category":"Category 2"},{"cat":3,"gs":1,"category":"Category 3"},{"cat":3,"gs":2,"category":"Category 3"},{"cat":3,"gs":3,"category":"Category 3"},{"cat":3,"gs":4,"category":"Category 3"},{"cat":4,"gs":1,"category":"Category 4"},{"cat":4,"gs":2,"category":"Category 4"},{"cat":4,"gs":3,"category":"Category 4"},{"cat":4,"gs":4,"category":"Category 4"}],"bucketRanges":{"1":[600,900,1300,1800,2500],"2":[400,650,950,1400,2000],"3":[200,350,550,800,1200],"4":[150,250,400,600,900]},"bucketLabels":{"1":["<$600","$600\u2013$900","$900\u2013$1.3k","$1.3k\u2013$1.8k","$1.8k\u2013$2.5k","$2.5k+"],"2":["<$400","$400\u2013$650","$650\u2013$950","$950\u2013$1.4k","$1.4k\u2013$2k","$2k+"],"3":["<$200","$200\u2013$350","$350\u2013$550","$550\u2013$800","$800\u2013$1.2k","$1.2k+"],"4":["<$150","$150\u2013$250","$250\u2013$400","$400\u2013$600","$600\u2013$900","$900+"]},"catMarketRange":{"1":[300,8000],"2":[150,6000],"3":[100,4000],"4":[100,3000]},"games":[{"pid":"10229226700920","matchup":"USA vs Australia","date":"Jun 19"},{"pid":"10229226700918","matchup":"Scotland vs Morocco","date":"Jun 19"},{"pid":"10229226700917","matchup":"Brazil vs Haiti","date":"Jun 20"},{"pid":"10229226700919","matchup":"T\u00fcrkiye vs Paraguay","date":"Jun 20"},{"pid":"10229226700923","matchup":"Netherlands vs Sweden","date":"Jun 20"},{"pid":"10229226700921","matchup":"Germany vs C\u00f4te d'Ivoire","date":"Jun 20"},{"pid":"10229226700922","matchup":"Ecuador vs Cura\u00e7ao","date":"Jun 21"},{"pid":"10229226700924","matchup":"Tunisia vs Japan","date":"Jun 21"},{"pid":"10229226700926","matchup":"Spain vs Saudi Arabia","date":"Jun 21"},{"pid":"10229226700927","matchup":"Belgium vs IR Iran","date":"Jun 21"},{"pid":"10229226700925","matchup":"Uruguay vs Cabo Verde","date":"Jun 21"},{"pid":"10229226700928","matchup":"New Zealand vs Egypt","date":"Jun 22"},{"pid":"10229226700931","matchup":"Argentina vs Austria","date":"Jun 22"},{"pid":"10229226700930","matchup":"France vs Iraq","date":"Jun 22"},{"pid":"10229226700929","matchup":"Norway vs Senegal","date":"Jun 23"},{"pid":"10229226700932","matchup":"Jordan vs Algeria","date":"Jun 23"},{"pid":"10229226700935","matchup":"Portugal vs Uzbekistan","date":"Jun 23"},{"pid":"10229226700933","matchup":"England vs Ghana","date":"Jun 23"},{"pid":"10229226700936","matchup":"Colombia vs Congo DR","date":"Jun 24"},{"pid":"10229226700941","matchup":"Switzerland vs Canada","date":"Jun 24"},{"pid":"10229226700942","matchup":"Bosnia and Herzegovina vs Qatar","date":"Jun 24"},{"pid":"10229226700937","matchup":"Scotland vs Brazil","date":"Jun 24"},{"pid":"10229226700938","matchup":"Morocco vs Haiti","date":"Jun 24"},{"pid":"10229226700939","matchup":"South Africa vs Korea Republic","date":"Jun 25"},{"pid":"10229226700940","matchup":"Czechia vs Mexico","date":"Jun 25"},{"pid":"10229226700943","matchup":"Cura\u00e7ao vs C\u00f4te d'Ivoire","date":"Jun 25"},{"pid":"10229226700944","matchup":"Ecuador vs Germany","date":"Jun 25"},{"pid":"10229226700945","matchup":"Japan vs Sweden","date":"Jun 25"},{"pid":"10229226700946","matchup":"Tunisia vs Netherlands","date":"Jun 25"},{"pid":"10229226700947","matchup":"T\u00fcrkiye vs USA","date":"Jun 26"},{"pid":"10229226700948","matchup":"Paraguay vs Australia","date":"Jun 26"},{"pid":"10229226700949","matchup":"Norway vs France","date":"Jun 26"},{"pid":"10229226700950","matchup":"Senegal vs Iraq","date":"Jun 26"},{"pid":"10229226700953","matchup":"Cabo Verde vs Saudi Arabia","date":"Jun 27"},{"pid":"10229226700954","matchup":"Uruguay vs Spain","date":"Jun 27"},{"pid":"10229226700951","matchup":"Egypt vs IR Iran","date":"Jun 27"},{"pid":"10229226700952","matchup":"New Zealand vs Belgium","date":"Jun 27"},{"pid":"10229226700955","matchup":"Panama vs England","date":"Jun 27"},{"pid":"10229226700956","matchup":"Croatia vs Ghana","date":"Jun 27"},{"pid":"10229226700957","matchup":"Colombia vs Portugal","date":"Jun 27"},{"pid":"10229226700958","matchup":"Congo DR vs Uzbekistan","date":"Jun 27"},{"pid":"10229226700959","matchup":"Algeria vs Austria","date":"Jun 28"},{"pid":"10229226700960","matchup":"Jordan vs Argentina","date":"Jun 28"},{"pid":"10229226725328","matchup":"2A vs 2B","date":"Jun 28"},{"pid":"10229226725331","matchup":"1C vs 2F","date":"Jun 29"},{"pid":"10229226725329","matchup":"1E vs 3ABCDF","date":"Jun 29"},{"pid":"10229226725330","matchup":"1F vs 2C","date":"Jun 30"},{"pid":"10229226725333","matchup":"2E vs 2I","date":"Jun 30"},{"pid":"10229226725332","matchup":"1I vs 3CDFGH","date":"Jun 30"},{"pid":"10229226725334","matchup":"1A vs 3CEFHI","date":"Jul 1"},{"pid":"10229226725335","matchup":"1L vs 3EHIJK","date":"Jul 1"},{"pid":"10229226725337","matchup":"1G vs 3AEHIJ","date":"Jul 1"},{"pid":"10229226725336","matchup":"1D vs 3BEFIJ","date":"Jul 2"},{"pid":"10229226725339","matchup":"1H vs 2J","date":"Jul 2"},{"pid":"10229226725340","matchup":"1B vs 3EFGIJ","date":"Jul 3"},{"pid":"10229226725343","matchup":"2D vs 2G","date":"Jul 3"},{"pid":"10229226725341","matchup":"1J vs 2H","date":"Jul 3"},{"pid":"10229226725342","matchup":"1K vs 3DEIJL","date":"Jul 4"},{"pid":"10229226725346","matchup":"Winner 73 vs Winner 75","date":"Jul 4"},{"pid":"10229226725345","matchup":"Winner 74 vs Winner 77","date":"Jul 4"},{"pid":"10229226725347","matchup":"Winner 76 vs Winner 78","date":"Jul 5"},{"pid":"10229226725348","matchup":"Winner 79 vs Winner 80","date":"Jul 6"},{"pid":"10229226725349","matchup":"Winner 83 vs Winner 84","date":"Jul 6"},{"pid":"10229226725350","matchup":"Winner 81 vs Winner 82","date":"Jul 7"},{"pid":"10229226725351","matchup":"Winner 86 vs Winner 88","date":"Jul 7"},{"pid":"10229226725352","matchup":"Winner 85 vs Winner 87","date":"Jul 7"},{"pid":"10229226725353","matchup":"Winner 89 vs Winner 90","date":"Jul 9"},{"pid":"10229226725354","matchup":"Winner 93 vs Winner 94","date":"Jul 10"},{"pid":"10229226725355","matchup":"Winner 91 vs Winner 92","date":"Jul 11"},{"pid":"10229226725356","matchup":"Winner 95 vs Winner 96","date":"Jul 12"},{"pid":"10229226725357","matchup":"Winner 97 vs Winner 98","date":"Jul 14"},{"pid":"10229226725358","matchup":"Winner 99 vs Winner 100","date":"Jul 15"},{"pid":"10229226725361","matchup":"Bronze 101 vs Bronze 102","date":"Jul 18"},{"pid":"10229226725360","matchup":"Winner 101 vs Winner 102","date":"Jul 19"}]};</script>
+</head>
+<body>
+<div class="page">
+  <div class="top-bar">
+    <a href="#" id="back-link" class="back-link">&#8592; All matches</a>
+    <p class="last-updated" id="last-updated">Last updated: <strong>Jun 19, 2026 at 12:46 AM ET</strong></p>
+  </div>
+  <p class="event-label">Belgium vs IR Iran</p>
+  <h1 class="report-title">Official FIFA Resale Marketplace</h1>
+  <p class="report-sub">Los Angeles Stadium · June 21, 2026</p>
+  <div class="controls-row">
+    <div class="control-group" id="game-nav-group" style="display:none">
+      <span class="control-label">Game</span>
+      <select id="game-nav" class="ctrl-select" onchange="goGame(this.value)" aria-label="Switch game"></select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Snapshot</span>
+      <select id="snapshot-picker" class="ctrl-select" onchange="goSnapshot(this.value)" aria-label="Snapshot date">
+        <option value="">Jun 19, 2026 · 12:46 AM ET · Latest</option>
+          <option value="2026-06-18">Jun 18, 2026 · 11:33 AM ET</option>
+          <option value="2026-06-17">Jun 17, 2026 · 11:42 AM ET</option>
+          <option value="2026-06-16">Jun 16, 2026 · 1:02 PM ET</option>
+          <option value="2026-06-15">Jun 15, 2026 · 1:20 PM ET</option>
+          <option value="2026-06-14">Jun 14, 2026 · 10:11 AM ET</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Live data</span>
+      <button type="button" id="refresh-btn" class="refresh-btn" aria-busy="false">
+        <span id="refresh-btn-label">Refresh now</span>
+      </button>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="gs-tabs">
+    <button id="gs-tab-1" class="gs-tab" onclick="switchGs(1,this)">1 Ticket</button>
+    <button id="gs-tab-2" class="gs-tab" onclick="switchGs(2,this)">2 Tickets</button>
+    <button id="gs-tab-3" class="gs-tab" onclick="switchGs(3,this)">3 Tickets</button>
+    <button id="gs-tab-4" class="gs-tab" onclick="switchGs(4,this)">4 Tickets</button>
+  </div>
+
+  <!-- Category sections (stacked, shown/hidden per tab by JS) -->
+  <div id="cat1-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 1</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat1-chart"></canvas></div>
+    </div>
+    <div class="list-card" id="cat1-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
+  </div>
+
+  <div id="cat2-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 2</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat2-chart"></canvas></div>
+    </div>
+    <div class="list-card" id="cat2-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
+  </div>
+
+  <div id="cat3-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 3</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat3-chart"></canvas></div>
+    </div>
+    <div class="list-card" id="cat3-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
+  </div>
+
+  <div id="cat4-wrap" class="cat-wrap" hidden>
+    <div class="cat-wrap-title">Category 4</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Price distribution</div>
+      <div class="chart-card-sub">Avg per ticket</div>
+      <div style="position:relative;height:220px;"><canvas id="cat4-chart"></canvas></div>
+    </div>
+    <div class="list-card" id="cat4-list"></div>
+    <p class="note derived-note"><span class="badge badge-derived">From 4-pack</span>&nbsp; Adjacent pair extracted from a group-of-4 listing; not a native pair SKU.</p>
+    <p class="note"><span class="badge badge-front">Front section</span>&nbsp; Row 10 or below — closer to the pitch.</p>
+  </div>
+
+  <div class="footer">Source: SeatSidekick &middot; seatsidekick.com &middot; Data captured Jun 19, 2026. Prices reflect resale market and may change. Avg per ticket = total cost &divide; group size. Groups = consecutive seats in the same row. &middot; <a href="history/deal-log.html" style="color:inherit">Deal movement log</a></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function goGame(pid) {
+  const p = location.pathname;
+  if (p.endsWith('/dashboard.html')) {
+    location.href = '../' + pid + '/dashboard.html';
+  } else {
+    location.href = '../../games/' + pid + '/';
+  }
+}
+
+(function() {
+  const cfg = window.__wc2026Config;
+
+  // Back link: resolve path for both reports/ (local) and docs/games/ (deployed)
+  const backLink = document.getElementById('back-link');
+  if (backLink) {
+    backLink.href = location.pathname.endsWith('/dashboard.html') ? '../index.html' : '../../';
+  }
+
+  // Game nav dropdown
+  const nav = document.getElementById('game-nav');
+  const group = document.getElementById('game-nav-group');
+  if (!cfg || !cfg.games || cfg.games.length < 2 || !nav || !group) return;
+  cfg.games.forEach(function(g) {
+    const opt = document.createElement('option');
+    opt.value = g.pid;
+    opt.textContent = g.matchup + ' \xb7 ' + g.date;
+    if (g.pid === cfg.performanceId) opt.selected = true;
+    nav.appendChild(opt);
+  });
+  group.style.display = '';
+})();
+
+function goSnapshot(date) {
+  const ctx = document.querySelector('meta[name="snapshot-context"]')?.content || 'index';
+  if (!date) {
+    window.location.href = ctx === 'archive' ? '../index.html' : 'index.html';
+  } else {
+    window.location.href = ctx === 'archive' ? `${date}.html` : `archive/${date}.html`;
+  }
+}
+
+const sideClass = { Right:'badge-right', Left:'badge-left', Opposite:'badge-opposite', Center:'badge-center' };
+
+function dealHTML(g, i) {
+  const mixed = g.mixed ? '<span style="color:var(--hint);font-size:10px"> *</span>' : '';
+  const frontBadge = g.front ? ` &middot; <span class="badge badge-front">front section</span>` : '';
+  const derivedBadge = g.derived ? ` &middot; <span class="badge badge-derived">from 4-pack</span>` : '';
+  return `<div class="deal">
+    <div class="deal-rank${i===0?' gold':''}">${i+1}</div>
+    <div>
+      <div class="deal-loc">Section ${g.sec} &middot; Row ${g.row}</div>
+      <div class="deal-tags">${g.stand} Stand &middot; <span class="badge ${sideClass[g.side]||''}">${g.side}</span> &middot; Seats ${g.seats}${frontBadge}${derivedBadge}</div>
+    </div>
+    <div class="deal-prices">
+      <div class="deal-per">$${g.avg.toLocaleString()}${mixed} <span>/ea avg</span></div>
+      <div class="deal-total">$${g.total.toLocaleString()} total</div>
+    </div>
+  </div>`;
+}
+
+function renderList(deals, id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = (deals || []).slice(0,10).map(function(g,i){return dealHTML(g,i);}).join('') ||
+    '<p style="padding:16px;color:var(--hint);font-size:12px">No listings in market range.</p>';
+}
+
+const chartInstances = {};
+function makeChart(id, c, labels, ymax, ystep) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  chartInstances[id] = new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets: [{ label:'Listings', data:c, backgroundColor:'#378ADD', borderWidth:0, borderRadius:3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display:false }, tooltip: { callbacks: { label: function(ctx){ return ' '+ctx.raw+' listings'; } } } },
+      layout: { padding: { top:20 } },
+      scales: {
+        x: { grid: { display:false }, ticks: { color:'#A5A49F', font: { size:10, family:'Inter' } } },
+        y: { grid: { color:'#F0EEE8' }, ticks: { color:'#A5A49F', font: { size:10, family:'Inter' }, stepSize:ystep }, max:ymax }
+      }
+    },
+    plugins: [{ afterDatasetsDraw: function(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach(function(ds, di) {
+        ds.data.forEach(function(val, i) {
+          if (!val) return;
+          const bar = chart.getDatasetMeta(di).data[i];
+          ctx.fillStyle = '#555'; ctx.font = '500 10px Inter,sans-serif';
+          ctx.textAlign = 'center'; ctx.fillText(val, bar.x, bar.y - 5);
+        });
+      });
+    }}]
+  });
+}
+
+var activeGs = 2;
+
+function switchGs(gs, tabEl) {
+  activeGs = gs;
+  document.querySelectorAll('.gs-tab').forEach(function(t){ t.classList.remove('active'); });
+  if (tabEl) tabEl.classList.add('active');
+
+  const data = window.__wc2026Data;
+  if (!data) return;
+
+  // Show/hide derived note (only relevant for gs=2)
+  document.querySelectorAll('.derived-note').forEach(function(n){ n.style.display = gs === 2 ? '' : 'none'; });
+
+  const cfg = window.__wc2026Config;
+  [1,2,3,4].forEach(function(cat) {
+    const wrap = document.getElementById('cat' + cat + '-wrap');
+    if (!wrap) return;
+    const catData = data.cats[cat] || data.cats[String(cat)];
+    const gsd = catData && (catData[gs] || catData[String(gs)]);
+    if (gsd && gsd.deals && gsd.deals.length > 0) {
+      wrap.hidden = false;
+      renderList(gsd.deals, 'cat' + cat + '-list');
+      const bl = cfg && cfg.bucketLabels && (cfg.bucketLabels[cat] || cfg.bucketLabels[String(cat)]);
+      const labels = bl || ['<$500','$500–1k','$1k–2k','$2k–4k','$4k–8k','$8k+'];
+      makeChart('cat' + cat + '-chart', gsd.chart.c, labels, gsd.chart.ymax, gsd.chart.ystep);
+    } else {
+      wrap.hidden = true;
+    }
+  });
+}
+
+</script>
+<script>window.__wc2026Data={"top3":{"1":[],"2":[{"sec":"533","row":14,"seats":"15\u201316","stand":"Main","side":"Right","total":1794,"avg":897,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"512","row":22,"seats":"19\u201320","stand":"Main","side":"Center","total":1840,"avg":920,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"540","row":5,"seats":"8\u20139","stand":"Opposite","side":"Opposite","total":1898,"avg":949,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false}],"3":[{"sec":"513","row":22,"seats":"9\u201311","stand":"Main","side":"Center","total":3105,"avg":1035,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"543","row":3,"seats":"12\u201314","stand":"Opposite","side":"Opposite","total":3450,"avg":1150,"gs":3,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"515","row":16,"seats":"1\u20133","stand":"Main","side":"Center","total":3709,"avg":1236,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false}],"4":[{"sec":"542","row":6,"seats":"5\u20138","stand":"Opposite","side":"Opposite","total":3742,"avg":935,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"549","row":22,"seats":"10\u201313","stand":"Main","side":"Left","total":4140,"avg":1035,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"541","row":5,"seats":"3\u20136","stand":"Opposite","side":"Opposite","total":4485,"avg":1121,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false}]},"cats":{"1":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"201","row":7,"seats":"7\u20138","stand":"Opposite","side":"Opposite","total":2004,"avg":1002,"gs":2,"cat":1,"front":true,"mixed":false,"derived":false},{"sec":"203","row":11,"seats":"4\u20135","stand":"Main","side":"Left","total":2645,"avg":1322,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"228","row":20,"seats":"5\u20136","stand":"Main","side":"Right","total":2760,"avg":1380,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"230","row":24,"seats":"5\u20136","stand":"Main","side":"Right","total":2760,"avg":1380,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"209","row":13,"seats":"11\u201312","stand":"Main","side":"Left","total":2760,"avg":1380,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"200","row":17,"seats":"8\u20139","stand":"Opposite","side":"Opposite","total":2760,"avg":1380,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"C223","row":2,"seats":"1\u20132","stand":"Main","side":"Center","total":2875,"avg":1438,"gs":2,"cat":1,"front":true,"mixed":false,"derived":false},{"sec":"C242","row":12,"seats":"16\u201317","stand":"Opposite","side":"Opposite","total":2932,"avg":1466,"gs":2,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"C222","row":8,"seats":"3\u20134","stand":"Main","side":"Center","total":2988,"avg":1494,"gs":2,"cat":1,"front":true,"mixed":false,"derived":false},{"sec":"227","row":2,"seats":"3\u20134","stand":"Main","side":"Right","total":2990,"avg":1495,"gs":2,"cat":1,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,1,30,25,16],"ymax":35,"ystep":7}},"3":{"deals":[{"sec":"228","row":1,"seats":"4\u20136","stand":"Main","side":"Right","total":4485,"avg":1495,"gs":3,"cat":1,"front":true,"mixed":false,"derived":false},{"sec":"VIP132","row":19,"seats":"4\u20136","stand":"Opposite","side":"Opposite","total":9315,"avg":3105,"gs":3,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"235","row":4,"seats":"12\u201314","stand":"Main","side":"Right","total":17250,"avg":5750,"gs":3,"cat":1,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,1,0,2],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"227","row":10,"seats":"9\u201312","stand":"Main","side":"Right","total":5382,"avg":1346,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"238","row":14,"seats":"22\u201325","stand":"Main","side":"Right","total":5980,"avg":1495,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"100","row":14,"seats":"13\u201316","stand":"Main","side":"Left","total":6435,"avg":1609,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"105","row":12,"seats":"5\u20138","stand":"Main","side":"Left","total":6440,"avg":1610,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"103","row":1,"seats":"3\u20136","stand":"Main","side":"Left","total":6670,"avg":1668,"gs":4,"cat":1,"front":true,"mixed":false,"derived":false},{"sec":"104","row":13,"seats":"9\u201312","stand":"Main","side":"Left","total":6670,"avg":1668,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"228","row":14,"seats":"1\u20134","stand":"Main","side":"Right","total":6900,"avg":1725,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"101","row":10,"seats":"5\u20138","stand":"Main","side":"Left","total":6900,"avg":1725,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"201","row":10,"seats":"9\u201312","stand":"Opposite","side":"Opposite","total":6900,"avg":1725,"gs":4,"cat":1,"front":false,"mixed":false,"derived":false},{"sec":"212","row":9,"seats":"5\u20138","stand":"Main","side":"Left","total":7130,"avg":1782,"gs":4,"cat":1,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,10,4,5],"ymax":15,"ystep":3}}},"2":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"512","row":22,"seats":"19\u201320","stand":"Main","side":"Center","total":1840,"avg":920,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"540","row":5,"seats":"8\u20139","stand":"Opposite","side":"Opposite","total":1898,"avg":949,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"541","row":22,"seats":"6\u20137","stand":"Opposite","side":"Opposite","total":2065,"avg":1032,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"515","row":7,"seats":"9\u201310","stand":"Main","side":"Center","total":2070,"avg":1035,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"516","row":14,"seats":"19\u201320","stand":"Main","side":"Center","total":2070,"avg":1035,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"512","row":9,"seats":"4\u20135","stand":"Main","side":"Center","total":2070,"avg":1035,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"516","row":9,"seats":"23\u201324","stand":"Main","side":"Center","total":2070,"avg":1035,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"540","row":1,"seats":"12\u201313","stand":"Opposite","side":"Opposite","total":2185,"avg":1092,"gs":2,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"516","row":22,"seats":"11\u201312","stand":"Main","side":"Center","total":2185,"avg":1092,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"512","row":18,"seats":"9\u201310","stand":"Main","side":"Center","total":2185,"avg":1092,"gs":2,"cat":2,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,2,25,5,7],"ymax":30,"ystep":6}},"3":{"deals":[{"sec":"513","row":22,"seats":"9\u201311","stand":"Main","side":"Center","total":3105,"avg":1035,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"515","row":16,"seats":"1\u20133","stand":"Main","side":"Center","total":3709,"avg":1236,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"538","row":11,"seats":"17\u201319","stand":"Opposite","side":"Opposite","total":4658,"avg":1552,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"232","row":20,"seats":"13\u201315","stand":"Main","side":"Right","total":4830,"avg":1610,"gs":3,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"325","row":6,"seats":"11\u201313","stand":"Main","side":"Center","total":5175,"avg":1725,"gs":3,"cat":2,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,2,3,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"542","row":6,"seats":"5\u20138","stand":"Opposite","side":"Opposite","total":3742,"avg":935,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"541","row":5,"seats":"3\u20136","stand":"Opposite","side":"Opposite","total":4485,"avg":1121,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"313","row":20,"seats":"21\u201324","stand":"Main","side":"Left","total":5055,"avg":1264,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"538","row":18,"seats":"22\u201325","stand":"Opposite","side":"Opposite","total":5520,"avg":1380,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"311","row":11,"seats":"12\u201315","stand":"Main","side":"Left","total":5750,"avg":1438,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"206","row":18,"seats":"17\u201320","stand":"Main","side":"Left","total":6440,"avg":1610,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false},{"sec":"411","row":4,"seats":"21\u201324","stand":"Main","side":"Center","total":6440,"avg":1610,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"401","row":5,"seats":"9\u201312","stand":"Main","side":"Left","total":6900,"avg":1725,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"422","row":2,"seats":"17\u201320","stand":"Main","side":"Right","total":7590,"avg":1898,"gs":4,"cat":2,"front":true,"mixed":false,"derived":false},{"sec":"541","row":16,"seats":"1\u20134","stand":"Opposite","side":"Opposite","total":8280,"avg":2070,"gs":4,"cat":2,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,1,3,5,2],"ymax":10,"ystep":2}}},"3":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"533","row":14,"seats":"15\u201316","stand":"Main","side":"Right","total":1794,"avg":897,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"535","row":11,"seats":"15\u201316","stand":"Opposite","side":"Opposite","total":1955,"avg":978,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"544","row":22,"seats":"11\u201312","stand":"Opposite","side":"Opposite","total":2024,"avg":1012,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"549","row":21,"seats":"4\u20135","stand":"Main","side":"Left","total":2042,"avg":1021,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"522","row":7,"seats":"4\u20135","stand":"Main","side":"Right","total":2058,"avg":1029,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"522","row":8,"seats":"16\u201317","stand":"Main","side":"Right","total":2068,"avg":1034,"gs":2,"cat":3,"front":true,"mixed":false,"derived":false},{"sec":"521","row":11,"seats":"10\u201311","stand":"Main","side":"Right","total":2070,"avg":1035,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"517","row":19,"seats":"11\u201312","stand":"Main","side":"Center","total":2070,"avg":1035,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"532","row":14,"seats":"5\u20136","stand":"Main","side":"Right","total":2185,"avg":1092,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"533","row":21,"seats":"1\u20132","stand":"Main","side":"Right","total":2229,"avg":1114,"gs":2,"cat":3,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,12,5],"ymax":15,"ystep":3}},"3":{"deals":[{"sec":"543","row":3,"seats":"12\u201314","stand":"Opposite","side":"Opposite","total":3450,"avg":1150,"gs":3,"cat":3,"front":true,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,1,0],"ymax":5,"ystep":1}},"4":{"deals":[{"sec":"549","row":22,"seats":"10\u201313","stand":"Main","side":"Left","total":4140,"avg":1035,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"534","row":20,"seats":"19\u201322","stand":"Opposite","side":"Opposite","total":4508,"avg":1127,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false},{"sec":"534","row":21,"seats":"13\u201316","stand":"Opposite","side":"Opposite","total":7880,"avg":1970,"gs":4,"cat":3,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,2,1],"ymax":5,"ystep":1}}},"4":{"1":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"2":{"deals":[{"sec":"526","row":20,"seats":"11\u201312","stand":"Main","side":"Right","total":2367,"avg":1183,"gs":2,"cat":4,"front":false,"mixed":false,"derived":false}],"chart":{"c":[0,0,0,0,0,1],"ymax":5,"ystep":1}},"3":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}},"4":{"deals":[],"chart":{"c":[0,0,0,0,0,0],"ymax":5,"ystep":1}}}}};</script>
+<script>
+(function() {
+  const data = window.__wc2026Data;
+  if (!data) return;
+
+  // Hide ticket-count tabs that have no data (but always keep gs=2 visible)
+  [1,3,4].forEach(function(gs) {
+    const tab = document.getElementById('gs-tab-' + gs);
+    if (!tab) return;
+    const hasData = Object.values(data.cats).some(function(cat) {
+      const gsd = cat[gs] || cat[String(gs)];
+      return gsd && gsd.deals && gsd.deals.length > 0;
+    });
+    if (!hasData) tab.hidden = true;
+  });
+
+  switchGs(2, document.getElementById('gs-tab-2'));
+})();
+</script>
+<script src="../../../refresh.js"></script>
+</body>
+</html>
