@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 79 groups, price range $1,024 – $195,500 total
-G4 fetched: 65 groups → 195 derived adjacent pairs
+G2 fetched: 75 groups, price range $1,026 – $195,500 total
+G4 fetched: 64 groups → 192 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   195 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   192 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,7 +20,7 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 69 groups, price range $817 – $6,900 total
+G2 fetched: 72 groups, price range $818 – $6,900 total
 G4 fetched: 21 groups → 63 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -40,12 +40,12 @@ Cheapest New: —
 Date: June 20, 2026
 
 G2 fetched: 38 groups, price range $1,042 – $322,000 total
-G4 fetched: 5 groups → 15 derived adjacent pairs
+G4 fetched: 4 groups → 12 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    15 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    12 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -78,9 +78,9 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            195 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            192 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |             63 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             15 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |             12 | INVESTIGATE     |
 | Cat 4    |       0.0% |         0 |              3 | SKIP            |
 
 Overall recommendation: **PARTIAL**

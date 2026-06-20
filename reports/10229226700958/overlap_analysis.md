@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 28 groups, price range $1,069 – $5,750 total
-G4 fetched: 10 groups → 30 derived adjacent pairs
+G2 fetched: 29 groups, price range $1,071 – $5,750 total
+G4 fetched: 9 groups → 27 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    30 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    27 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,13 +20,13 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 37 groups, price range $1,058 – $45,540 total
-G4 fetched: 11 groups → 33 derived adjacent pairs
+G2 fetched: 36 groups, price range $1,058 – $45,540 total
+G4 fetched: 10 groups → 30 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    33 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    30 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -39,13 +39,13 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 41 groups, price range $874 – $32,200 total
-G4 fetched: 16 groups → 48 derived adjacent pairs
+G2 fetched: 36 groups, price range $1,127 – $32,200 total
+G4 fetched: 14 groups → 42 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    48 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    42 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -59,9 +59,9 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |             30 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             33 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             48 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |             27 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             30 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |             42 | INVESTIGATE     |
 
 Overall recommendation: **PARTIAL**
 

@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 142 groups, price range $7,666 – $1,150,000 total
-G4 fetched: 93 groups → 279 derived adjacent pairs
+G2 fetched: 141 groups, price range $7,666 – $1,150,000 total
+G4 fetched: 91 groups → 273 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   276 |       98.9% | May exist in G2, not top-100   |
+| IN_RANGE   |   270 |       98.9% | May exist in G2, not top-100   |
 | NEW        |     3 |        1.1% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,7 +20,7 @@ Cheapest New: Sec 253CC Row 1 Seats 9–10  avg $3,738/ea  total $7,476
 ## Category 2 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 40 groups, price range $6,325 – $27,600 total
+G2 fetched: 38 groups, price range $6,325 – $27,600 total
 G4 fetched: 24 groups → 72 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -39,7 +39,7 @@ Cheapest New: Sec 318 Row 25 Seats 13–14  avg $16,100/ea  total $32,200
 ## Category 3 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 28 groups, price range $6,095 – $32,200 total
+G2 fetched: 29 groups, price range $6,095 – $32,200 total
 G4 fetched: 12 groups → 36 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -58,7 +58,7 @@ Cheapest New: —
 ## Category 4 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 5 groups, price range $6,210 – $11,958 total
+G2 fetched: 6 groups, price range $5,798 – $11,958 total
 G4 fetched: 3 groups → 9 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -78,7 +78,7 @@ Cheapest New: Sec 328 Row 24 Seats 13–14  avg $17,250/ea  total $34,500
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         3 |            276 | INVESTIGATE     |
+| Cat 1    |       0.0% |         3 |            270 | INVESTIGATE     |
 | Cat 2    |       0.0% |         3 |             69 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             36 | INVESTIGATE     |
 | Cat 4    |       0.0% |         3 |              6 | SKIP            |

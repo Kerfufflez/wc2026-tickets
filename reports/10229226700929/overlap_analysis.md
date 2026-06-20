@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 78 groups, price range $2,070 – $41,032 total
-G4 fetched: 19 groups → 57 derived adjacent pairs
+G2 fetched: 78 groups, price range $2,070 – $41,072 total
+G4 fetched: 21 groups → 63 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    57 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    63 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -20,13 +20,13 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: June 20, 2026
 
-G2 fetched: 47 groups, price range $1,598 – $6,900 total
-G4 fetched: 19 groups → 57 derived adjacent pairs
+G2 fetched: 43 groups, price range $1,794 – $6,900 total
+G4 fetched: 16 groups → 48 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    57 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    48 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -59,8 +59,8 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |             57 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             57 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |             63 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             48 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             15 | INVESTIGATE     |
 
 Overall recommendation: **PARTIAL**
