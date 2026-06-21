@@ -1,6 +1,84 @@
 {
   "entries": [
     {
+      "id": "2026-06-21T101908",
+      "captured_at": "2026-06-21T10:19:08-04:00",
+      "captured_label": "Jun 21, 2026 at 10:19 AM ET",
+      "prev_id": "2026-06-21T004306",
+      "prev_label": "Jun 21, 2026 at 12:43 AM ET",
+      "categories": {
+        "cat1": {
+          "label": "Category 1",
+          "g2_count": 5,
+          "g4_count": 0,
+          "g2_delta": -3,
+          "g4_delta": -1,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat2": {
+          "label": "Category 2",
+          "g2_count": 5,
+          "g4_count": 0,
+          "g2_delta": -1,
+          "g4_delta": -2,
+          "cheaper": [
+            {
+              "cat": "cat2",
+              "sec": "T2-05",
+              "row": "U",
+              "seats": "16\u201317",
+              "gs": 2,
+              "avg": 1725,
+              "total": 3450,
+              "front": false,
+              "derived": false,
+              "text": "Sec T2-05 Row U Seats 16\u201317 (2t) \u2014 $1,725/ea ($3,450 total)",
+              "change": "\u2212$345/ea",
+              "was_avg": 2070
+            }
+          ],
+          "top10_new_g2": [
+            {
+              "cat": "cat2",
+              "sec": "T2-29",
+              "row": "D",
+              "seats": "9\u201310",
+              "gs": 2,
+              "avg": 1840,
+              "total": 3680,
+              "front": false,
+              "derived": false,
+              "text": "Sec T2-29 Row D Seats 9\u201310 (2t) \u2014 $1,840/ea ($3,680 total)"
+            }
+          ],
+          "top10_new_g4": []
+        },
+        "cat3": {
+          "label": "Category 3",
+          "g2_count": 0,
+          "g4_count": 1,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        },
+        "cat4": {
+          "label": "Category 4",
+          "g2_count": 0,
+          "g4_count": 0,
+          "g2_delta": 0,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        }
+      },
+      "is_baseline": false
+    },
+    {
       "id": "2026-06-21T004306",
       "captured_at": "2026-06-21T00:43:06-04:00",
       "captured_label": "Jun 21, 2026 at 12:43 AM ET",
