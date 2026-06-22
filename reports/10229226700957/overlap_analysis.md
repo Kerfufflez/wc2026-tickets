@@ -1,32 +1,32 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 22, 2026
 
-G2 fetched: 102 groups, price range $8,050 – $115,000 total
-G4 fetched: 46 groups → 138 derived adjacent pairs
+G2 fetched: 103 groups, price range $8,050 – $115,000 total
+G4 fetched: 45 groups → 135 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   138 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   135 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 130 Row 8 Seats 9–10  avg $4,255/ea  total $8,510
+Cheapest In Range: Sec 125 Row 16 Seats 19–20  avg $4,285/ea  total $8,570
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 22, 2026
 
-G2 fetched: 47 groups, price range $6,693 – $57,500 total
-G4 fetched: 16 groups → 48 derived adjacent pairs
+G2 fetched: 43 groups, price range $6,693 – $57,500 total
+G4 fetched: 15 groups → 45 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    48 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    45 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 22, 2026
 
-G2 fetched: 18 groups, price range $6,898 – $23,000 total
+G2 fetched: 12 groups, price range $6,900 – $23,000 total
 G4 fetched: 3 groups → 9 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -59,8 +59,8 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            138 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             48 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            135 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             45 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |              9 | SKIP            |
 
 Overall recommendation: **PARTIAL**
