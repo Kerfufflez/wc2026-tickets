@@ -1,13 +1,13 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 21, 2026
+Date: June 22, 2026
 
-G2 fetched: 180 groups, price range $6,555 – $80,500 total
-G4 fetched: 77 groups → 231 derived adjacent pairs
+G2 fetched: 181 groups, price range $6,555 – $129,030 total
+G4 fetched: 73 groups → 219 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   231 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   219 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -18,15 +18,15 @@ Cheapest In Range: Sec 123 Row 38 Seats 14–15  avg $3,335/ea  total $6,670
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 21, 2026
+Date: June 22, 2026
 
-G2 fetched: 160 groups, price range $4,929 – $112,700 total
-G4 fetched: 77 groups → 231 derived adjacent pairs
+G2 fetched: 151 groups, price range $5,175 – $112,700 total
+G4 fetched: 82 groups → 246 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   231 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   246 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -37,9 +37,9 @@ Cheapest In Range: Sec 305 Row 21 Seats 13–14  avg $2,645/ea  total $5,290
 Cheapest New: —
 
 ## Category 4 — Pair Derivation Analysis
-Date: June 21, 2026
+Date: June 22, 2026
 
-G2 fetched: 3 groups, price range $8,214 – $25,300 total
+G2 fetched: 2 groups, price range $8,214 – $9,200 total
 G4 fetched: 1 groups → 3 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -59,8 +59,8 @@ Cheapest New: Sec 318 Row 15 Seats 5–6  avg $3,278/ea  total $6,556
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            231 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |            231 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            219 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |            246 | INVESTIGATE     |
 | Cat 4    |       0.0% |         3 |              0 | SKIP            |
 
 Overall recommendation: **PARTIAL**
