@@ -1,7 +1,7 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 23, 2026
 
-G2 fetched: 27 groups, price range $9,200 – $69,000 total
+G2 fetched: 30 groups, price range $9,200 – $69,000 total
 G4 fetched: 5 groups → 15 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -21,12 +21,12 @@ Cheapest New: —
 Date: June 23, 2026
 
 G2 fetched: 10 groups, price range $9,154 – $17,181 total
-G4 fetched: 1 groups → 3 derived adjacent pairs
+G4 fetched: 2 groups → 6 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |     3 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |     6 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 23, 2026
 
-G2 fetched: 11 groups, price range $8,798 – $17,250 total
+G2 fetched: 10 groups, price range $8,798 – $17,250 total
 G4 fetched: 5 groups → 15 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -62,7 +62,7 @@ Pairs eligible for merge (NEW below G2 min $8,798): 0
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
 | Cat 1    |       0.0% |         0 |             15 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |              3 | SKIP            |
+| Cat 2    |       0.0% |         0 |              6 | SKIP            |
 | Cat 3    |       0.0% |         9 |              6 | DERIVE          |
 
 Overall recommendation: **DERIVE**
