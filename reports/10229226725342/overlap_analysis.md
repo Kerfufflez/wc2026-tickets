@@ -1,28 +1,28 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 23, 2026
+Date: June 24, 2026
 
-G2 fetched: 112 groups, price range $3,738 – $48,900 total
-G4 fetched: 56 groups → 168 derived adjacent pairs
+G2 fetched: 106 groups, price range $4,400 – $48,900 total
+G4 fetched: 52 groups → 156 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   162 |       96.4% | May exist in G2, not top-100   |
-| NEW        |     6 |        3.6% | Genuinely new options          |
+| IN_RANGE   |   144 |       92.3% | May exist in G2, not top-100   |
+| NEW        |    12 |        7.7% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 131 Row 25 Seats 5–6  avg $2,012/ea  total $4,024
-Cheapest New: Sec 117 Row 33 Seats 23–24  avg $38,333/ea  total $76,666
+Cheapest In Range: Sec 107 Row 10 Seats 13–14  avg $2,300/ea  total $4,600
+Cheapest New: Sec 107 Row 17 Seats 5–6  avg $2,070/ea  total $4,140
 
-Pairs eligible for merge (NEW below G2 min $3,738): 0
+Pairs eligible for merge (NEW below G2 min $4,400): 6
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 23, 2026
+Date: June 24, 2026
 
-G2 fetched: 98 groups, price range $3,260 – $46,000 total
+G2 fetched: 95 groups, price range $3,473 – $46,000 total
 G4 fetched: 35 groups → 105 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -35,35 +35,35 @@ Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 305 Row 33 Seats 5–6  avg $1,725/ea  total $3,450
+Cheapest In Range: Sec 344 Row 10 Seats 1–2  avg $1,907/ea  total $3,814
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
-Date: June 23, 2026
+Date: June 24, 2026
 
-G2 fetched: 27 groups, price range $3,174 – $17,250 total
-G4 fetched: 35 groups → 105 derived adjacent pairs
+G2 fetched: 31 groups, price range $3,450 – $17,250 total
+G4 fetched: 29 groups → 87 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   102 |       97.1% | May exist in G2, not top-100   |
-| NEW        |     3 |        2.9% | Genuinely new options          |
+| IN_RANGE   |    84 |       96.6% | May exist in G2, not top-100   |
+| NEW        |     3 |        3.4% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 307 Row 30 Seats 13–14  avg $1,668/ea  total $3,336
+Cheapest In Range: Sec 331 Row 31 Seats 5–6  avg $1,806/ea  total $3,612
 Cheapest New: Sec 307 Row 37 Seats 1–2  avg $23,000/ea  total $46,000
 
 ## Summary Recommendation
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         6 |            162 | DERIVE          |
+| Cat 1    |       0.0% |        12 |            144 | DERIVE          |
 | Cat 2    |       0.0% |         0 |            105 | INVESTIGATE     |
-| Cat 3    |       0.0% |         3 |            102 | INVESTIGATE     |
+| Cat 3    |       0.0% |         3 |             84 | INVESTIGATE     |
 
 Overall recommendation: **DERIVE**
 
