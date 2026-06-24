@@ -15,7 +15,7 @@ Verdict: **SKIP** — G2 API already surfaces pairs; derivation adds little.
 
 Cheapest Duplicate: —
 Cheapest In Range: Sec T1-10 Row E Seats 1–2  avg $4,600/ea  total $9,200
-Cheapest New: Sec T1-08 Row X Seats 9–10  avg $3,312/ea  total $6,624
+Cheapest New: Sec T1-08 Row X Seats 9–10  avg $3,318/ea  total $6,636
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 24, 2026

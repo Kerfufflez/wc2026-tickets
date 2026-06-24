@@ -1,20 +1,20 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 24, 2026
 
-G2 fetched: 94 groups, price range $9,200 – $32,200 total
-G4 fetched: 47 groups → 141 derived adjacent pairs
+G2 fetched: 99 groups, price range $9,200 – $38,332 total
+G4 fetched: 48 groups → 144 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   135 |       95.7% | May exist in G2, not top-100   |
-| NEW        |     6 |        4.3% | Genuinely new options          |
+| IN_RANGE   |   138 |       95.8% | May exist in G2, not top-100   |
+| NEW        |     6 |        4.2% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 143 Row W Seats 15–16  avg $4,600/ea  total $9,200
+Cheapest In Range: Sec 214 Row D Seats 17–18  avg $4,794/ea  total $9,588
 Cheapest New: Sec 214 Row R Seats 1–2  avg $23,000/ea  total $46,000
 
 Pairs eligible for merge (NEW below G2 min $9,200): 0
@@ -22,7 +22,7 @@ Pairs eligible for merge (NEW below G2 min $9,200): 0
 ## Category 2 — Pair Derivation Analysis
 Date: June 24, 2026
 
-G2 fetched: 101 groups, price range $6,647 – $27,710 total
+G2 fetched: 105 groups, price range $6,647 – $27,628 total
 G4 fetched: 43 groups → 129 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -63,7 +63,7 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         6 |            135 | DERIVE          |
+| Cat 1    |       0.0% |         6 |            138 | DERIVE          |
 | Cat 2    |       0.0% |        12 |            117 | DERIVE          |
 | Cat 3    |       0.0% |         0 |             42 | INVESTIGATE     |
 
