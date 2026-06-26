@@ -1,7 +1,7 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 26, 2026
 
-G2 fetched: 37 groups, price range $8,280 – $34,500 total
+G2 fetched: 40 groups, price range $5,375 – $34,500 total
 G4 fetched: 8 groups → 24 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -14,7 +14,7 @@ Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 459 Row 1 Seats 14–15  avg $4,637/ea  total $9,274
+Cheapest In Range: Sec RS25 Row 2 Seats 20–21  avg $3,833/ea  total $7,666
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: June 26, 2026
 
-G2 fetched: 14 groups, price range $7,949 – $57,500 total
+G2 fetched: 16 groups, price range $7,866 – $57,500 total
 G4 fetched: 6 groups → 18 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -53,7 +53,7 @@ Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch be
 
 Cheapest Duplicate: —
 Cheapest In Range: Sec 658 Row 1 Seats 15–16  avg $4,312/ea  total $8,624
-Cheapest New: Sec 615 Row 9 Seats 4–5  avg $3,643/ea  total $7,286
+Cheapest New: Sec 615 Row 9 Seats 4–5  avg $3,605/ea  total $7,210
 
 ## Summary Recommendation
 

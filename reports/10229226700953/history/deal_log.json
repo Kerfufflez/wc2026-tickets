@@ -1,6 +1,546 @@
 {
   "entries": [
     {
+      "id": "2026-06-26T103225",
+      "captured_at": "2026-06-26T10:32:25-04:00",
+      "captured_label": "Jun 26, 2026 at 10:32 AM ET",
+      "prev_id": "2026-06-26T000234",
+      "prev_label": "Jun 26, 2026 at 12:02 AM ET",
+      "categories": {
+        "cat1": {
+          "label": "Category 1",
+          "g2_count": 29,
+          "g4_count": 11,
+          "g2_delta": -7,
+          "g4_delta": -10,
+          "cheaper": [
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": "AA",
+              "seats": "12\u201315",
+              "gs": 4,
+              "avg": 575,
+              "total": 2300,
+              "front": false,
+              "derived": false,
+              "text": "Sec 121 Row AA Seats 12\u201315 (4t) \u2014 $575/ea ($2,300 total)",
+              "change": "\u2212$575/ea",
+              "was_avg": 1150
+            },
+            {
+              "cat": "cat1",
+              "sec": "134",
+              "row": "B",
+              "seats": "5\u20138",
+              "gs": 4,
+              "avg": 1912,
+              "total": 7648,
+              "front": false,
+              "derived": false,
+              "text": "Sec 134 Row B Seats 5\u20138 (4t) \u2014 $1,912/ea ($7,648 total)",
+              "change": "\u2212$302/ea",
+              "was_avg": 2214
+            },
+            {
+              "cat": "cat1",
+              "sec": "102",
+              "row": "H",
+              "seats": "13\u201316",
+              "gs": 4,
+              "avg": 1150,
+              "total": 4600,
+              "front": false,
+              "derived": false,
+              "text": "Sec 102 Row H Seats 13\u201316 (4t) \u2014 $1,150/ea ($4,600 total)",
+              "change": "\u2212$230/ea",
+              "was_avg": 1380
+            },
+            {
+              "cat": "cat1",
+              "sec": "340",
+              "row": "N",
+              "seats": "3\u20134",
+              "gs": 2,
+              "avg": 828,
+              "total": 1656,
+              "front": false,
+              "derived": false,
+              "text": "Sec 340 Row N Seats 3\u20134 (2t) \u2014 $828/ea ($1,656 total)",
+              "change": "\u2212$190/ea",
+              "was_avg": 1018
+            },
+            {
+              "cat": "cat1",
+              "sec": "115",
+              "row": "AA",
+              "seats": "1\u20134",
+              "gs": 4,
+              "avg": 805,
+              "total": 3220,
+              "front": false,
+              "derived": false,
+              "text": "Sec 115 Row AA Seats 1\u20134 (4t) \u2014 $805/ea ($3,220 total)",
+              "change": "\u2212$173/ea",
+              "was_avg": 978
+            }
+          ],
+          "top10_new_g2": [
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": "AA",
+              "seats": "12\u201313",
+              "gs": 2,
+              "avg": 575,
+              "total": 1150,
+              "front": false,
+              "derived": true,
+              "text": "Sec 121 Row AA Seats 12\u201313 (2t) \u2014 $575/ea ($1,150 total) [from 4-pack]"
+            },
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": "AA",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 575,
+              "total": 1150,
+              "front": false,
+              "derived": true,
+              "text": "Sec 121 Row AA Seats 13\u201314 (2t) \u2014 $575/ea ($1,150 total) [from 4-pack]"
+            },
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": "AA",
+              "seats": "14\u201315",
+              "gs": 2,
+              "avg": 575,
+              "total": 1150,
+              "front": false,
+              "derived": true,
+              "text": "Sec 121 Row AA Seats 14\u201315 (2t) \u2014 $575/ea ($1,150 total) [from 4-pack]"
+            },
+            {
+              "cat": "cat1",
+              "sec": "340",
+              "row": "N",
+              "seats": "3\u20134",
+              "gs": 2,
+              "avg": 828,
+              "total": 1656,
+              "front": false,
+              "derived": false,
+              "text": "Sec 340 Row N Seats 3\u20134 (2t) \u2014 $828/ea ($1,656 total)"
+            }
+          ],
+          "top10_new_g4": [
+            {
+              "cat": "cat1",
+              "sec": "121",
+              "row": "AA",
+              "seats": "12\u201315",
+              "gs": 4,
+              "avg": 575,
+              "total": 2300,
+              "front": false,
+              "derived": false,
+              "text": "Sec 121 Row AA Seats 12\u201315 (4t) \u2014 $575/ea ($2,300 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "336",
+              "row": "R",
+              "seats": "9\u201312",
+              "gs": 4,
+              "avg": 920,
+              "total": 3680,
+              "front": false,
+              "derived": false,
+              "text": "Sec 336 Row R Seats 9\u201312 (4t) \u2014 $920/ea ($3,680 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "132",
+              "row": "AA",
+              "seats": "11\u201314",
+              "gs": 4,
+              "avg": 1035,
+              "total": 4140,
+              "front": false,
+              "derived": false,
+              "text": "Sec 132 Row AA Seats 11\u201314 (4t) \u2014 $1,035/ea ($4,140 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "102",
+              "row": "H",
+              "seats": "13\u201316",
+              "gs": 4,
+              "avg": 1150,
+              "total": 4600,
+              "front": false,
+              "derived": false,
+              "text": "Sec 102 Row H Seats 13\u201316 (4t) \u2014 $1,150/ea ($4,600 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "342",
+              "row": "N",
+              "seats": "9\u201312",
+              "gs": 4,
+              "avg": 1265,
+              "total": 5060,
+              "front": false,
+              "derived": false,
+              "text": "Sec 342 Row N Seats 9\u201312 (4t) \u2014 $1,265/ea ($5,060 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "126",
+              "row": "L",
+              "seats": "19\u201322",
+              "gs": 4,
+              "avg": 1380,
+              "total": 5520,
+              "front": false,
+              "derived": false,
+              "text": "Sec 126 Row L Seats 19\u201322 (4t) \u2014 $1,380/ea ($5,520 total)"
+            },
+            {
+              "cat": "cat1",
+              "sec": "132",
+              "row": "Z",
+              "seats": "3\u20136",
+              "gs": 4,
+              "avg": 1495,
+              "total": 5980,
+              "front": false,
+              "derived": false,
+              "text": "Sec 132 Row Z Seats 3\u20136 (4t) \u2014 $1,495/ea ($5,980 total)"
+            }
+          ]
+        },
+        "cat2": {
+          "label": "Category 2",
+          "g2_count": 19,
+          "g4_count": 1,
+          "g2_delta": -9,
+          "g4_delta": 0,
+          "cheaper": [
+            {
+              "cat": "cat2",
+              "sec": "633",
+              "row": "N",
+              "seats": "4\u20135",
+              "gs": 2,
+              "avg": 689,
+              "total": 1378,
+              "front": false,
+              "derived": false,
+              "text": "Sec 633 Row N Seats 4\u20135 (2t) \u2014 $689/ea ($1,378 total)",
+              "change": "\u2212$863/ea",
+              "was_avg": 1552
+            },
+            {
+              "cat": "cat2",
+              "sec": "513",
+              "row": "J",
+              "seats": "14\u201317",
+              "gs": 4,
+              "avg": 677,
+              "total": 2709,
+              "front": false,
+              "derived": false,
+              "text": "Sec 513 Row J Seats 14\u201317 (4t) \u2014 $677/ea ($2,709 total)",
+              "change": "\u2212$473/ea",
+              "was_avg": 1150
+            },
+            {
+              "cat": "cat2",
+              "sec": "537",
+              "row": "J",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 514,
+              "total": 1028,
+              "front": false,
+              "derived": false,
+              "text": "Sec 537 Row J Seats 13\u201314 (2t) \u2014 $514/ea ($1,028 total)",
+              "change": "\u2212$234/ea",
+              "was_avg": 748
+            },
+            {
+              "cat": "cat2",
+              "sec": "551",
+              "row": "B",
+              "seats": "9\u201310",
+              "gs": 2,
+              "avg": 804,
+              "total": 1608,
+              "front": false,
+              "derived": false,
+              "text": "Sec 551 Row B Seats 9\u201310 (2t) \u2014 $804/ea ($1,608 total)",
+              "change": "\u2212$115/ea",
+              "was_avg": 919
+            },
+            {
+              "cat": "cat2",
+              "sec": "552",
+              "row": "H",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 745,
+              "total": 1490,
+              "front": false,
+              "derived": false,
+              "text": "Sec 552 Row H Seats 13\u201314 (2t) \u2014 $745/ea ($1,490 total)",
+              "change": "\u2212$83/ea",
+              "was_avg": 828
+            }
+          ],
+          "top10_new_g2": [
+            {
+              "cat": "cat2",
+              "sec": "633",
+              "row": "N",
+              "seats": "4\u20135",
+              "gs": 2,
+              "avg": 689,
+              "total": 1378,
+              "front": false,
+              "derived": false,
+              "text": "Sec 633 Row N Seats 4\u20135 (2t) \u2014 $689/ea ($1,378 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "552",
+              "row": "H",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 745,
+              "total": 1490,
+              "front": false,
+              "derived": false,
+              "text": "Sec 552 Row H Seats 13\u201314 (2t) \u2014 $745/ea ($1,490 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "518",
+              "row": "F",
+              "seats": "10\u201311",
+              "gs": 2,
+              "avg": 770,
+              "total": 1541,
+              "front": false,
+              "derived": false,
+              "text": "Sec 518 Row F Seats 10\u201311 (2t) \u2014 $770/ea ($1,541 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "551",
+              "row": "B",
+              "seats": "9\u201310",
+              "gs": 2,
+              "avg": 804,
+              "total": 1608,
+              "front": false,
+              "derived": false,
+              "text": "Sec 551 Row B Seats 9\u201310 (2t) \u2014 $804/ea ($1,608 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "635",
+              "row": "T",
+              "seats": "24\u201325",
+              "gs": 2,
+              "avg": 809,
+              "total": 1617,
+              "front": false,
+              "derived": false,
+              "text": "Sec 635 Row T Seats 24\u201325 (2t) \u2014 $809/ea ($1,617 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "350",
+              "row": "D",
+              "seats": "17\u201318",
+              "gs": 2,
+              "avg": 862,
+              "total": 1725,
+              "front": false,
+              "derived": false,
+              "text": "Sec 350 Row D Seats 17\u201318 (2t) \u2014 $862/ea ($1,725 total)"
+            },
+            {
+              "cat": "cat2",
+              "sec": "323",
+              "row": "H",
+              "seats": "5\u20136",
+              "gs": 2,
+              "avg": 874,
+              "total": 1748,
+              "front": false,
+              "derived": false,
+              "text": "Sec 323 Row H Seats 5\u20136 (2t) \u2014 $874/ea ($1,748 total)"
+            }
+          ],
+          "top10_new_g4": []
+        },
+        "cat3": {
+          "label": "Category 3",
+          "g2_count": 21,
+          "g4_count": 3,
+          "g2_delta": -4,
+          "g4_delta": -3,
+          "cheaper": [
+            {
+              "cat": "cat3",
+              "sec": "650",
+              "row": "C",
+              "seats": "7\u201310",
+              "gs": 4,
+              "avg": 632,
+              "total": 2530,
+              "front": false,
+              "derived": false,
+              "text": "Sec 650 Row C Seats 7\u201310 (4t) \u2014 $632/ea ($2,530 total)",
+              "change": "\u2212$300/ea",
+              "was_avg": 932
+            },
+            {
+              "cat": "cat3",
+              "sec": "632",
+              "row": "S",
+              "seats": "14\u201315",
+              "gs": 2,
+              "avg": 862,
+              "total": 1725,
+              "front": false,
+              "derived": false,
+              "text": "Sec 632 Row S Seats 14\u201315 (2t) \u2014 $862/ea ($1,725 total)",
+              "change": "\u2212$116/ea",
+              "was_avg": 978
+            },
+            {
+              "cat": "cat3",
+              "sec": "648",
+              "row": "H",
+              "seats": "17\u201320",
+              "gs": 4,
+              "avg": 690,
+              "total": 2760,
+              "front": false,
+              "derived": false,
+              "text": "Sec 648 Row H Seats 17\u201320 (4t) \u2014 $690/ea ($2,760 total)",
+              "change": "\u2212$58/ea",
+              "was_avg": 748
+            }
+          ],
+          "top10_new_g2": [
+            {
+              "cat": "cat3",
+              "sec": "624",
+              "row": "B",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 546,
+              "total": 1092,
+              "front": false,
+              "derived": false,
+              "text": "Sec 624 Row B Seats 13\u201314 (2t) \u2014 $546/ea ($1,092 total)"
+            },
+            {
+              "cat": "cat3",
+              "sec": "646",
+              "row": "J",
+              "seats": "3\u20134",
+              "gs": 2,
+              "avg": 575,
+              "total": 1150,
+              "front": false,
+              "derived": false,
+              "text": "Sec 646 Row J Seats 3\u20134 (2t) \u2014 $575/ea ($1,150 total)"
+            },
+            {
+              "cat": "cat3",
+              "sec": "624",
+              "row": "E",
+              "seats": "10\u201311",
+              "gs": 2,
+              "avg": 702,
+              "total": 1403,
+              "front": false,
+              "derived": false,
+              "text": "Sec 624 Row E Seats 10\u201311 (2t) \u2014 $702/ea ($1,403 total)"
+            },
+            {
+              "cat": "cat3",
+              "sec": "629",
+              "row": "E",
+              "seats": "9\u201310",
+              "gs": 2,
+              "avg": 748,
+              "total": 1495,
+              "front": false,
+              "derived": false,
+              "text": "Sec 629 Row E Seats 9\u201310 (2t) \u2014 $748/ea ($1,495 total)"
+            },
+            {
+              "cat": "cat3",
+              "sec": "603",
+              "row": "Q",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 748,
+              "total": 1495,
+              "front": false,
+              "derived": false,
+              "text": "Sec 603 Row Q Seats 13\u201314 (2t) \u2014 $748/ea ($1,495 total)"
+            },
+            {
+              "cat": "cat3",
+              "sec": "631",
+              "row": "R",
+              "seats": "13\u201314",
+              "gs": 2,
+              "avg": 805,
+              "total": 1610,
+              "front": false,
+              "derived": false,
+              "text": "Sec 631 Row R Seats 13\u201314 (2t) \u2014 $805/ea ($1,610 total)"
+            }
+          ],
+          "top10_new_g4": [
+            {
+              "cat": "cat3",
+              "sec": "640",
+              "row": "B",
+              "seats": "8\u201311",
+              "gs": 4,
+              "avg": 868,
+              "total": 3473,
+              "front": false,
+              "derived": false,
+              "text": "Sec 640 Row B Seats 8\u201311 (4t) \u2014 $868/ea ($3,473 total)"
+            }
+          ]
+        },
+        "cat4": {
+          "label": "Category 4",
+          "g2_count": 1,
+          "g4_count": 1,
+          "g2_delta": -2,
+          "g4_delta": 0,
+          "cheaper": [],
+          "top10_new_g2": [],
+          "top10_new_g4": []
+        }
+      },
+      "is_baseline": false
+    },
+    {
       "id": "2026-06-26T000234",
       "captured_at": "2026-06-26T00:02:34-04:00",
       "captured_label": "Jun 26, 2026 at 12:02 AM ET",
@@ -195,20 +735,6 @@
           "cheaper": [
             {
               "cat": "cat2",
-              "sec": "536",
-              "row": "M",
-              "seats": "18\u201319",
-              "gs": 2,
-              "avg": 805,
-              "total": 1610,
-              "front": false,
-              "derived": false,
-              "text": "Sec 536 Row M Seats 18\u201319 (2t) \u2014 $805/ea ($1,610 total)",
-              "change": "\u2212$173/ea",
-              "was_avg": 978
-            },
-            {
-              "cat": "cat2",
               "sec": "323",
               "row": "B",
               "seats": "7\u20138",
@@ -220,6 +746,20 @@
               "text": "Sec 323 Row B Seats 7\u20138 (2t) \u2014 $862/ea ($1,725 total)",
               "change": "\u2212$173/ea",
               "was_avg": 1035
+            },
+            {
+              "cat": "cat2",
+              "sec": "536",
+              "row": "M",
+              "seats": "18\u201319",
+              "gs": 2,
+              "avg": 805,
+              "total": 1610,
+              "front": false,
+              "derived": false,
+              "text": "Sec 536 Row M Seats 18\u201319 (2t) \u2014 $805/ea ($1,610 total)",
+              "change": "\u2212$173/ea",
+              "was_avg": 978
             },
             {
               "cat": "cat2",
@@ -589,34 +1129,6 @@
             },
             {
               "cat": "cat1",
-              "sec": "106",
-              "row": "X",
-              "seats": "19\u201320",
-              "gs": 2,
-              "avg": 1495,
-              "total": 2990,
-              "front": false,
-              "derived": false,
-              "text": "Sec 106 Row X Seats 19\u201320 (2t) \u2014 $1,495/ea ($2,990 total)",
-              "change": "\u2212$230/ea",
-              "was_avg": 1725
-            },
-            {
-              "cat": "cat1",
-              "sec": "132",
-              "row": "GG",
-              "seats": "21\u201324",
-              "gs": 4,
-              "avg": 1150,
-              "total": 4600,
-              "front": false,
-              "derived": false,
-              "text": "Sec 132 Row GG Seats 21\u201324 (4t) \u2014 $1,150/ea ($4,600 total)",
-              "change": "\u2212$230/ea",
-              "was_avg": 1380
-            },
-            {
-              "cat": "cat1",
               "sec": "125",
               "row": "C",
               "seats": "5\u20136",
@@ -628,6 +1140,34 @@
               "text": "Sec 125 Row C Seats 5\u20136 (2t) \u2014 $1,150/ea ($2,300 total)",
               "change": "\u2212$230/ea",
               "was_avg": 1380
+            },
+            {
+              "cat": "cat1",
+              "sec": "124",
+              "row": "C",
+              "seats": "6\u20137",
+              "gs": 2,
+              "avg": 1265,
+              "total": 2530,
+              "front": false,
+              "derived": false,
+              "text": "Sec 124 Row C Seats 6\u20137 (2t) \u2014 $1,265/ea ($2,530 total)",
+              "change": "\u2212$230/ea",
+              "was_avg": 1495
+            },
+            {
+              "cat": "cat1",
+              "sec": "106",
+              "row": "X",
+              "seats": "19\u201320",
+              "gs": 2,
+              "avg": 1495,
+              "total": 2990,
+              "front": false,
+              "derived": false,
+              "text": "Sec 106 Row X Seats 19\u201320 (2t) \u2014 $1,495/ea ($2,990 total)",
+              "change": "\u2212$230/ea",
+              "was_avg": 1725
             }
           ],
           "top10_new_g2": [
@@ -1854,20 +2394,6 @@
             },
             {
               "cat": "cat1",
-              "sec": "338",
-              "row": "T",
-              "seats": "12\u201313",
-              "gs": 2,
-              "avg": 1265,
-              "total": 2530,
-              "front": false,
-              "derived": false,
-              "text": "Sec 338 Row T Seats 12\u201313 (2t) \u2014 $1,265/ea ($2,530 total)",
-              "change": "\u2212$575/ea",
-              "was_avg": 1840
-            },
-            {
-              "cat": "cat1",
               "sec": "115",
               "row": "AA",
               "seats": "9\u201312",
@@ -1879,6 +2405,20 @@
               "text": "Sec 115 Row AA Seats 9\u201312 (4t) \u2014 $1,150/ea ($4,600 total)",
               "change": "\u2212$575/ea",
               "was_avg": 1725
+            },
+            {
+              "cat": "cat1",
+              "sec": "338",
+              "row": "T",
+              "seats": "12\u201313",
+              "gs": 2,
+              "avg": 1265,
+              "total": 2530,
+              "front": false,
+              "derived": false,
+              "text": "Sec 338 Row T Seats 12\u201313 (2t) \u2014 $1,265/ea ($2,530 total)",
+              "change": "\u2212$575/ea",
+              "was_avg": 1840
             },
             {
               "cat": "cat1",
@@ -2877,16 +3417,16 @@
             {
               "cat": "cat1",
               "sec": "338",
-              "row": "N",
-              "seats": "15\u201316",
-              "gs": 2,
-              "avg": 1208,
-              "total": 2415,
+              "row": "H",
+              "seats": "19\u201322",
+              "gs": 4,
+              "avg": 1438,
+              "total": 5750,
               "front": false,
               "derived": false,
-              "text": "Sec 338 Row N Seats 15\u201316 (2t) \u2014 $1,208/ea ($2,415 total)",
+              "text": "Sec 338 Row H Seats 19\u201322 (4t) \u2014 $1,438/ea ($5,750 total)",
               "change": "\u2212$287/ea",
-              "was_avg": 1495
+              "was_avg": 1725
             }
           ],
           "top10_new_g2": [
@@ -5333,6 +5873,20 @@
             },
             {
               "cat": "cat1",
+              "sec": "133",
+              "row": "GG",
+              "seats": "11\u201312",
+              "gs": 2,
+              "avg": 820,
+              "total": 1640,
+              "front": false,
+              "derived": false,
+              "text": "Sec 133 Row GG Seats 11\u201312 (2t) \u2014 $820/ea ($1,640 total)",
+              "change": "\u2212$3/ea",
+              "was_avg": 823
+            },
+            {
+              "cat": "cat1",
               "sec": "110",
               "row": "V",
               "seats": "1\u20132",
@@ -5358,20 +5912,6 @@
               "text": "Sec 336 Row P Seats 21\u201322 (2t) \u2014 $739/ea ($1,477 total)",
               "change": "\u2212$3/ea",
               "was_avg": 742
-            },
-            {
-              "cat": "cat1",
-              "sec": "133",
-              "row": "GG",
-              "seats": "11\u201312",
-              "gs": 2,
-              "avg": 820,
-              "total": 1640,
-              "front": false,
-              "derived": false,
-              "text": "Sec 133 Row GG Seats 11\u201312 (2t) \u2014 $820/ea ($1,640 total)",
-              "change": "\u2212$3/ea",
-              "was_avg": 823
             }
           ],
           "top10_new_g2": [
@@ -6754,20 +7294,6 @@
             },
             {
               "cat": "cat2",
-              "sec": "528",
-              "row": "K",
-              "seats": "8\u20139",
-              "gs": 2,
-              "avg": 518,
-              "total": 1035,
-              "front": false,
-              "derived": false,
-              "text": "Sec 528 Row K Seats 8\u20139 (2t) \u2014 $518/ea ($1,035 total)",
-              "change": "\u2212$57/ea",
-              "was_avg": 575
-            },
-            {
-              "cat": "cat2",
               "sec": "636",
               "row": "P",
               "seats": "17\u201318",
@@ -6777,6 +7303,20 @@
               "front": false,
               "derived": false,
               "text": "Sec 636 Row P Seats 17\u201318 (2t) \u2014 $518/ea ($1,035 total)",
+              "change": "\u2212$57/ea",
+              "was_avg": 575
+            },
+            {
+              "cat": "cat2",
+              "sec": "528",
+              "row": "K",
+              "seats": "8\u20139",
+              "gs": 2,
+              "avg": 518,
+              "total": 1035,
+              "front": false,
+              "derived": false,
+              "text": "Sec 528 Row K Seats 8\u20139 (2t) \u2014 $518/ea ($1,035 total)",
               "change": "\u2212$57/ea",
               "was_avg": 575
             }
@@ -7217,31 +7757,31 @@
             },
             {
               "cat": "cat1",
-              "sec": "110",
-              "row": "V",
-              "seats": "1\u20132",
-              "gs": 2,
-              "avg": 823,
-              "total": 1645,
+              "sec": "137",
+              "row": "CC",
+              "seats": "5\u20138",
+              "gs": 4,
+              "avg": 625,
+              "total": 2501,
               "front": false,
               "derived": false,
-              "text": "Sec 110 Row V Seats 1\u20132 (2t) \u2014 $823/ea ($1,645 total)",
+              "text": "Sec 137 Row CC Seats 5\u20138 (4t) \u2014 $625/ea ($2,501 total)",
               "change": "\u2212$2/ea",
-              "was_avg": 825
+              "was_avg": 627
             },
             {
               "cat": "cat1",
-              "sec": "115",
-              "row": "CC",
-              "seats": "1\u20134",
-              "gs": 4,
-              "avg": 905,
-              "total": 3620,
+              "sec": "133",
+              "row": "GG",
+              "seats": "11\u201312",
+              "gs": 2,
+              "avg": 658,
+              "total": 1316,
               "front": false,
               "derived": false,
-              "text": "Sec 115 Row CC Seats 1\u20134 (4t) \u2014 $905/ea ($3,620 total)",
+              "text": "Sec 133 Row GG Seats 11\u201312 (2t) \u2014 $658/ea ($1,316 total)",
               "change": "\u2212$2/ea",
-              "was_avg": 907
+              "was_avg": 660
             }
           ],
           "top10_new_g2": [
@@ -7528,20 +8068,6 @@
             },
             {
               "cat": "cat2",
-              "sec": "516",
-              "row": "C",
-              "seats": "9\u201310",
-              "gs": 2,
-              "avg": 1070,
-              "total": 2139,
-              "front": false,
-              "derived": false,
-              "text": "Sec 516 Row C Seats 9\u201310 (2t) \u2014 $1,070/ea ($2,139 total)",
-              "change": "\u2212$2/ea",
-              "was_avg": 1072
-            },
-            {
-              "cat": "cat2",
               "sec": "635",
               "row": "L",
               "seats": "10\u201311",
@@ -7553,6 +8079,20 @@
               "text": "Sec 635 Row L Seats 10\u201311 (2t) \u2014 $592/ea ($1,185 total)",
               "change": "\u2212$2/ea",
               "was_avg": 594
+            },
+            {
+              "cat": "cat2",
+              "sec": "516",
+              "row": "C",
+              "seats": "9\u201310",
+              "gs": 2,
+              "avg": 1070,
+              "total": 2139,
+              "front": false,
+              "derived": false,
+              "text": "Sec 516 Row C Seats 9\u201310 (2t) \u2014 $1,070/ea ($2,139 total)",
+              "change": "\u2212$2/ea",
+              "was_avg": 1072
             }
           ],
           "top10_new_g2": [
