@@ -1,43 +1,43 @@
 ## Category 1 — Pair Derivation Analysis
-Date: June 27, 2026
+Date: June 28, 2026
 
-G2 fetched: 148 groups, price range $6,325 – $67,850 total
-G4 fetched: 82 groups → 246 derived adjacent pairs
+G2 fetched: 158 groups, price range $6,785 – $67,850 total
+G4 fetched: 93 groups → 279 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   246 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   279 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 103 Row 10 Seats 17–18  avg $3,450/ea  total $6,900
+Cheapest In Range: Sec 110 Row 22 Seats 5–6  avg $3,795/ea  total $7,590
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
-Date: June 27, 2026
+Date: June 28, 2026
 
-G2 fetched: 60 groups, price range $6,302 – $34,500 total
-G4 fetched: 20 groups → 60 derived adjacent pairs
+G2 fetched: 67 groups, price range $5,750 – $34,500 total
+G4 fetched: 21 groups → 63 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    60 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    63 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 315 Row 29 Seats 21–22  avg $3,162/ea  total $6,324
+Cheapest In Range: Sec 315 Row 25 Seats 1–2  avg $3,680/ea  total $7,360
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
-Date: June 27, 2026
+Date: June 28, 2026
 
 G2 fetched: 30 groups, price range $6,210 – $21,148 total
 G4 fetched: 9 groups → 27 derived adjacent pairs
@@ -52,36 +52,16 @@ Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 332 Row 23 Seats 17–18  avg $3,335/ea  total $6,670
+Cheapest In Range: Sec 328 Row 21 Seats 15–16  avg $3,449/ea  total $6,898
 Cheapest New: —
-
-## Category 4 — Pair Derivation Analysis
-Date: June 27, 2026
-
-G2 fetched: 3 groups, price range $7,590 – $11,500 total
-G4 fetched: 1 groups → 3 derived adjacent pairs
-
-| Bucket     | Count | % of derived | Notes                          |
-|------------|-------|--------------|--------------------------------|
-| DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |     0 |        0.0% | May exist in G2, not top-100   |
-| NEW        |     3 |      100.0% | Genuinely new options          |
-
-Overlap rate: 0.0% (DUPLICATE / total)
-Verdict: **SKIP** — G2 API already surfaces pairs; derivation adds little.
-
-Cheapest Duplicate: —
-Cheapest In Range: —
-Cheapest New: Sec 328 Row 30 Seats 10–11  avg $2,875/ea  total $5,750
 
 ## Summary Recommendation
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            246 | INVESTIGATE     |
-| Cat 2    |       0.0% |         0 |             60 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            279 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |             63 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             27 | INVESTIGATE     |
-| Cat 4    |       0.0% |         3 |              0 | SKIP            |
 
 Overall recommendation: **PARTIAL**
 
