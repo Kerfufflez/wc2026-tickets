@@ -1,26 +1,26 @@
 ## Category 1 — Pair Derivation Analysis
 Date: June 30, 2026
 
-G2 fetched: 234 groups, price range $6,900 – $345,000 total
-G4 fetched: 95 groups → 285 derived adjacent pairs
+G2 fetched: 236 groups, price range $6,670 – $345,000 total
+G4 fetched: 97 groups → 291 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   285 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   291 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 127 Row 20 Seats 12–13  avg $3,738/ea  total $7,476
+Cheapest In Range: Sec 130 Row 33 Seats 14–15  avg $4,140/ea  total $8,280
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: June 30, 2026
 
-G2 fetched: 172 groups, price range $5,980 – $80,500 total
+G2 fetched: 181 groups, price range $5,635 – $80,500 total
 G4 fetched: 83 groups → 249 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -33,20 +33,20 @@ Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 305 Row 21 Seats 13–14  avg $3,350/ea  total $6,700
+Cheapest In Range: Sec 305 Row 21 Seats 13–14  avg $3,345/ea  total $6,690
 Cheapest New: —
 
 ## Category 3 — Pair Derivation Analysis
 Date: June 30, 2026
 
-G2 fetched: 89 groups, price range $6,210 – $57,500 total
-G4 fetched: 38 groups → 114 derived adjacent pairs
+G2 fetched: 90 groups, price range $6,210 – $57,500 total
+G4 fetched: 40 groups → 120 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   108 |       94.7% | May exist in G2, not top-100   |
-| NEW        |     6 |        5.3% | Genuinely new options          |
+| IN_RANGE   |   114 |       95.0% | May exist in G2, not top-100   |
+| NEW        |     6 |        5.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
@@ -61,9 +61,9 @@ Pairs eligible for merge (NEW below G2 min $6,210): 0
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            285 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            291 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |            249 | INVESTIGATE     |
-| Cat 3    |       0.0% |         6 |            108 | DERIVE          |
+| Cat 3    |       0.0% |         6 |            114 | DERIVE          |
 
 Overall recommendation: **DERIVE**
 
