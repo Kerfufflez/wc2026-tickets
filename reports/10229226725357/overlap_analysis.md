@@ -20,7 +20,7 @@ Cheapest New: —
 ## Category 2 — Pair Derivation Analysis
 Date: July 1, 2026
 
-G2 fetched: 233 groups, price range $6,900 – $230,000 total
+G2 fetched: 234 groups, price range $6,900 – $230,000 total
 G4 fetched: 85 groups → 255 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: July 1, 2026
 
-G2 fetched: 30 groups, price range $7,590 – $83,950 total
+G2 fetched: 32 groups, price range $7,302 – $83,950 total
 G4 fetched: 7 groups → 21 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
