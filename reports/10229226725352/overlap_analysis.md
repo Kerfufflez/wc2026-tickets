@@ -1,34 +1,32 @@
 ## Category 1 — Pair Derivation Analysis
 Date: July 2, 2026
 
-G2 fetched: 350 groups, price range $2,026 – $34,500 total
-G4 fetched: 128 groups → 384 derived adjacent pairs
+G2 fetched: 357 groups, price range $2,042 – $34,500 total
+G4 fetched: 126 groups → 378 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   378 |       98.4% | May exist in G2, not top-100   |
-| NEW        |     6 |        1.6% | Genuinely new options          |
+| IN_RANGE   |   375 |       99.2% | May exist in G2, not top-100   |
+| NEW        |     3 |        0.8% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
-Verdict: **DERIVE** — Add only NEW pairs below G2 min total to G2 list.
+Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 203 Row RR Seats 6–7  avg $1,216/ea  total $2,432
-Cheapest New: Sec 254 Row CC Seats 1–2  avg $951/ea  total $1,902
-
-Pairs eligible for merge (NEW below G2 min $2,026): 3
+Cheapest In Range: Sec 230 Row NN Seats 5–6  avg $1,175/ea  total $2,350
+Cheapest New: Sec 222 Row DD Seats 101–102  avg $114,999/ea  total $229,998
 
 ## Category 2 — Pair Derivation Analysis
 Date: July 2, 2026
 
-G2 fetched: 219 groups, price range $1,955 – $32,416 total
-G4 fetched: 72 groups → 216 derived adjacent pairs
+G2 fetched: 220 groups, price range $1,840 – $32,416 total
+G4 fetched: 75 groups → 225 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   216 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   225 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -41,13 +39,13 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: July 2, 2026
 
-G2 fetched: 59 groups, price range $1,621 – $24,312 total
-G4 fetched: 26 groups → 78 derived adjacent pairs
+G2 fetched: 57 groups, price range $1,621 – $24,312 total
+G4 fetched: 28 groups → 84 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    78 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    84 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -57,13 +55,33 @@ Cheapest Duplicate: —
 Cheapest In Range: Sec 426 Row DD Seats 105–106  avg $1,135/ea  total $2,270
 Cheapest New: —
 
+## Category 4 — Pair Derivation Analysis
+Date: July 2, 2026
+
+G2 fetched: 9 groups, price range $2,431 – $9,838 total
+G4 fetched: 1 groups → 3 derived adjacent pairs
+
+| Bucket     | Count | % of derived | Notes                          |
+|------------|-------|--------------|--------------------------------|
+| DUPLICATE  |     0 |        0.0% | Already in G2 response         |
+| IN_RANGE   |     3 |      100.0% | May exist in G2, not top-100   |
+| NEW        |     0 |        0.0% | Genuinely new options          |
+
+Overlap rate: 0.0% (DUPLICATE / total)
+Verdict: **SKIP** — G2 API already surfaces pairs; derivation adds little.
+
+Cheapest Duplicate: —
+Cheapest In Range: Sec 425 Row WW Seats 104–105  avg $1,297/ea  total $2,594
+Cheapest New: —
+
 ## Summary Recommendation
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         6 |            378 | DERIVE          |
-| Cat 2    |       0.0% |         0 |            216 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             78 | INVESTIGATE     |
+| Cat 1    |       0.0% |         3 |            375 | INVESTIGATE     |
+| Cat 2    |       0.0% |         0 |            225 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |             84 | INVESTIGATE     |
+| Cat 4    |       0.0% |         0 |              3 | SKIP            |
 
-Overall recommendation: **DERIVE**
+Overall recommendation: **PARTIAL**
 
