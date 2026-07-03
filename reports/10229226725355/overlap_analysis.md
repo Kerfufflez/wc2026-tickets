@@ -1,26 +1,26 @@
 ## Category 1 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 184 groups, price range $9,028 – $575,000 total
-G4 fetched: 111 groups → 333 derived adjacent pairs
+G2 fetched: 191 groups, price range $9,028 – $575,000 total
+G4 fetched: 113 groups → 339 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |   333 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |   339 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 125 Row 18 Seats 8–9  avg $4,888/ea  total $9,776
+Cheapest In Range: Sec 239 Row 8 Seats 5–6  avg $4,542/ea  total $9,084
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 63 groups, price range $7,820 – $46,000 total
+G2 fetched: 62 groups, price range $7,820 – $46,000 total
 G4 fetched: 23 groups → 69 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -39,7 +39,7 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 40 groups, price range $7,989 – $32,200 total
+G2 fetched: 38 groups, price range $7,966 – $32,200 total
 G4 fetched: 19 groups → 57 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
@@ -78,7 +78,7 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |            333 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |            339 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |             69 | INVESTIGATE     |
 | Cat 3    |       0.0% |         0 |             57 | INVESTIGATE     |
 | Cat 4    |       0.0% |         0 |              6 | SKIP            |

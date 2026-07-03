@@ -1,20 +1,20 @@
 ## Category 1 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 77 groups, price range $15,092 – $802,301 total
-G4 fetched: 18 groups → 54 derived adjacent pairs
+G2 fetched: 81 groups, price range $11,500 – $800,024 total
+G4 fetched: 19 groups → 57 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    54 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    57 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
 Verdict: **INVESTIGATE** — Many IN_RANGE pairs; consider paginated G2 fetch before adding.
 
 Cheapest Duplicate: —
-Cheapest In Range: Sec 116 Row 38 Seats 20–21  avg $10,062/ea  total $20,124
+Cheapest In Range: Sec 121 Row 44 Seats 13–14  avg $9,050/ea  total $18,100
 Cheapest New: —
 
 ## Category 2 — Pair Derivation Analysis
@@ -39,13 +39,13 @@ Cheapest New: —
 ## Category 3 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 131 groups, price range $7,648 – $115,000 total
-G4 fetched: 30 groups → 90 derived adjacent pairs
+G2 fetched: 133 groups, price range $7,820 – $115,000 total
+G4 fetched: 31 groups → 93 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    90 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    93 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -58,13 +58,13 @@ Cheapest New: —
 ## Category 4 — Pair Derivation Analysis
 Date: July 3, 2026
 
-G2 fetched: 15 groups, price range $8,234 – $80,500 total
-G4 fetched: 4 groups → 12 derived adjacent pairs
+G2 fetched: 14 groups, price range $8,234 – $80,500 total
+G4 fetched: 5 groups → 15 derived adjacent pairs
 
 | Bucket     | Count | % of derived | Notes                          |
 |------------|-------|--------------|--------------------------------|
 | DUPLICATE  |     0 |        0.0% | Already in G2 response         |
-| IN_RANGE   |    12 |      100.0% | May exist in G2, not top-100   |
+| IN_RANGE   |    15 |      100.0% | May exist in G2, not top-100   |
 | NEW        |     0 |        0.0% | Genuinely new options          |
 
 Overlap rate: 0.0% (DUPLICATE / total)
@@ -78,10 +78,10 @@ Cheapest New: —
 
 | Category | Overlap Rate | NEW count | IN_RANGE count | Verdict         |
 |----------|-------------|-----------|----------------|-----------------|
-| Cat 1    |       0.0% |         0 |             54 | INVESTIGATE     |
+| Cat 1    |       0.0% |         0 |             57 | INVESTIGATE     |
 | Cat 2    |       0.0% |         0 |            108 | INVESTIGATE     |
-| Cat 3    |       0.0% |         0 |             90 | INVESTIGATE     |
-| Cat 4    |       0.0% |         0 |             12 | INVESTIGATE     |
+| Cat 3    |       0.0% |         0 |             93 | INVESTIGATE     |
+| Cat 4    |       0.0% |         0 |             15 | INVESTIGATE     |
 
 Overall recommendation: **PARTIAL**
 
